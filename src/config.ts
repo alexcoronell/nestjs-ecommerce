@@ -16,7 +16,6 @@ type Config = {
   jwtRefreshTokenExpirationTime: string | undefined;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 export default registerAs('config', (): Config => {
   return {
     postgres: {

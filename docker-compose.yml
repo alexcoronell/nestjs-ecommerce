@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+     - DATABASE_HOST=127.0.0.1
+     - POSTGRES_DB=nestjs_ecommerce
+     - POSTGRES_USER=root
+     - POSTGRES_PASSWORD=EXZTedK5V5rhaM9GQEJKvRApBT1wA5RCEXZTedK5V5rhaM9GQEJKvRApBT1wA5RC
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+     - PGADMIN_DEFAULT_EMAIL=root@admin.com
+     - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres

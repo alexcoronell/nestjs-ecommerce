@@ -1,20 +1,19 @@
-import * as dotenv from 'dotenv';
-import { env } from 'process';
+import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-dotenv.config();
+const env = process.env.NODE_ENV || 'development';
 
-export const dataSource = new DataSource({
+config({
+  path: `.env.${env}`,
+});
+
+export default new DataSource({
   type: 'postgres',
-  host: env.TYPEORM_HOST,
-  port: env.TYPEORM_PORT ? Number(env.TYPEORM_PORT) : 5432, // default to 5432 or handle as needed
-  username: env.TYPEORM_USERNAME,
-  password: env.TYPEORM_PASSWORD,
-  database: env.TYPEORM_DATABASE,
-  entities: [env.TYPEORM_ENTITIES as string],
-  migrations: [env.TYPEORM_MIGRATIONS as string],
-  migrationsTableName: env.TYPEORM_MIGRATIONS_TABLE_NAME,
-  synchronize: false,
-  dropSchema: false,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: ['src/**/*.entity.ts'],
+  migrations: ['src/database/migrations/*.ts'],
 });

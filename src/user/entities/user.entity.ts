@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Entity, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
 

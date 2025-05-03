@@ -25,6 +25,9 @@ export class User extends BaseEntity {
   @Column({ name: 'phone_number', type: 'varchar', length: 255 })
   phoneNumber: string;
 
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   /**************************** Relations ****************************/
   /* Users */
   @ManyToOne(() => User, (user) => user.createdUsers)

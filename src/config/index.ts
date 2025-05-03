@@ -1,4 +1,11 @@
+import { config } from 'dotenv';
 import { registerAs } from '@nestjs/config';
+
+const env = process.env.NODE_ENV || 'dev';
+
+config({
+  path: `.env.${env}`,
+});
 
 export default registerAs('config', () => {
   return {

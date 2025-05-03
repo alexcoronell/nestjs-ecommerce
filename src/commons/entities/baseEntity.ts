@@ -23,6 +23,9 @@ export class BaseEntity {
   })
   updatedAt: Date;
 
+  @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
+
   @Column({
     name: 'deleted',
     type: 'boolean',

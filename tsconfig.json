@@ -18,6 +18,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@commons/*": ["src/commons/*"],
       "@user/*": ["src/user/*"],
     }
   }

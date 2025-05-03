@@ -35,9 +35,16 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'updated_by_user_id' })
   updatedBy: number;
 
+  @ManyToOne(() => User, (user) => user.deletedUsers)
+  @JoinColumn({ name: 'deleted_by_user_id' })
+  deletedBy: number;
+
   @OneToMany(() => User, (users) => users.createdBy)
   createdUsers: User[];
 
   @OneToMany(() => User, (users) => users.updatedBy)
   updatedUsers: User[];
+
+  @OneToMany(() => User, (users) => users.deletedBy)
+  deletedUsers: User[];
 }

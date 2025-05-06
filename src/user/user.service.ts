@@ -3,6 +3,7 @@
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -13,6 +14,7 @@ import { User } from '@user/entities/user.entity';
 /* DTO's */
 import { CreateUserDto } from '@user/dto/create-user.dto';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
+import { UpdatePasswordDto } from '@user/dto/update-password-user';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
@@ -88,7 +90,7 @@ export class UserService
   async findOne(id: User['id']): Promise<Result<User>> {
     const user = await this.userRepo.findOne({
       relations: ['createdBy', 'updatedBy'],
-      where: { id: id as number, isDeleted: false },
+      where: { id, isDeleted: false },
     });
     if (!user) {
       throw new NotFoundException(`The User with ${id} not found`);
@@ -115,6 +117,9 @@ export class UserService
   /* Create */
   async create(dto: CreateUserDto) {
     const newUser = this.userRepo.create(dto);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
     const user = await this.userRepo.save(newUser);
     user.password = '';
     return {
@@ -138,21 +143,22 @@ export class UserService
   }
 
   /* Update Password */
-  /*  async updatePassword(id: number, changes: UpdatePasswordDto) {
+  async updatePassword(id: number, changes: UpdatePasswordDto) {
     const { data } = await this.findOne(id);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const hashPassword = await bcrypt.hash(changes.password, 10);
     const newPasswordChanges = {
       password: hashPassword,
     };
-    this.userRepo.merge(data, newPasswordChanges);
-    const rta = await this.userRepo.save(data);
-    rta.password = undefined;
+    this.userRepo.merge(data as User, newPasswordChanges);
+    const rta = await this.userRepo.save(data as User);
+    rta.password = '';
     return {
       statusCode: HttpStatus.OK,
       message: 'The password was updated',
     };
-  } */
+  }
 
   /* Remove */
   async remove(id: User['id']) {

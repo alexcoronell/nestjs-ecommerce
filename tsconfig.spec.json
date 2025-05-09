@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "types": ["jest", "node"],
+    "baseUrl": "./",
+    "paths": {
+      "@config/*": ["src/config/*"],
+      "@commons/*": ["src/commons/*"],
+      "@auth/*": ["src/auth/*"],
+      "@user/*": ["src/user/*"],
+      "@faker/*": ["src/faker/*"]
+    }
+  }
+}

@@ -75,12 +75,20 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
+    "preset": "ts-jest",
+    "moduleNameMapper": {
+    "@config/(.*)": "<rootDir>/src/config/$1",
+    "@commons/(.*)": "<rootDir>/src/commons/$1",
+    "@auth/(.*)": "<rootDir>/src/auth/$1",
+    "@user/(.*)": "<rootDir>/src/user/$1",
+    "@faker/(.*)": "<rootDir>/src/faker/$1"
+  },
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

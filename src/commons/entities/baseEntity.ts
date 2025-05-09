@@ -24,7 +24,7 @@ export class BaseEntity {
   updatedAt: Date;
 
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
-  deletedAt: Date;
+  deletedAt: Date | null;
 
   @Column({
     name: 'is_deleted',

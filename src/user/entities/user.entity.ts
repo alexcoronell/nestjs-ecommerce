@@ -40,7 +40,7 @@ export class User extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.deletedUsers)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number;
+  deletedBy: number | null;
 
   @OneToMany(() => User, (users) => users.createdBy)
   createdUsers: User[];

@@ -18,8 +18,10 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@config/*": ["src/config/*"],
       "@commons/*": ["src/commons/*"],
-      "@user/*": ["src/user/*"],
+      "@auth/*": ["src/auth/*"],
+      "@user/*": ["src/user/*"]
     }
   }
 }

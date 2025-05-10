@@ -53,7 +53,7 @@ export class UserService
       },
     });
     const rta = users.map((user) => {
-      user.password = '';
+      user.password = undefined;
       return user;
     });
 
@@ -76,7 +76,7 @@ export class UserService
       },
     });
     const rta = users.map((user) => {
-      user.password = '';
+      user.password = undefined;
       return user;
     });
     return {
@@ -95,7 +95,7 @@ export class UserService
     if (!user) {
       throw new NotFoundException(`The User with ${id} not found`);
     }
-    user.password = '';
+    user.password = undefined;
     return {
       statusCode: HttpStatus.OK,
       data: user,

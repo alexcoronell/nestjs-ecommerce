@@ -81,7 +81,7 @@
     "@commons/(.*)": "<rootDir>/src/commons/$1",
     "@auth/(.*)": "<rootDir>/src/auth/$1",
     "@user/(.*)": "<rootDir>/src/user/$1",
-    "@faker/(.*)": "<rootDir>/src/faker/$1"
+    "@faker/(.*)": "<rootDir>/faker/$1"
   },
     "moduleFileExtensions": [
       "js",

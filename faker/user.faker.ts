@@ -8,7 +8,7 @@ import { generateBaseEntity } from '@faker/base.faker';
 
 import { User } from '@user/entities/user.entity';
 
-export const generateUser = (id: User['id'], isDeleted = false): User => ({
+export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   ...generateBaseEntity(id, isDeleted),
   firstname: faker.person.firstName(),
   lastname: faker.person.lastName(),
@@ -26,7 +26,7 @@ export const generateUser = (id: User['id'], isDeleted = false): User => ({
   deletedUsers: [],
 });
 
-export const generateManuUsers = (size: number): User[] => {
+export const generateManyUsers = (size: number): User[] => {
   const limit = size ?? 10;
   const users: User[] = [];
   for (let i = 0; i < limit; i++) {
@@ -34,7 +34,7 @@ export const generateManuUsers = (size: number): User[] => {
   }
   return users;
 };
-export const generateManuDeletedUsers = (size: number): User[] => {
+export const generateManyDeletedUsers = (size: number): User[] => {
   const users: User[] = [];
   for (let i = 0; i < size; i++) {
     users.push(generateUser(i, true));

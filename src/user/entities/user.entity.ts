@@ -14,7 +14,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column({ type: 'varchar', length: 255 })
-  password: string;
+  password: string | undefined;
 
   @Column({ type: 'varchar', length: 255 })
   address: string;

@@ -8,6 +8,18 @@ import { generateBaseEntity } from '@faker/base.faker';
 
 import { User } from '@user/entities/user.entity';
 
+import { CreateUserDto } from '@user/dto/create-user.dto';
+
+export const createUser = (): CreateUserDto => ({
+  firstname: faker.person.firstName(),
+  lastname: faker.person.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  address: faker.location.streetAddress(),
+  neighborhood: faker.location.county(),
+  phoneNumber: faker.phone.number(),
+});
+
 export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   ...generateBaseEntity(id, isDeleted),
   firstname: faker.person.firstName(),

@@ -167,7 +167,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       try {
-        await service.findByEmail(email);
+        await service.findOneByEmail(email);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The User with email ${email} not found`);

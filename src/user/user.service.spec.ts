@@ -208,7 +208,7 @@ describe('UserService', () => {
     it('update should return a user', async () => {
       const user = generateUser();
       const id = user.id;
-      const changes = { email: 'updatedEmail@email.com' };
+      const changes: UpdateUserDto = { email: 'updatedEmail@email.com' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...user, ...changes });
@@ -223,7 +223,7 @@ describe('UserService', () => {
       const user = generateUser();
       const id = user.id;
       const hashedPassword: string = 'hashedPassword';
-      const changes = { password: hashedPassword };
+      const changes: UpdatePasswordDto = { password: hashedPassword };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       jest.spyOn(bcrypt, 'hash').mockResolvedValue(hashedPassword);
@@ -258,6 +258,32 @@ describe('UserService', () => {
       await expect(
         service.update(id, { firstname: 'newFirstName' }),
       ).rejects.toThrowError(
+        new NotFoundException(`The User with ${id} not found`),
+      );
+    });
+  });
+
+  describe('remove users services', () => {
+    it('remove should return status and message', async () => {
+      const user = generateUser();
+      const id = user.id;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
+      jest
+        .spyOn(repository, 'merge')
+        .mockReturnValue({ ...user, isDeleted: false });
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      const { statusCode, message } = await service.remove(id);
+      expect(statusCode).toBe(200);
+      expect(message).toEqual(`The User with id: ${id} has been deleted`);
+    });
+
+    it('remove should throw NotFoundException if user does not exist with Rejects', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.remove(id)).rejects.toThrowError(
         new NotFoundException(`The User with ${id} not found`),
       );
     });

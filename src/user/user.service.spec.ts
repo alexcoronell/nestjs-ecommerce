@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -174,7 +175,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('create users services', () => {
+  describe('create user services', () => {
     it('create should return a user', async () => {
       const user = generateUser();
       const newUser = { ...user, password: 'password' };
@@ -200,6 +201,65 @@ describe('UserService', () => {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Email ${user.email} already exists`);
       }
+    });
+  });
+
+  describe('update user service', () => {
+    it('update should return a user', async () => {
+      const user = generateUser();
+      const id = user.id;
+      const changes = { email: 'updatedEmail@email.com' };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
+      jest.spyOn(repository, 'merge').mockReturnValue({ ...user, ...changes });
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      const { statusCode, message } = await service.update(id, changes);
+      expect(statusCode).toBe(200);
+      expect(message).toEqual(`The User with id: ${id} has been modified`);
+    });
+
+    it('updatePassword should return an user', async () => {
+      const user = generateUser();
+      const id = user.id;
+      const hashedPassword: string = 'hashedPassword';
+      const changes = { password: hashedPassword };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue(hashedPassword);
+      jest.spyOn(repository, 'merge').mockReturnValue({ ...user, ...changes });
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      const { statusCode, message } = await service.updatePassword(id, changes);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(bcrypt.hash).toHaveBeenCalledTimes(1);
+      expect(repository.merge).toHaveBeenCalledTimes(1);
+      expect(repository.save).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(message).toEqual('The password was updated');
+    });
+
+    it('update should throw NotFoundException if user does not exist', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.update(id, { email: 'newEmail' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe(`The User with ${id} not found`);
+      }
+    });
+
+    it('update should throw NotFoundException if user does not exist with Rejects', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        service.update(id, { firstname: 'newFirstName' }),
+      ).rejects.toThrowError(
+        new NotFoundException(`The User with ${id} not found`),
+      );
     });
   });
 });

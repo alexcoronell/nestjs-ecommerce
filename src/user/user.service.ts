@@ -65,7 +65,7 @@ export class UserService
   }
 
   /* Find All  Active Users*/
-  async getActives(): Promise<Result<User[]>> {
+  async findAllActives(): Promise<Result<User[]>> {
     const [users, total] = await this.userRepo.findAndCount({
       where: {
         isDeleted: false,
@@ -103,7 +103,7 @@ export class UserService
   }
 
   /* Find By Username */
-  async findByEmail(email: string): Promise<Result<User>> {
+  async findOneByEmail(email: string): Promise<Result<User>> {
     const user = await this.userRepo.findOneBy({ email });
     if (!user) {
       throw new NotFoundException(`The User with email ${email} not found`);

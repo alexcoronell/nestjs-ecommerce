@@ -89,13 +89,13 @@ describe('UserService', () => {
       expect(data[0].password).toBe(undefined);
     });
 
-    it('getActives should return all active users', async () => {
+    it('findAllActives should return all active users', async () => {
       const mockUsers = generateManyUsers(10);
       jest
         .spyOn(repository, 'findAndCount')
         .mockResolvedValue([mockUsers, mockUsers.length]);
 
-      const { statusCode, data, total } = await service.getActives();
+      const { statusCode, data, total } = await service.findAllActives();
       const users: User[] = data as User[];
       const user = users[0];
 
@@ -155,14 +155,14 @@ describe('UserService', () => {
 
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
 
-      const { statusCode, data } = await service.findByEmail(email);
+      const { statusCode, data } = await service.findOneByEmail(email);
       const dataUser: User = data as User;
       expect(repository.findOneBy).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(dataUser).toEqual(user);
     });
 
-    it('findByEMail should throw NotFoundException if user does not exist', async () => {
+    it('findOneByEMail should throw NotFoundException if user does not exist', async () => {
       const email = 'email';
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 

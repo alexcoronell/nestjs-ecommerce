@@ -13,7 +13,7 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   firstname: faker.person.firstName(),
   lastname: faker.person.lastName(),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  password: faker.internet.password() as string,
   address: faker.location.streetAddress(),
   neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),

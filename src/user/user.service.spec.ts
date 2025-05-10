@@ -173,4 +173,33 @@ describe('UserService', () => {
       }
     });
   });
+
+  describe('create users services', () => {
+    it('create should return a user', async () => {
+      const user = generateUser();
+      const newUser = { ...user, password: 'password' };
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(repository, 'create').mockReturnValue(user);
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      const { statusCode, data } = await service.create(newUser);
+      expect(statusCode).toBe(201);
+      expect(data).toEqual(user);
+    });
+
+    it('create should return Conflict Exception when email exists', async () => {
+      const user = generateUser();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
+      jest.spyOn(repository, 'create').mockReturnValue(user);
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      try {
+        await service.create(user as CreateUserDto);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(`Email ${user.email} already exists`);
+      }
+    });
+  });
 });

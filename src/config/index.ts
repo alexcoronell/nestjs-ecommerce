@@ -24,3 +24,5 @@ export default registerAs('config', () => {
       process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   };
 });
+
+export const apiRoute = process.env.API_ROUTE;

@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string) {
-    const { data } = await this.userService.findByEmail(email);
+    const { data } = await this.userService.findOneByEmail(email);
     const user = data as User;
     const isMatch = await bcrypt.compare(password, user.password);
     if (user && isMatch) {
@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   async validatePassword(email: string, password: string) {
-    const { data } = await this.userService.findByEmail(email);
+    const { data } = await this.userService.findOneByEmail(email);
     const user = data as User;
     const isMatch = await bcrypt.compare(password, user.password);
     if (user && isMatch) {
@@ -62,7 +62,7 @@ export class AuthService {
     const payload: PayloadToken = { user: user.id };
     const expiresIn = 604800;
     return {
-      access_token: await this.jwtService.sign(payload, { expiresIn }),
+      access_token: this.jwtService.sign(payload, { expiresIn }),
       refresh_token: await this.generateRefreshToken(payload),
     };
   }

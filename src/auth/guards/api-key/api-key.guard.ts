@@ -15,26 +15,33 @@ import config from '@config/index';
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    @Inject(config.KEY) private configService: ConfigType<typeof config>,
+    private readonly reflector: Reflector, // Used to access metadata for routes
+    @Inject(config.KEY)
+    private readonly configService: ConfigType<typeof config>, // Injects the application's configuration
   ) {}
+
   canActivate(
-    context: ExecutionContext,
+    context: ExecutionContext, // Provides access to the current execution context
   ): boolean | Promise<boolean> | Observable<boolean> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const isPublic = this.reflector.get(IS_PUBLIC_KEY, context.getHandler());
+    // Check if the route is marked as public
+    const isPublic =
+      this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getHandler()) || false;
     if (isPublic) {
+      // If the route is public, allow access
       return true;
     }
+
+    // Retrieve the HTTP request object
     const request = context.switchToHttp().getRequest<Request>();
-    const authHeader = request.header('Auth');
-    const isAuth =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      authHeader === (this.configService.apikey as unknown as string);
-    if (!isAuth) {
-      throw new UnauthorizedException('Not Allow');
+    const authHeader = request.header('Authorization'); // Use the standard 'Authorization' header
+
+    // Validate the API key from the Authorization header
+    if (!authHeader || authHeader !== this.configService.apikey) {
+      // If the API key is invalid or missing, throw an UnauthorizedException
+      throw new UnauthorizedException('Invalid API key');
     }
-    return isAuth;
+
+    // If the API key is valid, allow access
+    return true;
   }
 }

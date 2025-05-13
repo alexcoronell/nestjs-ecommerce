@@ -62,7 +62,21 @@ export class CategoryService
       where: { id, isDeleted: false },
     });
     if (!category) {
-      throw new NotFoundException(`The category with ${id} not found`);
+      throw new NotFoundException(`The Category with id: ${id} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: category,
+    };
+  }
+
+  async findOneByName(name: string): Promise<Result<Category>> {
+    const category = await this.repo.findOne({
+      relations: ['createdBy', 'updatedBy'],
+      where: { name, isDeleted: false },
+    });
+    if (!category) {
+      throw new NotFoundException(`The Category with name: ${name} not found`);
     }
     return {
       statusCode: HttpStatus.OK,

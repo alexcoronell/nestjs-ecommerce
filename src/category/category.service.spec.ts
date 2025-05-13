@@ -175,4 +175,37 @@ describe('CategoryService', () => {
       }
     });
   });
+
+  describe('update category services', () => {
+    it('update should return message: have been modified', async () => {
+      const category = generateCategory();
+      const id = category.id;
+      const changes: UpdateCategoryDto = { name: 'newName' };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(category);
+      jest
+        .spyOn(repository, 'merge')
+        .mockReturnValue({ ...category, ...changes });
+      jest.spyOn(repository, 'save').mockResolvedValue(category);
+
+      const { statusCode, message } = await service.update(id, changes);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(repository.merge).toHaveBeenCalledTimes(1);
+      expect(repository.save).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(message).toEqual(`The Category with id: ${id} has been modified`);
+    });
+
+    it('update should throw NotFoundException if Category does not exist', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.update(id, { name: 'newName' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe(`The Category with id: ${id} not found`);
+      }
+    });
+  });
 });

@@ -101,7 +101,7 @@ export class CategoryService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The User with id: ${id} has been modified`,
+      message: `The Category with id: ${id} has been modified`,
     };
   }
 

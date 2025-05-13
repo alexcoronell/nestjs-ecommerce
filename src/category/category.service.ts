@@ -14,21 +14,36 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
-
+/**
+ * Service for managing categories in the application.
+ * Implements the IBaseService interface for CRUD operations.
+ */
 @Injectable()
 export class CategoryService
   implements IBaseService<Category, CreateCategoryDto, UpdateCategoryDto>
 {
+  /**
+   * Constructor for the CategoryService.
+   * @param repo - Injected TypeORM repository for the Category entity.
+   */
   constructor(
     @InjectRepository(Category)
     private readonly repo: Repository<Category>,
   ) {}
 
+  /**
+   * Counts all categories, including deleted ones.
+   * @returns An object containing the total count of categories and an HTTP status code.
+   */
   async countAll() {
     const total = await this.repo.count();
     return { statusCode: HttpStatus.OK, total };
   }
 
+  /**
+   * Counts all categories that are not marked as deleted.
+   * @returns An object containing the total count of non-deleted categories and an HTTP status code.
+   */
   async count() {
     const total = await this.repo.count({
       where: {
@@ -38,7 +53,10 @@ export class CategoryService
     return { statusCode: HttpStatus.OK, total };
   }
 
-  /* Find All */
+  /**
+   * Retrieves all categories that are not marked as deleted.
+   * @returns An object containing the list of categories, total count, and an HTTP status code.
+   */
   async findAll() {
     const [categories, total] = await this.repo.findAndCount({
       where: {
@@ -56,6 +74,12 @@ export class CategoryService
     };
   }
 
+  /**
+   * Finds a single category by its ID.
+   * @param id - The ID of the category to retrieve.
+   * @returns A Result object containing the category data and an HTTP status code.
+   * @throws NotFoundException if the category is not found.
+   */
   async findOne(id: Category['id']): Promise<Result<Category>> {
     const category = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -70,6 +94,12 @@ export class CategoryService
     };
   }
 
+  /**
+   * Finds a single category by its name.
+   * @param name - The name of the category to retrieve.
+   * @returns A Result object containing the category data and an HTTP status code.
+   * @throws NotFoundException if the category is not found.
+   */
   async findOneByName(name: string): Promise<Result<Category>> {
     const category = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -84,6 +114,11 @@ export class CategoryService
     };
   }
 
+  /**
+   * Creates a new category.
+   * @param dto - The data transfer object containing the category details.
+   * @returns An object containing the created category, an HTTP status code, and a success message.
+   */
   async create(dto: CreateCategoryDto) {
     const newCategory = this.repo.create(dto);
     const category = await this.repo.save(newCategory);
@@ -94,6 +129,12 @@ export class CategoryService
     };
   }
 
+  /**
+   * Updates an existing category by its ID.
+   * @param id - The ID of the category to update.
+   * @param changes - The data transfer object containing the updated category details.
+   * @returns An object containing the updated category, an HTTP status code, and a success message.
+   */
   async update(id: number, changes: UpdateCategoryDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as Category, changes);
@@ -105,6 +146,11 @@ export class CategoryService
     };
   }
 
+  /**
+   * Marks a category as deleted by its ID.
+   * @param id - The ID of the category to delete.
+   * @returns An object containing an HTTP status code and a success message.
+   */
   async remove(id: Category['id']) {
     const { data } = await this.findOne(id);
 

@@ -93,7 +93,7 @@ export class UserService
       where: { id, isDeleted: false },
     });
     if (!user) {
-      throw new NotFoundException(`The User with ${id} not found`);
+      throw new NotFoundException(`The User with id: ${id} not found`);
     }
     user.password = undefined;
     return {

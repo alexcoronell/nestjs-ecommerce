@@ -208,4 +208,30 @@ describe('CategoryService', () => {
       }
     });
   });
+
+  describe('remove category services', () => {
+    it('remove should return status and message', async () => {
+      const category = generateCategory();
+      const id = category.id;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(category);
+      jest
+        .spyOn(repository, 'merge')
+        .mockReturnValue({ ...category, isDeleted: true });
+      jest.spyOn(repository, 'save').mockResolvedValue(category);
+
+      const { statusCode, message } = await service.remove(id);
+      expect(statusCode).toBe(200);
+      expect(message).toEqual(`The Category with id: ${id} has been deleted`);
+    });
+
+    it('remove should throw NotFoundException if category does not exist with Rejects', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.remove(id)).rejects.toThrowError(
+        new NotFoundException(`The Category with id: ${id} not found`),
+      );
+    });
+  });
 });

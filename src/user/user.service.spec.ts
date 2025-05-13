@@ -136,7 +136,7 @@ describe('UserService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The User with ${id} not found`);
+        expect(error.message).toBe(`The User with id: ${id} not found`);
       }
     });
 
@@ -145,7 +145,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The User with ${id} not found`),
+        new NotFoundException(`The User with id: ${id} not found`),
       );
     });
 
@@ -205,7 +205,7 @@ describe('UserService', () => {
   });
 
   describe('update user service', () => {
-    it('update should return a user', async () => {
+    it('update should return a message: have been modified', async () => {
       const user = generateUser();
       const id = user.id;
       const changes: UpdateUserDto = { email: 'updatedEmail@email.com' };
@@ -247,7 +247,7 @@ describe('UserService', () => {
         await service.update(id, { email: 'newEmail' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The User with ${id} not found`);
+        expect(error.message).toBe(`The User with id: ${id} not found`);
       }
     });
 
@@ -258,7 +258,7 @@ describe('UserService', () => {
       await expect(
         service.update(id, { firstname: 'newFirstName' }),
       ).rejects.toThrowError(
-        new NotFoundException(`The User with ${id} not found`),
+        new NotFoundException(`The User with id: ${id} not found`),
       );
     });
   });
@@ -271,7 +271,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       jest
         .spyOn(repository, 'merge')
-        .mockReturnValue({ ...user, isDeleted: false });
+        .mockReturnValue({ ...user, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const { statusCode, message } = await service.remove(id);
@@ -284,7 +284,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id)).rejects.toThrowError(
-        new NotFoundException(`The User with ${id} not found`),
+        new NotFoundException(`The User with id: ${id} not found`),
       );
     });
   });

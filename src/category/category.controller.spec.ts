@@ -1,20 +1,106 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
+
+/* Controller */
 import { CategoryController } from './category.controller';
+
+/* Services */
 import { CategoryService } from './category.service';
+
+/* Faker */
+import {
+  createCategory,
+  generateCategory,
+  generateManyCategories,
+} from '@faker/category.faker';
 
 describe('CategoryController', () => {
   let controller: CategoryController;
+  let service: CategoryService;
+
+  const mockCategory = generateCategory();
+  const mockCategories = generateManyCategories(10);
+  const mockNewCategory = createCategory();
+
+  const mockService = {
+    countAll: jest.fn().mockResolvedValue(mockCategories.length),
+    count: jest.fn().mockResolvedValue(mockCategories.length),
+    findAll: jest.fn().mockResolvedValue(mockCategories),
+    findOne: jest.fn().mockResolvedValue(mockCategory),
+    findOneByName: jest.fn().mockResolvedValue(mockCategory),
+    create: jest.fn().mockResolvedValue(mockNewCategory),
+    update: jest.fn().mockResolvedValue(1),
+    updatePassword: jest.fn().mockResolvedValue(1),
+    remove: jest.fn().mockResolvedValue(1),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CategoryController],
-      providers: [CategoryService],
+      providers: [
+        {
+          provide: CategoryService,
+          useValue: mockService,
+        },
+      ],
     }).compile();
 
     controller = module.get<CategoryController>(CategoryController);
+    service = module.get<CategoryService>(CategoryService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('Count category controllers', () => {
+    it('should call countAll category service', async () => {
+      expect(await controller.countAll()).toBe(mockCategories.length);
+      expect(service.countAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call count category service', async () => {
+      expect(await controller.count()).toBe(mockCategories.length);
+      expect(service.count).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Find categories controllers', () => {
+    it('should call findAll category service', async () => {
+      expect(await controller.findAll()).toBe(mockCategories);
+      expect(service.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call findOne category service', async () => {
+      expect(await controller.findOne(1)).toBe(mockCategory);
+      expect(service.findOne).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return an category by name', async () => {
+      expect(await controller.findOneByname(mockCategory.name));
+      expect(service.findOneByName).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('create category controller', () => {
+    it('should call create category service', async () => {
+      await controller.create(mockNewCategory);
+      expect(service.create).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('update category controller', () => {
+    it('should call update category service', async () => {
+      const changes = { name: 'newName' };
+      await controller.update(1, changes);
+      expect(service.update).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('remove category controller', () => {
+    it('shoudl call remove category service', async () => {
+      await controller.remove(1);
+      expect(service.remove).toHaveBeenCalledTimes(1);
+    });
   });
 });

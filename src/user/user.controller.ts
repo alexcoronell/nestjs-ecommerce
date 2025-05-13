@@ -81,7 +81,7 @@ export class UserController
    */
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: User['id']) {
-    return this.userService.findOne(id);
+    return this.userService.findOne(+id);
   }
 
   /**
@@ -89,7 +89,7 @@ export class UserController
    * @param email - The email of the user to retrieve.
    * @returns The user with the specified email.
    */
-  @Get('email')
+  @Get('email/:email')
   findOneByEmail(@Param('email') email: string) {
     return this.userService.findOneByEmail(email);
   }

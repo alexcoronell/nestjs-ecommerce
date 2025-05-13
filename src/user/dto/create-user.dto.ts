@@ -47,5 +47,5 @@ export class CreateUserDto {
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  readonly deletedBy: number;
+  readonly deletedBy: number | null;
 }

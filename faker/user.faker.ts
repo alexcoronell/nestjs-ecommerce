@@ -18,6 +18,9 @@ export const createUser = (): CreateUserDto => ({
   address: faker.location.streetAddress(),
   neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),
+  createdBy: faker.number.int(),
+  updatedBy: faker.number.int(),
+  deletedBy: null,
 });
 
 export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
@@ -25,7 +28,7 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   firstname: faker.person.firstName(),
   lastname: faker.person.lastName(),
   email: faker.internet.email(),
-  password: faker.internet.password() as string,
+  password: faker.internet.password(),
   address: faker.location.streetAddress(),
   neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),

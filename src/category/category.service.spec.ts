@@ -16,13 +16,20 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 
 describe('CategoryService', () => {
   let service: CategoryService;
+  let repository: Repository<Category>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoryService],
+      providers: [
+        CategoryService,
+        {
+          provide: getRepositoryToken(Category),
+          useClass: Repository,
+        },
+      ],
     }).compile();
-
     service = module.get<CategoryService>(CategoryService);
+    repository = module.get<Repository<Category>>(getRepositoryToken(Category));
   });
 
   it('should be defined', () => {

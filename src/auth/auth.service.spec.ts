@@ -122,7 +122,6 @@ describe('AuthService', () => {
       it('should generate a new access token', async () => {
         const dto = { refresh: 'mockedRefreshToken' };
         const result = await service.refreshToken(dto);
-        console.log(result);
         expect(result).toEqual({
           access_token: 'mockedRefreshToken',
         });

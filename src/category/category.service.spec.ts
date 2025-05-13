@@ -17,6 +17,7 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import {
+  createCategory,
   generateCategory,
   generateManyCategories,
 } from '@faker/category.faker';
@@ -144,6 +145,33 @@ describe('CategoryService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Category with name: ${name} not found`);
+      }
+    });
+  });
+
+  describe('create category services', () => {
+    it('create should return a category', async () => {
+      const category = generateCategory();
+
+      jest.spyOn(repository, 'create').mockReturnValue(category);
+      jest.spyOn(repository, 'save').mockResolvedValue(category);
+
+      const { statusCode, data } = await service.create(category);
+      expect(statusCode).toBe(201);
+      expect(data).toEqual(category);
+    });
+
+    it('create should return Conflict Exception when name category exists', async () => {
+      const category = generateCategory();
+
+      jest.spyOn(repository, 'create').mockReturnValue(category);
+      jest.spyOn(repository, 'save').mockResolvedValue(category);
+
+      try {
+        await service.create(category);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(`Category ${category.name} already exists`);
       }
     });
   });

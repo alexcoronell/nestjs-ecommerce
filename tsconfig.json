@@ -21,8 +21,9 @@
       "@config/*": ["src/config/*"],
       "@commons/*": ["src/commons/*"],
       "@auth/*": ["src/auth/*"],
+      "@category/*": ["src/category/*"],
       "@user/*": ["src/user/*"],
-      "@faker/*": ["faker/*"],
+      "@faker/*": ["faker/*"]
     }
   }
 }

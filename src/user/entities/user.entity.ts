@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
+import { Category } from '@category/entities/category.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -50,4 +52,14 @@ export class User extends BaseEntity {
 
   @OneToMany(() => User, (users) => users.deletedBy)
   deletedUsers: User[];
+
+  /* Categories */
+  @OneToMany(() => Category, (categories) => categories.createdBy)
+  createdCategories: Category[];
+
+  @OneToMany(() => Category, (categories) => categories.updatedBy)
+  updatedCategories: Category[];
+
+  @OneToMany(() => Category, (categories) => categories.deletedBy)
+  deletedCategories: Category[];
 }

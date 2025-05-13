@@ -36,6 +36,9 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   createdUsers: [],
   updatedUsers: [],
   deletedUsers: [],
+  createdCategories: [],
+  updatedCategories: [],
+  deletedCategories: [],
 });
 
 export const generateManyUsers = (size: number): User[] => {

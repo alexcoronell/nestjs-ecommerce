@@ -15,11 +15,11 @@ describe('UserModule', () => {
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      imports: [UserModule], // Importamos el módulo completo
+      imports: [UserModule],
     })
       .overrideProvider(getRepositoryToken(User)) // Simulamos el repositorio de TypeORM
       .useValue({
-        findOne: jest.fn(), // Mock de métodos del repositorio
+        findOne: jest.fn(),
         save: jest.fn(),
         find: jest.fn(),
         delete: jest.fn(),

@@ -19,5 +19,5 @@ export class Category extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.deletedBy)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number;
+  deletedBy: number | null;
 }

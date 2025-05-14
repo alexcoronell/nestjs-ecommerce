@@ -4,7 +4,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
-import { Supplier } from 'src/supplier/entities/supplier.entity';
+import { Supplier } from '@supplier/entities/supplier.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {

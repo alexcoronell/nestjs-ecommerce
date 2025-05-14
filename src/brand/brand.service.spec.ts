@@ -63,7 +63,7 @@ describe('BrandService', () => {
   });
 
   describe('find brands services', () => {
-    it('findAll should return all categories', async () => {
+    it('findAll should return all brands', async () => {
       const brands = generateManyBrands(50);
 
       jest
@@ -88,14 +88,14 @@ describe('BrandService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
 
       const { statusCode, data } = await service.findOne(id);
-      const databrand: Brand = data as Brand;
+      const dataBrand: Brand = data as Brand;
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.findOne).toHaveBeenCalledWith({
         relations: ['createdBy', 'updatedBy'],
         where: { id, isDeleted: false },
       });
       expect(statusCode).toBe(200);
-      expect(databrand).toEqual(brand);
+      expect(dataBrand).toEqual(brand);
     });
 
     it('findOne should throw NotFoundException if Brand does not exist', async () => {

@@ -23,6 +23,7 @@
       "@auth/*": ["src/auth/*"],
       "@brand/*": ["src/brand/*"],
       "@category/*": ["src/category/*"],
+      "@supplier/*": ["src/supplier/*"],
       "@user/*": ["src/user/*"],
       "@faker/*": ["faker/*"]
     }

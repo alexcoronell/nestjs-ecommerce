@@ -13,11 +13,11 @@ export class Category extends BaseEntity {
   @JoinColumn({ name: 'created_by_user_id' })
   createdBy: number;
 
-  @ManyToOne(() => User, (user) => user.updatedBy)
+  @ManyToOne(() => User, (user) => user.updatedCategories)
   @JoinColumn({ name: 'updated_by_user_id' })
   updatedBy: number;
 
-  @ManyToOne(() => User, (user) => user.deletedBy)
+  @ManyToOne(() => User, (user) => user.deletedCategories)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
 }

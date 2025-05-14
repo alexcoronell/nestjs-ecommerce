@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { BrandModule } from './brand/brand.module';
+import { SupplierModule } from './supplier/supplier.module';
 
 /* Config */
 import config from './config';
@@ -25,6 +26,7 @@ import config from './config';
     AuthModule,
     CategoryModule,
     BrandModule,
+    SupplierModule,
   ],
   controllers: [AppController],
   providers: [AppService],

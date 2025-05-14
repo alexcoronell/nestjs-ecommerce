@@ -3,7 +3,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Category } from '@category/entities/category.entity';
-import { Brand } from 'src/brand/entities/brand.entity';
+import { Brand } from '@brand/entities/brand.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {

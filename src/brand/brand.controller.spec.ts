@@ -63,7 +63,6 @@ describe('BrandController', () => {
   describe('Count brand controllers', () => {
     it('should call countAll brand service', async () => {
       expect(await controller.countAll()).toBe(mockBrands.length);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(service.countAll).toHaveBeenCalledTimes(1);
     });
 

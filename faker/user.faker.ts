@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker/.';
 
 import { generateBaseEntity } from '@faker/base.faker';
 
+/* Entities */
 import { User } from '@user/entities/user.entity';
 
 import { CreateUserDto } from '@user/dto/create-user.dto';
@@ -42,6 +43,9 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   createdCategories: [],
   updatedCategories: [],
   deletedCategories: [],
+  createdBrands: [],
+  updatedBrands: [],
+  deletedBrands: [],
 });
 
 export const generateManyUsers = (size: number): User[] => {

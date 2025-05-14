@@ -3,6 +3,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Category } from '@category/entities/category.entity';
+import { Brand } from 'src/brand/entities/brand.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -62,4 +63,14 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Category, (categories) => categories.deletedBy)
   deletedCategories: Category[];
+
+  /* Brands */
+  @OneToMany(() => Brand, (brands) => brands.createdBy)
+  createdBrands: Brand[];
+
+  @OneToMany(() => Brand, (brands) => brands.updatedBy)
+  updatedBrands: Brand[];
+
+  @OneToMany(() => Brand, (brands) => brands.deletedBy)
+  deletedBrands: Brand[];
 }

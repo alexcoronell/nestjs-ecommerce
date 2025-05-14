@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-/* Create Table Users */
+/* Create Users Table */
 export class Migrations1746488359816 implements MigrationInterface {
   name = 'Migrations1746488359816';
 

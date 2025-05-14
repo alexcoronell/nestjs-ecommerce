@@ -2,8 +2,9 @@
 import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
-import { Category } from '@category/entities/category.entity';
 import { Brand } from '@brand/entities/brand.entity';
+import { Category } from '@category/entities/category.entity';
+import { Supplier } from 'src/supplier/entities/supplier.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -54,6 +55,16 @@ export class User extends BaseEntity {
   @OneToMany(() => User, (users) => users.deletedBy)
   deletedUsers: User[];
 
+  /* Brands */
+  @OneToMany(() => Brand, (brands) => brands.createdBy)
+  createdBrands: Brand[];
+
+  @OneToMany(() => Brand, (brands) => brands.updatedBy)
+  updatedBrands: Brand[];
+
+  @OneToMany(() => Brand, (brands) => brands.deletedBy)
+  deletedBrands: Brand[];
+
   /* Categories */
   @OneToMany(() => Category, (categories) => categories.createdBy)
   createdCategories: Category[];
@@ -64,13 +75,13 @@ export class User extends BaseEntity {
   @OneToMany(() => Category, (categories) => categories.deletedBy)
   deletedCategories: Category[];
 
-  /* Brands */
-  @OneToMany(() => Brand, (brands) => brands.createdBy)
-  createdBrands: Brand[];
+  /* Supplier */
+  @OneToMany(() => Supplier, (suppliers) => suppliers.createdBy)
+  createdSuppliers: Supplier[];
 
-  @OneToMany(() => Brand, (brands) => brands.updatedBy)
-  updatedBrands: Brand[];
+  @OneToMany(() => Supplier, (suppliers) => suppliers.updatedBy)
+  updatedSuppliers: Supplier[];
 
-  @OneToMany(() => Brand, (brands) => brands.deletedBy)
-  deletedBrands: Brand[];
+  @OneToMany(() => Supplier, (suppliers) => suppliers.deletedBy)
+  deletedSuppliers: Supplier[];
 }

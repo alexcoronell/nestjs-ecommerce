@@ -37,15 +37,7 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   createdBy: faker.number.int(),
   updatedBy: faker.number.int(),
   deletedBy: null,
-  createdUsers: [],
-  updatedUsers: [],
-  deletedUsers: [],
-  createdCategories: [],
-  updatedCategories: [],
-  deletedCategories: [],
-  createdBrands: [],
-  updatedBrands: [],
-  deletedBrands: [],
+  ...generateUserRelations(),
 });
 
 export const generateManyUsers = (size: number): User[] => {
@@ -63,3 +55,18 @@ export const generateManyDeletedUsers = (size: number): User[] => {
   }
   return users;
 };
+
+const generateUserRelations = () => ({
+  createdBrands: [],
+  updatedBrands: [],
+  deletedBrands: [],
+  createdCategories: [],
+  updatedCategories: [],
+  deletedCategories: [],
+  createdSuppliers: [],
+  updatedSuppliers: [],
+  deletedSuppliers: [],
+  createdUsers: [],
+  updatedUsers: [],
+  deletedUsers: [],
+});

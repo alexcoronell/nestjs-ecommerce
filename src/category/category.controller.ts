@@ -8,16 +8,26 @@ import {
   Delete,
   ParseIntPipe,
 } from '@nestjs/common';
+
+/* Interface */
+import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Services */
 import { CategoryService } from './category.service';
+
+/* DTO's */
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Controller('category')
 /**
  * Controller responsible for handling category-related operations.
  * Provides endpoints for creating, retrieving, updating, and deleting categories.
  */
-export class CategoryController {
+export class CategoryController
+  implements IBaseController<Category, CreateCategoryDto, UpdateCategoryDto>
+{
   /**
    * Constructs a new instance of the CategoryController.
    *

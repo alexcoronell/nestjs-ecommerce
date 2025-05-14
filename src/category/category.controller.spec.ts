@@ -7,6 +7,12 @@ import { CategoryController } from './category.controller';
 /* Services */
 import { CategoryService } from './category.service';
 
+/* Entities */
+import { Category } from './entities/category.entity';
+
+/* DTO's */
+import { CreateCategoryDto } from './dto/create-category.dto';
+
 /* Faker */
 import {
   createCategory,
@@ -18,9 +24,9 @@ describe('CategoryController', () => {
   let controller: CategoryController;
   let service: CategoryService;
 
-  const mockCategory = generateCategory();
-  const mockCategories = generateManyCategories(10);
-  const mockNewCategory = createCategory();
+  const mockCategory: Category = generateCategory();
+  const mockCategories: Category[] = generateManyCategories(10);
+  const mockNewCategory: CreateCategoryDto = createCategory();
 
   const mockService = {
     countAll: jest.fn().mockResolvedValue(mockCategories.length),
@@ -30,7 +36,6 @@ describe('CategoryController', () => {
     findOneByName: jest.fn().mockResolvedValue(mockCategory),
     create: jest.fn().mockResolvedValue(mockNewCategory),
     update: jest.fn().mockResolvedValue(1),
-    updatePassword: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
   };
 

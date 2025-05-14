@@ -12,7 +12,6 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 
 /* Interfaces */
 import { IBaseController } from '@commons/interfaces/i-base-controller';

@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
-import { BrandController } from './brand.controller';
-import { BrandService } from './brand.service';
+import { BrandController } from '@brand/brand.controller';
+import { BrandService } from '@brand/brand.service';
 
 describe('BrandController', () => {
   let controller: BrandController;

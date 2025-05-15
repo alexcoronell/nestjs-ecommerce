@@ -1,15 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
+
+/* Interface */
+import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Services */
 import { TagService } from './tag.service';
+
+/* Entities */
+import { Tag } from './entities/tag.entity';
+
+/* DTO's */
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 @Controller('tag')
-export class TagController {
+export class TagController
+  implements IBaseController<Tag, CreateTagDto, UpdateTagDto>
+{
   constructor(private readonly tagService: TagService) {}
 
-  @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  @Get('count-all')
+  countAll() {
+    return this.tagService.countAll();
+  }
+
+  @Get('count')
+  count() {
+    return this.tagService.count();
   }
 
   @Get()
@@ -18,17 +44,30 @@ export class TagController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tagService.findOne(+id);
   }
 
+  @Get('name/:name')
+  findOneByname(@Param('name') name: string) {
+    return this.tagService.findOneByName(name);
+  }
+
+  @Post()
+  create(@Body() payload: CreateTagDto) {
+    return this.tagService.create(payload);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagService.update(+id, updateTagDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCategoryDto: UpdateTagDto,
+  ) {
+    return this.tagService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.tagService.remove(+id);
   }
 }

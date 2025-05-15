@@ -5,7 +5,9 @@ import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
+import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
+import { Tag } from '@tag/entities/tag.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -87,14 +89,14 @@ export class User extends BaseEntity {
   deletedPaymentMethods: PaymentMethod[];
 
   /* Shipping Companies */
-  @OneToMany(() => PaymentMethod, (items) => items.createdBy)
-  createdShippingCompanies: PaymentMethod[];
+  @OneToMany(() => ShippingCompany, (items) => items.createdBy)
+  createdShippingCompanies: ShippingCompany[];
 
-  @OneToMany(() => PaymentMethod, (items) => items.updatedBy)
-  updatedShippingCompanies: PaymentMethod[];
+  @OneToMany(() => ShippingCompany, (items) => items.updatedBy)
+  updatedShippingCompanies: ShippingCompany[];
 
-  @OneToMany(() => PaymentMethod, (items) => items.deletedBy)
-  deletedShippingCompanies: PaymentMethod[];
+  @OneToMany(() => ShippingCompany, (items) => items.deletedBy)
+  deletedShippingCompanies: ShippingCompany[];
 
   /* Suppliers */
   @OneToMany(() => Supplier, (items) => items.createdBy)
@@ -105,4 +107,14 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Supplier, (items) => items.deletedBy)
   deletedSuppliers: Supplier[];
+
+  /* Tags */
+  @OneToMany(() => Tag, (items) => items.createdBy)
+  createdTags: Tag[];
+
+  @OneToMany(() => Tag, (items) => items.updatedBy)
+  updatedTags: Tag[];
+
+  @OneToMany(() => Tag, (items) => items.deletedBy)
+  deletedTags: Tag[];
 }

@@ -22,6 +22,18 @@ export class StoreDetail {
   name: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
+  country: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  state: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  city: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  neighborhood: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
   address: string | null;
 
   @Column({ type: 'varchar', length: 20, nullable: true })
@@ -30,8 +42,8 @@ export class StoreDetail {
   @Column({ type: 'varchar', length: 100, nullable: true })
   email: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  legal_information: string | null;
+  @Column({ name: 'legal_information', type: 'text', nullable: true })
+  legalInformation: string | null;
 
   @CreateDateColumn({
     name: 'created_at',

@@ -17,27 +17,47 @@ export class UpdateStoreDetailDto {
   @IsString()
   @IsOptional()
   @ApiProperty()
-  address: string | null;
-
-  @IsPhoneNumber()
-  @IsOptional()
-  @ApiProperty()
-  phone: string | null;
-
-  @IsEmail()
-  @IsOptional()
-  @ApiProperty()
-  email: string | null;
+  readonly country: string | null;
 
   @IsString()
   @IsOptional()
   @ApiProperty()
-  legal_information: string | null;
+  readonly state: string | null;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly city: string | null;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly neighborhood: string | null;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly address: string | null;
+
+  @IsPhoneNumber()
+  @IsOptional()
+  @ApiProperty()
+  readonly phone: string | null;
+
+  @IsEmail()
+  @IsOptional()
+  @ApiProperty()
+  readonly email: string | null;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly legalInformation: string | null;
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  readonly createdBy: number;
+  createdBy: number;
 
   @IsNumber()
   @IsNotEmpty()

@@ -4,7 +4,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
-import { PaymentMethod } from '@paymentMethod/entities/payment-method.entity';
+import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 
 @Entity({ name: 'users' })

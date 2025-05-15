@@ -5,11 +5,15 @@
     "types": ["jest", "node"],
     "baseUrl": "./",
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@commons/*": ["src/commons/*"],
       "@auth/*": ["src/auth/*"],
-      "@user/*": ["src/user/*"],
-      "@faker/*": ["src/faker/*"]
+      "@brand/*": ["src/brand/*"],
+      "@category/*": ["src/category/*"],
+      "@commons/*": ["src/commons/*"],
+      "@config/*": ["src/config/*"],
+      "@faker/*": ["faker/*"],
+      "@supplier/*": ["src/supplier/*"],
+      "@payment_method/*": ["src/payment-method/*"],
+      "@user/*": ["src/user/*"]
     }
   }
 }

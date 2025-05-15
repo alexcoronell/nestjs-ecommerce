@@ -2,9 +2,9 @@ import { faker } from '@faker-js/faker/.';
 
 import { generateBaseEntity } from '@faker/base.faker';
 
-import { PaymentMethod } from '@paymentMethod/entities/payment-method.entity';
+import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 
-import { CreatePaymentMethodDto } from '@paymentMethod/dto/create-payment-method.dto';
+import { CreatePaymentMethodDto } from '@payment_method/dto/create-payment-method.dto';
 
 export const createPaymentMethod = (): CreatePaymentMethodDto => ({
   name: faker.lorem.word(),

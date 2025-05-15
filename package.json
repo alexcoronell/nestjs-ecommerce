@@ -83,7 +83,7 @@
       "@commons/(.*)": "<rootDir>/src/commons/$1",
       "@config/(.*)": "<rootDir>/src/config/$1",
       "@faker/(.*)": "<rootDir>/faker/$1",
-      "@paymentMethod/(.*)": "<rootDir>/payment-method/$1",
+      "@payment_method/(.*)": "<rootDir>/src/payment-method/$1",
       "@supplier/(.*)": "<rootDir>/src/supplier/$1",
       "@user/(.*)": "<rootDir>/src/user/$1"
     },

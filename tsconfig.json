@@ -18,14 +18,15 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@commons/*": ["src/commons/*"],
       "@auth/*": ["src/auth/*"],
       "@brand/*": ["src/brand/*"],
       "@category/*": ["src/category/*"],
+      "@commons/*": ["src/commons/*"],
+      "@config/*": ["src/config/*"],
+      "@faker/*": ["faker/*"],
       "@supplier/*": ["src/supplier/*"],
+      "@paymentMethod/*": ["src/payment-method/*"],
       "@user/*": ["src/user/*"],
-      "@faker/*": ["faker/*"]
     }
   }
 }

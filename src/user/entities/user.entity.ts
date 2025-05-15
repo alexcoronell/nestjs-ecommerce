@@ -4,6 +4,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
+import { PaymentMethod } from '@paymentMethod/entities/payment-method.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 
 @Entity({ name: 'users' })
@@ -56,32 +57,42 @@ export class User extends BaseEntity {
   deletedUsers: User[];
 
   /* Brands */
-  @OneToMany(() => Brand, (brands) => brands.createdBy)
+  @OneToMany(() => Brand, (items) => items.createdBy)
   createdBrands: Brand[];
 
-  @OneToMany(() => Brand, (brands) => brands.updatedBy)
+  @OneToMany(() => Brand, (items) => items.updatedBy)
   updatedBrands: Brand[];
 
-  @OneToMany(() => Brand, (brands) => brands.deletedBy)
+  @OneToMany(() => Brand, (items) => items.deletedBy)
   deletedBrands: Brand[];
 
   /* Categories */
-  @OneToMany(() => Category, (categories) => categories.createdBy)
+  @OneToMany(() => Category, (items) => items.createdBy)
   createdCategories: Category[];
 
-  @OneToMany(() => Category, (categories) => categories.updatedBy)
+  @OneToMany(() => Category, (items) => items.updatedBy)
   updatedCategories: Category[];
 
-  @OneToMany(() => Category, (categories) => categories.deletedBy)
+  @OneToMany(() => Category, (items) => items.deletedBy)
   deletedCategories: Category[];
 
-  /* Supplier */
-  @OneToMany(() => Supplier, (suppliers) => suppliers.createdBy)
+  /* Payment Method */
+  @OneToMany(() => Supplier, (items) => items.createdBy)
   createdSuppliers: Supplier[];
 
-  @OneToMany(() => Supplier, (suppliers) => suppliers.updatedBy)
+  @OneToMany(() => Supplier, (items) => items.updatedBy)
   updatedSuppliers: Supplier[];
 
-  @OneToMany(() => Supplier, (suppliers) => suppliers.deletedBy)
+  @OneToMany(() => Supplier, (items) => items.deletedBy)
   deletedSuppliers: Supplier[];
+
+  /* Supplier */
+  @OneToMany(() => PaymentMethod, (items) => items.createdBy)
+  createdPaymentMethods: PaymentMethod[];
+
+  @OneToMany(() => PaymentMethod, (items) => items.updatedBy)
+  updatedPaymentMethods: PaymentMethod[];
+
+  @OneToMany(() => PaymentMethod, (items) => items.deletedBy)
+  deletedPaymentMethods: PaymentMethod[];
 }

@@ -77,14 +77,15 @@
   "jest": {
     "preset": "ts-jest",
     "moduleNameMapper": {
-      "@config/(.*)": "<rootDir>/src/config/$1",
-      "@commons/(.*)": "<rootDir>/src/commons/$1",
       "@auth/(.*)": "<rootDir>/src/auth/$1",
       "@brand/(.*)": "<rootDir>/src/brand/$1",
       "@category/(.*)": "<rootDir>/src/category/$1",
+      "@commons/(.*)": "<rootDir>/src/commons/$1",
+      "@config/(.*)": "<rootDir>/src/config/$1",
       "@faker/(.*)": "<rootDir>/faker/$1",
-      "@user/(.*)": "<rootDir>/src/user/$1",
-      "@supplier/(.*)": "<rootDir>/src/supplier/$1"
+      "@paymentMethod/(.*)": "<rootDir>/payment-method/$1",
+      "@supplier/(.*)": "<rootDir>/src/supplier/$1",
+      "@user/(.*)": "<rootDir>/src/user/$1"
     },
     "moduleFileExtensions": [
       "js",

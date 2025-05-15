@@ -6,6 +6,7 @@ import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
+import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { Tag } from '@tag/entities/tag.entity';
 
@@ -97,6 +98,13 @@ export class User extends BaseEntity {
 
   @OneToMany(() => ShippingCompany, (items) => items.deletedBy)
   deletedShippingCompanies: ShippingCompany[];
+
+  /* Store Details */
+  @OneToMany(() => StoreDetail, (items) => items.createdBy)
+  createdStoreDetail: StoreDetail[];
+
+  @OneToMany(() => StoreDetail, (items) => items.updatedBy)
+  updatedStoreDetail: StoreDetail[];
 
   /* Suppliers */
   @OneToMany(() => Supplier, (items) => items.createdBy)

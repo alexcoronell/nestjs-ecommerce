@@ -26,6 +26,7 @@
       "@faker/*": ["faker/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
       "@supplier/*": ["src/supplier/*"],
+      "@tag/*": ["src/tag/*"],
       "@payment_method/*": ["src/payment-method/*"],
       "@user/*": ["src/user/*"]
     }

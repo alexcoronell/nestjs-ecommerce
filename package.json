@@ -85,6 +85,7 @@
       "@faker/(.*)": "<rootDir>/faker/$1",
       "@payment_method/(.*)": "<rootDir>/src/payment-method/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",
+      "@store_detail/(.*)": "<rootDir>/src/store-detail/$1",
       "@supplier/(.*)": "<rootDir>/src/supplier/$1",
       "@tag/(.*)": "<rootDir>/src/tag/$1",
       "@user/(.*)": "<rootDir>/src/user/$1"

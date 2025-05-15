@@ -13,6 +13,7 @@ import { SupplierModule } from '@supplier/supplier.module';
 import { UserModule } from '@user/user.module';
 import { ShippingCompanyModule } from './shipping-company/shipping-company.module';
 import { TagModule } from './tag/tag.module';
+import { StoreDetailModule } from './store-detail/store-detail.module';
 
 /* Config */
 import config from './config';
@@ -33,6 +34,7 @@ import config from './config';
     PaymentMethodModule,
     ShippingCompanyModule,
     TagModule,
+    StoreDetailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

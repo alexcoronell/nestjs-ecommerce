@@ -76,17 +76,7 @@ export class User extends BaseEntity {
   @OneToMany(() => Category, (items) => items.deletedBy)
   deletedCategories: Category[];
 
-  /* Payment Method */
-  @OneToMany(() => Supplier, (items) => items.createdBy)
-  createdSuppliers: Supplier[];
-
-  @OneToMany(() => Supplier, (items) => items.updatedBy)
-  updatedSuppliers: Supplier[];
-
-  @OneToMany(() => Supplier, (items) => items.deletedBy)
-  deletedSuppliers: Supplier[];
-
-  /* Supplier */
+  /* Payment Methods */
   @OneToMany(() => PaymentMethod, (items) => items.createdBy)
   createdPaymentMethods: PaymentMethod[];
 
@@ -95,4 +85,24 @@ export class User extends BaseEntity {
 
   @OneToMany(() => PaymentMethod, (items) => items.deletedBy)
   deletedPaymentMethods: PaymentMethod[];
+
+  /* Shipping Companies */
+  @OneToMany(() => PaymentMethod, (items) => items.createdBy)
+  createdShippingCompanies: PaymentMethod[];
+
+  @OneToMany(() => PaymentMethod, (items) => items.updatedBy)
+  updatedShippingCompanies: PaymentMethod[];
+
+  @OneToMany(() => PaymentMethod, (items) => items.deletedBy)
+  deletedShippingCompanies: PaymentMethod[];
+
+  /* Suppliers */
+  @OneToMany(() => Supplier, (items) => items.createdBy)
+  createdSuppliers: Supplier[];
+
+  @OneToMany(() => Supplier, (items) => items.updatedBy)
+  updatedSuppliers: Supplier[];
+
+  @OneToMany(() => Supplier, (items) => items.deletedBy)
+  deletedSuppliers: Supplier[];
 }

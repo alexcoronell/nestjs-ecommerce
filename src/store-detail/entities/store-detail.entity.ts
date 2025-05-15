@@ -12,8 +12,8 @@ import {
 
 import { User } from '@user/entities/user.entity';
 
-@Entity('details')
-@Check('"store_id" = 1')
+@Entity('store_details')
+@Check('"id" = 1')
 export class StoreDetail {
   @PrimaryColumn({ type: 'int', default: 1 })
   id: number;
@@ -59,11 +59,11 @@ export class StoreDetail {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.createdStoreDetail)
+  @ManyToOne(() => User, (user) => user.createdStoreDetail, { nullable: true })
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: number | null;
 
-  @ManyToOne(() => User, (user) => user.updatedStoreDetail)
+  @ManyToOne(() => User, (user) => user.updatedStoreDetail, { nullable: true })
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: number | null;
 }

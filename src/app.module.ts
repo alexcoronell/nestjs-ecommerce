@@ -11,6 +11,7 @@ import { CategoryModule } from '@category/category.module';
 import { PaymentMethodModule } from '@payment_method/payment-method.module';
 import { SupplierModule } from '@supplier/supplier.module';
 import { UserModule } from '@user/user.module';
+import { ShippingCompanyModule } from './shipping-company/shipping-company.module';
 
 /* Config */
 import config from './config';
@@ -29,6 +30,7 @@ import config from './config';
     BrandModule,
     SupplierModule,
     PaymentMethodModule,
+    ShippingCompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

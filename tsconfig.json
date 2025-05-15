@@ -24,6 +24,7 @@
       "@commons/*": ["src/commons/*"],
       "@config/*": ["src/config/*"],
       "@faker/*": ["faker/*"],
+      "@shipping_company/*": ["src/shipping-company/*"],
       "@supplier/*": ["src/supplier/*"],
       "@payment_method/*": ["src/payment-method/*"],
       "@user/*": ["src/user/*"]

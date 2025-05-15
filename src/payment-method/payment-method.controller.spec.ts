@@ -63,36 +63,36 @@ describe('PaymentMethodController', () => {
   });
 
   describe('Count payment methods controllers', () => {
-    it('should call countAll brand service', async () => {
+    it('should call countAll payment method service', async () => {
       expect(await controller.countAll()).toBe(mockPaymentMethods.length);
       expect(service.countAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call count brand service', async () => {
+    it('should call count payment method service', async () => {
       expect(await controller.count()).toBe(mockPaymentMethods.length);
       expect(service.count).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Find payment methods controllers', () => {
-    it('should call findAll brand service', async () => {
+    it('should call findAll payment method service', async () => {
       expect(await controller.findAll()).toBe(mockPaymentMethods);
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call findOne brand service', async () => {
+    it('should call findOne payment method service', async () => {
       expect(await controller.findOne(1)).toBe(mockPaymentMethod);
       expect(service.findOne).toHaveBeenCalledTimes(1);
     });
 
-    it('should return an brand by name', async () => {
+    it('should return an payment method by name', async () => {
       expect(await controller.findOneByname(mockPaymentMethod.name));
       expect(service.findOneByName).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('create payment methods controller', () => {
-    it('should call create brand service', async () => {
+    it('should call create payment method service', async () => {
       await controller.create(mockNewPaymentMethod);
       expect(service.create).toHaveBeenCalledTimes(1);
     });

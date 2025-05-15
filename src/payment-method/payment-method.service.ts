@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,20 +18,43 @@ import { UpdatePaymentMethodDto } from '@payment_method/dto/update-payment-metho
 import { Result } from '@commons/types/result.type';
 
 @Injectable()
+/**
+ * Service for managing PaymentMethod entities.
+ *
+ * Provides CRUD operations and utility methods for PaymentMethod, including
+ * soft deletion, counting, and retrieval by name or ID.
+ *
+ * @implements IBaseService<PaymentMethod, CreatePaymentMethodDto, UpdatePaymentMethodDto>
+ */
 export class PaymentMethodService
   implements
     IBaseService<PaymentMethod, CreatePaymentMethodDto, UpdatePaymentMethodDto>
 {
+  /**
+   * Constructs a new PaymentMethodService.
+   *
+   * @param repo - The repository instance for PaymentMethod entity.
+   */
   constructor(
     @InjectRepository(PaymentMethod)
     private readonly repo: Repository<PaymentMethod>,
   ) {}
 
+  /**
+   * Counts all PaymentMethod records, including deleted ones.
+   *
+   * @returns An object containing the total count and HTTP status code.
+   */
   async countAll() {
     const total = await this.repo.count();
     return { statusCode: HttpStatus.OK, total };
   }
 
+  /**
+   * Counts all PaymentMethod records that are not marked as deleted.
+   *
+   * @returns An object containing the total count and HTTP status code.
+   */
   async count() {
     const total = await this.repo.count({
       where: {
@@ -40,6 +64,12 @@ export class PaymentMethodService
     return { statusCode: HttpStatus.OK, total };
   }
 
+  /**
+   * Retrieves all PaymentMethod records that are not marked as deleted,
+   * ordered by name in ascending order.
+   *
+   * @returns An object containing the list of payment methods, total count, and HTTP status code.
+   */
   async findAll() {
     const [paymentMethod, total] = await this.repo.findAndCount({
       where: {
@@ -57,6 +87,14 @@ export class PaymentMethodService
     };
   }
 
+  /**
+   * Finds a PaymentMethod by its ID, including related createdBy and updatedBy entities.
+   * Throws NotFoundException if not found or marked as deleted.
+   *
+   * @param id - The ID of the PaymentMethod to retrieve.
+   * @returns A result object containing the PaymentMethod and HTTP status code.
+   * @throws NotFoundException if the PaymentMethod is not found.
+   */
   async findOne(id: PaymentMethod['id']): Promise<Result<PaymentMethod>> {
     const paymentMethod = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -73,6 +111,14 @@ export class PaymentMethodService
     };
   }
 
+  /**
+   * Finds a PaymentMethod by its name, including related createdBy and updatedBy entities.
+   * Throws NotFoundException if not found or marked as deleted.
+   *
+   * @param name - The name of the PaymentMethod to retrieve.
+   * @returns A result object containing the PaymentMethod and HTTP status code.
+   * @throws NotFoundException if the PaymentMethod is not found.
+   */
   async findOneByName(name: string): Promise<Result<PaymentMethod>> {
     const paymentMethod = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -89,6 +135,12 @@ export class PaymentMethodService
     };
   }
 
+  /**
+   * Creates a new PaymentMethod entity.
+   *
+   * @param dto - The data transfer object containing creation data.
+   * @returns An object containing the created PaymentMethod, HTTP status code, and a message.
+   */
   async create(dto: CreatePaymentMethodDto) {
     const newPaymentMethod = this.repo.create(dto);
     const paymentMethod = await this.repo.save(newPaymentMethod);
@@ -99,6 +151,13 @@ export class PaymentMethodService
     };
   }
 
+  /**
+   * Updates an existing PaymentMethod entity by its ID.
+   *
+   * @param id - The ID of the PaymentMethod to update.
+   * @param changes - The data transfer object containing update data.
+   * @returns An object containing the updated PaymentMethod, HTTP status code, and a message.
+   */
   async update(id: number, changes: UpdatePaymentMethodDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as PaymentMethod, changes);
@@ -110,6 +169,12 @@ export class PaymentMethodService
     };
   }
 
+  /**
+   * Soft deletes a PaymentMethod entity by its ID by setting isDeleted to true.
+   *
+   * @param id - The ID of the PaymentMethod to delete.
+   * @returns An object containing HTTP status code and a message.
+   */
   async remove(id: PaymentMethod['id']) {
     const { data } = await this.findOne(id);
 

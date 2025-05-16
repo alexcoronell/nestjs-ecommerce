@@ -18,6 +18,7 @@ export const generateCategory = (id: number = 1): Category => ({
   ...generateBaseEntity(id),
   ...createCategory(),
   id,
+  ...generateRelations(),
 });
 
 export const generateManyCategories = (size: number): Category[] => {
@@ -27,3 +28,7 @@ export const generateManyCategories = (size: number): Category[] => {
   }
   return categories;
 };
+
+const generateRelations = () => ({
+  subcategories: [],
+});

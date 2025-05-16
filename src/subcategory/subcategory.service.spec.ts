@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -234,6 +235,31 @@ describe('SubcategoryService', () => {
       expect(message).toEqual(
         `The Subcategory with id: ${id} has been modified`,
       );
+    });
+
+    it('update should return Conflict Exception when name subcategory exists with the same category', async () => {
+      const mock = generateSubcategory();
+      const id = mock.id;
+      const changes: UpdateSubcategoryDto = { name: 'newName' };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([[{ ...mock, ...changes }], 1]);
+      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'save').mockResolvedValue(mock);
+
+      try {
+        console.log('try');
+        await service.update(id, changes);
+      } catch (error) {
+        console.log('catch');
+        console.log(error);
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Subcategory already exists in other category`,
+        );
+      }
     });
 
     it('update should throw NotFoundException if Subcategory does not exist', async () => {

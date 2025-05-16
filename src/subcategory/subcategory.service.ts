@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   NotFoundException,
@@ -25,6 +26,7 @@ export class SubcategoryService
   implements
     IBaseService<Subcategory, CreateSubcategoryDto, UpdateSubcategoryDto>
 {
+  [x: string]: any;
   constructor(
     @InjectRepository(Subcategory)
     private readonly repo: Repository<Subcategory>,
@@ -137,6 +139,17 @@ export class SubcategoryService
 
   async update(id: number, changes: UpdateSubcategoryDto) {
     const { data } = await this.findOne(id);
+    const { category, name } = changes;
+    if (category && name) {
+      const rta = await this.findAllByCategoryAndName(category, name);
+      const total = rta.total || 0;
+      const data: Subcategory[] = rta.data as Subcategory[];
+      if (total > 0 && data[0].name === name) {
+        throw new ConflictException(
+          'The Subcategory already exists in other category',
+        );
+      }
+    }
     this.repo.merge(data, changes);
     const rta = await this.repo.save(data);
     return {

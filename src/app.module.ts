@@ -14,6 +14,7 @@ import { UserModule } from '@user/user.module';
 import { ShippingCompanyModule } from './shipping-company/shipping-company.module';
 import { TagModule } from './tag/tag.module';
 import { StoreDetailModule } from './store-detail/store-detail.module';
+import { SubcategoriesModule } from './subcategories/subcategories.module';
 
 /* Config */
 import config from './config';
@@ -35,6 +36,7 @@ import config from './config';
     ShippingCompanyModule,
     TagModule,
     StoreDetailModule,
+    SubcategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

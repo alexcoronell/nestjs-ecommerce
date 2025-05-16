@@ -25,6 +25,7 @@
       "@config/*": ["src/config/*"],
       "@faker/*": ["faker/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
+      "@subcategories/*": ["src/subcategories/*"],
       "@store_detail/*": ["src/store-detail/*"],
       "@supplier/*": ["src/supplier/*"],
       "@tag/*": ["src/tag/*"],

@@ -26,7 +26,6 @@ export class SubcategoryService
   implements
     IBaseService<Subcategory, CreateSubcategoryDto, UpdateSubcategoryDto>
 {
-  [x: string]: any;
   constructor(
     @InjectRepository(Subcategory)
     private readonly repo: Repository<Subcategory>,

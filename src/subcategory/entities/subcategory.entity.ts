@@ -6,7 +6,7 @@ import { User } from '@user/entities/user.entity';
 
 @Entity('subcategories')
 export class Subcategory extends BaseEntity {
-  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
 
   @ManyToOne(() => Category, (item) => item.subcategories)

@@ -20,17 +20,23 @@ export const createSubcategory = (
   };
 };
 
-export const generateSubcategory = (id: number = 1): Subcategory => ({
+export const generateSubcategory = (
+  id: number = 1,
+  categoryId: number | null = null,
+): Subcategory => ({
   ...generateBaseEntity(id),
-  ...createSubcategory(),
+  ...createSubcategory(categoryId),
   id,
   ...generateRelations(),
 });
 
-export const generateManyCategories = (size: number): Subcategory[] => {
+export const generateManySubcategories = (
+  size: number,
+  categoryId: number | null = null,
+): Subcategory[] => {
   const categories: Subcategory[] = [];
   for (let i = 0; i < size; i++) {
-    categories.push(generateSubcategory(i + 1));
+    categories.push(generateSubcategory(i + 1, categoryId));
   }
   return categories;
 };

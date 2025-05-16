@@ -53,7 +53,7 @@ describe('CategoryService', () => {
       expect(total).toEqual(100);
     });
 
-    it('should return total brands not removed', async () => {
+    it('should return total categories not removed', async () => {
       jest.spyOn(repository, 'count').mockResolvedValue(100);
       const { statusCode, total } = await service.count();
       expect(repository.count).toHaveBeenCalledTimes(1);

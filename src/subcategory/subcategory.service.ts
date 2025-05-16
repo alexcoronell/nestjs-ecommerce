@@ -16,7 +16,7 @@ import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { Result } from '@commons/types/result.type';
 
 @Injectable()
-export class SubcategoriesService
+export class SubcategoryService
   implements
     IBaseService<Subcategory, CreateSubcategoryDto, UpdateSubcategoryDto>
 {

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Category } from '@category/entities/category.entity';
 import { User } from '@user/entities/user.entity';

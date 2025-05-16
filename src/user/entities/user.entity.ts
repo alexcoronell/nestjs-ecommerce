@@ -7,7 +7,7 @@ import { Category } from '@category/entities/category.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
-import { Subcategory } from '@subcategories/entities/subcategory.entity';
+import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { Tag } from '@tag/entities/tag.entity';
 

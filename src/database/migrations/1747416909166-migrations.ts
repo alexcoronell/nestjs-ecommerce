@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /* Create Subcategories Table */
-export class Migrations1747414423347 implements MigrationInterface {
-  name = 'Migrations1747414423347';
+export class Migrations1747416909166 implements MigrationInterface {
+  name = 'Migrations1747416909166';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

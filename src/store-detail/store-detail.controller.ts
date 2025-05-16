@@ -1,21 +1,37 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
+
+/* Services */
 import { StoreDetailService } from './store-detail.service';
+
+/* Entities */
+import { StoreDetail } from './entities/store-detail.entity';
+
+/* DTO's */
 import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
+
+import { Result } from '@commons/types/result.type';
 
 @Controller('store-detail')
 export class StoreDetailController {
   constructor(private readonly storeDetailService: StoreDetailService) {}
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Result<StoreDetail>> {
     return this.storeDetailService.findOne(+id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateStoreDetailDto: UpdateStoreDetailDto,
-  ) {
-    return this.storeDetailService.update(+id, updateStoreDetailDto);
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateStoreDetailDto,
+  ): Promise<Result<StoreDetail>> {
+    return this.storeDetailService.update(+id, payload);
   }
 }

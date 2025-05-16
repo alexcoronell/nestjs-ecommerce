@@ -6,8 +6,10 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Trim } from '@commons/decorators/trim.decorator';
 
 export class CreateSubcategoryDto {
+  @Trim()
   @IsString()
   @IsNotEmpty()
   @ApiProperty()

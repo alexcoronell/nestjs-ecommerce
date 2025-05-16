@@ -98,6 +98,7 @@
       "@config/(.*)": "<rootDir>/src/config/$1",
       "@faker/(.*)": "<rootDir>/faker/$1",
       "@payment_method/(.*)": "<rootDir>/src/payment-method/$1",
+      "@product/(.*)": "<rootDir>/src/product/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",
       "@store_detail/(.*)": "<rootDir>/src/store-detail/$1",
       "@subcategory/(.*)": "<rootDir>/src/subcategory/$1",

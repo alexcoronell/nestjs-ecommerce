@@ -15,6 +15,7 @@ import { ShippingCompanyModule } from './shipping-company/shipping-company.modul
 import { TagModule } from './tag/tag.module';
 import { StoreDetailModule } from './store-detail/store-detail.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
+import { ProductModule } from './product/product.module';
 
 /* Config */
 import config from './config';
@@ -37,6 +38,7 @@ import config from './config';
     TagModule,
     StoreDetailModule,
     SubcategoryModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -31,7 +31,7 @@ export class StoreDetail {
   city: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  neighborhood: string;
+  neighborhood: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string | null;

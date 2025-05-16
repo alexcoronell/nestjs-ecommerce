@@ -24,6 +24,9 @@ export class Migrations1747352207060 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
+            DELETE FROM store_details WHERE id = 1;
+        `);
     await queryRunner.query(
       `ALTER TABLE "store_details" DROP CONSTRAINT "FK_fcfbd816f5d412e97cba432525b"`,
     );
@@ -31,8 +34,5 @@ export class Migrations1747352207060 implements MigrationInterface {
       `ALTER TABLE "store_details" DROP CONSTRAINT "FK_84496ff5bbd1d061df9b45297a1"`,
     );
     await queryRunner.query(`DROP TABLE "store_details"`);
-    await queryRunner.query(`
-            DELETE FROM details WHERE id = 1;
-        `);
   }
 }

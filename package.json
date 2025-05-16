@@ -76,6 +76,20 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "testPathIgnorePatterns": [
+      "<rootDir>/coverage/",
+      "<rootDir>/dist/",
+      "<rootDir>/faker/",
+      "<rootDir>/src/database/migrations/",
+      "<rootDir>/test/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/coverage/",
+      "<rootDir>/dist/",
+      "<rootDir>/faker/",
+      "<rootDir>/src/database/migrations/",
+      "<rootDir>/test/"
+    ],
     "moduleNameMapper": {
       "@auth/(.*)": "<rootDir>/src/auth/$1",
       "@brand/(.*)": "<rootDir>/src/brand/$1",

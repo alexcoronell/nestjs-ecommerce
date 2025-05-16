@@ -9,10 +9,11 @@ import { CreateSubcategoryDto } from '@subcategory/dto/create-subcategory.dto';
 
 export const createSubcategory = (
   categoryId: number | null = null,
+  name: string | null = null,
 ): CreateSubcategoryDto => {
   const category = categoryId || faker.number.int({ min: 1, max: 50 });
   return {
-    name: faker.lorem.word(),
+    name: name || faker.lorem.word(),
     category,
     createdBy: faker.number.int(),
     updatedBy: faker.number.int(),
@@ -23,9 +24,10 @@ export const createSubcategory = (
 export const generateSubcategory = (
   id: number = 1,
   categoryId: number | null = null,
+  name: string | null = null,
 ): Subcategory => ({
   ...generateBaseEntity(id),
-  ...createSubcategory(categoryId),
+  ...createSubcategory(categoryId, name || faker.lorem.word()),
   id,
   ...generateRelations(),
 });
@@ -33,10 +35,12 @@ export const generateSubcategory = (
 export const generateManySubcategories = (
   size: number,
   categoryId: number | null = null,
+  name: string | null = null,
 ): Subcategory[] => {
   const categories: Subcategory[] = [];
   for (let i = 0; i < size; i++) {
-    categories.push(generateSubcategory(i + 1, categoryId));
+    const finalName = i === 0 && name ? name : faker.lorem.word(1);
+    categories.push(generateSubcategory(i + 1, categoryId, finalName));
   }
   return categories;
 };

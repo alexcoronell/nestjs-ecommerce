@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpStatus,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -68,6 +73,20 @@ export class SubcategoryService
     };
   }
 
+  async findAllByCategoryAndName(
+    category: number,
+    name: string,
+  ): Promise<Result<Subcategory[]>> {
+    const [data, total] = await this.repo.findAndCount({
+      where: { category, name },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+      total,
+    };
+  }
+
   async findOne(id: Subcategory['id']) {
     const data = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -99,12 +118,20 @@ export class SubcategoryService
   }
 
   async create(dto: CreateSubcategoryDto) {
+    const { category, name } = dto;
+    const rta = await this.findAllByCategoryAndName(category, name);
+    const total: number = rta.total as number;
+    if (total > 0) {
+      throw new ConflictException(
+        'The Subcategory already exists in this category',
+      );
+    }
     const newSubcategory = this.repo.create(dto);
     const data = await this.repo.save(newSubcategory);
     return {
       statusCode: HttpStatus.CREATED,
       data,
-      message: 'The Subcategory was created',
+      message: `The Subcategory already exists in this category`,
     };
   }
 

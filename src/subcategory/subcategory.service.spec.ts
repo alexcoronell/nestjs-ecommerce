@@ -104,6 +104,25 @@ describe('SubcategoryService', () => {
       expect(data).toEqual(mock);
     });
 
+    it('findAllByCategoryAndName should returns all subcategories by category and name', async () => {
+      const categoryId = 3;
+      const tagNameTest = 'tagNameTest';
+      const mock = generateManySubcategories(1, categoryId, tagNameTest);
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([mock, mock.length]);
+      const { statusCode, data, total } =
+        await service.findAllByCategoryAndName(categoryId, tagNameTest);
+
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { category: categoryId, name: tagNameTest },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(mock.length);
+      expect(data).toEqual(mock);
+    });
+
     it('findOne should return a subcategory', async () => {
       const mock = generateSubcategory();
       const id = mock.id;
@@ -171,13 +190,29 @@ describe('SubcategoryService', () => {
   describe('create subcategory services', () => {
     it('create should return a subcategory', async () => {
       const mock = generateSubcategory();
-
+      jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       const { statusCode, data } = await service.create(mock);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
+    });
+
+    it('create should return Conflict Exception when name subcategory exists with the same category', async () => {
+      const mock = generateSubcategory();
+      jest.spyOn(repository, 'findAndCount').mockResolvedValue([[mock], 1]);
+      jest.spyOn(repository, 'create').mockReturnValue(mock);
+      jest.spyOn(repository, 'save').mockResolvedValue(mock);
+
+      try {
+        await service.create(mock);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Subcategory already exists in this category`,
+        );
+      }
     });
   });
 

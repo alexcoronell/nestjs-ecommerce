@@ -29,7 +29,7 @@ export class Product extends BaseEntity {
   subcategory: number;
 
   @ManyToOne(() => Brand, (item) => item.products)
-  @JoinColumn({ name: 'category_id' })
+  @JoinColumn({ name: 'brand_id' })
   brand: number;
 
   @ManyToOne(() => User, (user) => user.createdProducts)

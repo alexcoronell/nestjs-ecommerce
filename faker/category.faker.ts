@@ -31,4 +31,5 @@ export const generateManyCategories = (size: number): Category[] => {
 
 const generateRelations = () => ({
   subcategories: [],
+  products: [],
 });

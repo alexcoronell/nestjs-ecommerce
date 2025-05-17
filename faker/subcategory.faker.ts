@@ -45,4 +45,6 @@ export const generateManySubcategories = (
   return categories;
 };
 
-const generateRelations = () => ({});
+const generateRelations = () => ({
+  products: [],
+});

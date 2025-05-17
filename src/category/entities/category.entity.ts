@@ -3,6 +3,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
+import { Product } from '@product/entities/product.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('categories')
@@ -25,4 +26,8 @@ export class Category extends BaseEntity {
   /* Subcategories */
   @OneToMany(() => Subcategory, (items) => items.createdBy)
   subcategories: Subcategory[];
+
+  /* Products */
+  @OneToMany(() => Product, (items) => items.category)
+  products: Product[];
 }

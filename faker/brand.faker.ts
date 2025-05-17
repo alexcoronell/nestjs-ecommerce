@@ -17,6 +17,7 @@ export const generateBrand = (id: number = 1): Brand => ({
   ...generateBaseEntity(id),
   ...createBrand(),
   id,
+  products: [],
 });
 
 export const generateManyBrands = (size: number): Brand[] => {

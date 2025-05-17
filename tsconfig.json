@@ -24,14 +24,13 @@
       "@commons/*": ["src/commons/*"],
       "@config/*": ["src/config/*"],
       "@faker/*": ["faker/*"],
-      "payment_method/*": ["src/payment-method/*"],
-      "product/*": ["src/product/*"],
+      "@payment_method/*": ["src/payment-method/*"],
+      "@product/*": ["src/product/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
       "@subcategory/*": ["src/subcategory/*"],
       "@store_detail/*": ["src/store-detail/*"],
       "@supplier/*": ["src/supplier/*"],
       "@tag/*": ["src/tag/*"],
-      "@payment_method/*": ["src/payment-method/*"],
       "@user/*": ["src/user/*"]
     }
   }

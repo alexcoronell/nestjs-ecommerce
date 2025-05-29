@@ -48,7 +48,7 @@ export class CreateProductDto {
   @Min(1)
   @IsNotEmpty()
   @ApiProperty()
-  brandcategory: number;
+  brand: number;
 
   @IsNumber()
   @IsNotEmpty()

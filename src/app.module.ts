@@ -16,6 +16,7 @@ import { TagModule } from './tag/tag.module';
 import { StoreDetailModule } from './store-detail/store-detail.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { ProductModule } from './product/product.module';
+import { ProductImagesModule } from './product-images/product-images.module';
 
 /* Config */
 import config from './config';
@@ -39,6 +40,7 @@ import config from './config';
     StoreDetailModule,
     SubcategoryModule,
     ProductModule,
+    ProductImagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

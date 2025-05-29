@@ -6,6 +6,7 @@ import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Product } from '@product/entities/product.entity';
+import { ProductImage } from 'src/product-images/entities/product-image.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
@@ -100,6 +101,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Product, (items) => items.deletedBy)
   deletedProducts: Product[];
+
+  /* Product Images */
+  @OneToMany(() => ProductImage, (items) => items.uploadedBy)
+  uploadedProductImages: ProductImage[];
 
   /* Shipping Companies */
   @OneToMany(() => ShippingCompany, (items) => items.createdBy)

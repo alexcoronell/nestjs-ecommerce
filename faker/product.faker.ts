@@ -23,6 +23,7 @@ export const generateProduct = (id: number = 1): Product => ({
   ...generateBaseEntity(id),
   ...createProduct(),
   id,
+  images: [],
 });
 
 export const generateManyProducts = (size: number): Product[] => {

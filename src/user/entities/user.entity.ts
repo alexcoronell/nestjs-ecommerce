@@ -4,6 +4,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
+import { Discount } from 'src/discount/entities/discount.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Product } from '@product/entities/product.entity';
 import { ProductImage } from 'src/product-images/entities/product-image.entity';
@@ -81,6 +82,16 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Category, (items) => items.deletedBy)
   deletedCategories: Category[];
+
+  /* Discounts */
+  @OneToMany(() => Discount, (items) => items.createdBy)
+  createdDiscounts: Discount[];
+
+  @OneToMany(() => Discount, (items) => items.updatedBy)
+  updatedDiscounts: Discount[];
+
+  @OneToMany(() => Discount, (items) => items.deletedBy)
+  deletedDiscounts: Discount[];
 
   /* Payment Methods */
   @OneToMany(() => PaymentMethod, (items) => items.createdBy)

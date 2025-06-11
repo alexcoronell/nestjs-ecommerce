@@ -69,7 +69,7 @@ const generateUserRelations = () => ({
   createdProducts: [],
   updatedProducts: [],
   deletedProducts: [],
-  createdProductImages: [],
+  uploadedProductImages: [],
   createdShippingCompanies: [],
   updatedShippingCompanies: [],
   deletedShippingCompanies: [],

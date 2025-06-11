@@ -17,6 +17,7 @@ import { StoreDetailModule } from './store-detail/store-detail.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { ProductModule } from './product/product.module';
 import { ProductImagesModule } from './product-images/product-images.module';
+import { DiscountModule } from './discount/discount.module';
 
 /* Config */
 import config from './config';
@@ -41,6 +42,7 @@ import config from './config';
     SubcategoryModule,
     ProductModule,
     ProductImagesModule,
+    DiscountModule,
   ],
   controllers: [AppController],
   providers: [AppService],

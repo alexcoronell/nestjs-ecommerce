@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,11 +8,11 @@ import { Repository } from 'typeorm';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
-import { Discount } from './entities/discount.entity';
+import { Discount } from '@discount/entities/discount.entity';
 
 /* DTO's */
-import { CreateDiscountDto } from './dto/create-discount.dto';
-import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { CreateDiscountDto } from '@discount/dto/create-discount.dto';
+import { UpdateDiscountDto } from '@discount/dto/update-discount.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';

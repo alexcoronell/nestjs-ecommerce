@@ -4,7 +4,7 @@ import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
-import { ProductImage } from 'src/product-images/entities/product-image.entity';
+import { ProductImage } from '@product_images/entities/product-image.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('products')

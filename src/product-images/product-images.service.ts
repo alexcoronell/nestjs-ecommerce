@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductImageDto } from './dto/create-product-image.dto';
-import { UpdateProductImageDto } from './dto/update-product-image.dto';
+import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
+import { UpdateProductImageDto } from '@product_images/dto/update-product-image.dto';
 
 @Injectable()
 export class ProductImagesService {

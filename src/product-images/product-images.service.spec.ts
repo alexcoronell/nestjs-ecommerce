@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductImagesService } from './product-images.service';
+import { ProductImagesService } from '@product_images/product-images.service';
 
 describe('ProductImagesService', () => {
   let service: ProductImagesService;

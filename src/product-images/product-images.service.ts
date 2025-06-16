@@ -1,26 +1,105 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+/* Interfaces */
+import { IBaseService } from '@commons/interfaces/i-base-service';
+
+/* Entities */
+import { ProductImage } from './entities/product-image.entity';
+
+/* DTO's */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
 import { UpdateProductImageDto } from '@product_images/dto/update-product-image.dto';
 
+/* Types */
+import { Result } from '@commons/types/result.type';
+
 @Injectable()
-export class ProductImagesService {
-  create(createProductImageDto: CreateProductImageDto) {
-    return 'This action adds a new productImage';
+export class ProductImagesService
+  implements
+    IBaseService<ProductImage, CreateProductImageDto, UpdateProductImageDto>
+{
+  constructor(
+    @InjectRepository(ProductImage)
+    private readonly repo: Repository<ProductImage>,
+  ) {}
+
+  async countAll() {
+    const total = await this.repo.count();
+    return { statusCode: HttpStatus.OK, total };
   }
 
-  findAll() {
-    return `This action returns all productImages`;
+  async count() {
+    const total = await this.repo.count({
+      where: {
+        isDeleted: false,
+      },
+    });
+    return { statusCode: HttpStatus.OK, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productImage`;
+  async findAll() {
+    const [productImages, total] = await this.repo.findAndCount({
+      where: {
+        isDeleted: false,
+      },
+      order: {
+        title: 'ASC',
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: productImages,
+      total,
+    };
   }
 
-  update(id: number, updateProductImageDto: UpdateProductImageDto) {
-    return `This action updates a #${id} productImage`;
+  async findOne(id: ProductImage['id']): Promise<Result<ProductImage>> {
+    const productImage = await this.repo.findOne({
+      relations: ['createdBy', 'updatedBy'],
+      where: { id, isDeleted: false },
+    });
+    if (!productImage) {
+      throw new NotFoundException(`The Product Image with id: ${id} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: productImage,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productImage`;
+  async create(dto: CreateProductImageDto) {
+    const newProductImage = this.repo.create(dto);
+    const productImage = await this.repo.save(newProductImage);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: productImage,
+      message: 'The Product was created',
+    };
+  }
+
+  async update(id: number, changes: UpdateProductImageDto) {
+    const { data } = await this.findOne(id);
+    this.repo.merge(data as ProductImage, changes);
+    const rta = await this.repo.save(data as ProductImage);
+    return {
+      statusCode: HttpStatus.OK,
+      data: rta,
+      message: `The Product Image with id: ${id} has been modified`,
+    };
+  }
+
+  async remove(id: ProductImage['id']) {
+    const { data } = await this.findOne(id);
+
+    const changes = { isDeleted: true };
+    this.repo.merge(data as ProductImage, changes);
+    await this.repo.save(data as ProductImage);
+    return {
+      statusCode: HttpStatus.OK,
+      message: `The Product Image with id: ${id} has been deleted`,
+    };
   }
 }

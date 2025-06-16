@@ -18,6 +18,7 @@ import { SubcategoryModule } from './subcategory/subcategory.module';
 import { ProductModule } from './product/product.module';
 import { ProductImagesModule } from './product-images/product-images.module';
 import { DiscountModule } from './discount/discount.module';
+import { ProductTagModule } from './product-tag/product-tag.module';
 
 /* Config */
 import config from './config';
@@ -43,6 +44,7 @@ import config from './config';
     ProductModule,
     ProductImagesModule,
     DiscountModule,
+    ProductTagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

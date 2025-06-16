@@ -6,18 +6,37 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
+
+/* Interface */
+import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Services */
 import { ProductImagesService } from '@product_images/product-images.service';
+
+/* Entities */
+import { ProductImage } from './entities/product-image.entity';
+
+/* DTO's */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
 import { UpdateProductImageDto } from '@product_images/dto/update-product-image.dto';
 
 @Controller('product-images')
-export class ProductImagesController {
+export class ProductImagesController
+  implements
+    IBaseController<ProductImage, CreateProductImageDto, UpdateProductImageDto>
+{
   constructor(private readonly productImagesService: ProductImagesService) {}
 
-  @Post()
-  create(@Body() createProductImageDto: CreateProductImageDto) {
-    return this.productImagesService.create(createProductImageDto);
+  @Get('count-all')
+  countAll() {
+    return this.productImagesService.countAll();
+  }
+
+  @Get('count')
+  count() {
+    return this.productImagesService.count();
   }
 
   @Get()
@@ -26,20 +45,25 @@ export class ProductImagesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productImagesService.findOne(+id);
+  }
+
+  @Post()
+  create(@Body() payload: CreateProductImageDto) {
+    return this.productImagesService.create(payload);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateProductImageDto: UpdateProductImageDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() changes: UpdateProductImageDto,
   ) {
-    return this.productImagesService.update(+id, updateProductImageDto);
+    return this.productImagesService.update(+id, changes);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.productImagesService.remove(+id);
   }
 }

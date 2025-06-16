@@ -1,15 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DiscountService } from './discount.service';
-import { CreateDiscountDto } from './dto/create-discount.dto';
-import { UpdateDiscountDto } from './dto/update-discount.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
+
+/* Interface */
+import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Services */
+import { DiscountService } from '@discount/discount.service';
+
+/* Entities */
+import { Discount } from '@discount/entities/discount.entity';
+
+/* DTO's */
+import { CreateDiscountDto } from '@discount/dto/create-discount.dto';
+import { UpdateDiscountDto } from '@discount/dto/update-discount.dto';
 
 @Controller('discount')
-export class DiscountController {
+export class DiscountController
+  implements IBaseController<Discount, CreateDiscountDto, UpdateDiscountDto>
+{
   constructor(private readonly discountService: DiscountService) {}
 
-  @Post()
-  create(@Body() createDiscountDto: CreateDiscountDto) {
-    return this.discountService.create(createDiscountDto);
+  @Get('count-all')
+  countAll() {
+    return this.discountService.countAll();
+  }
+
+  @Get('count')
+  count() {
+    return this.discountService.count();
   }
 
   @Get()
@@ -18,17 +44,30 @@ export class DiscountController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.discountService.findOne(+id);
   }
 
+  @Get('code/:code')
+  findOneByCode(@Param('code') code: string) {
+    return this.discountService.findOneByCode(code);
+  }
+
+  @Post()
+  create(@Body() payload: CreateDiscountDto) {
+    return this.discountService.create(payload);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
-    return this.discountService.update(+id, updateDiscountDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCategoryDto: UpdateDiscountDto,
+  ) {
+    return this.discountService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.discountService.remove(+id);
   }
 }

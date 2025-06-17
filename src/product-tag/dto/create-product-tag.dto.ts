@@ -6,13 +6,13 @@ export class CreateProductTagDto {
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  product: number;
+  products: number;
 
   @IsNumber()
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  tag: number;
+  tags: number;
 
   @IsNumber()
   @Min(0)

@@ -5,6 +5,7 @@ import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { ProductImage } from '@product_images/entities/product-image.entity';
+import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('products')
@@ -47,4 +48,7 @@ export class Product extends BaseEntity {
 
   @OneToMany(() => ProductImage, (items) => items.product)
   images: ProductImage[];
+
+  @OneToMany(() => ProductTag, (items) => items.products)
+  tags: ProductTag[];
 }

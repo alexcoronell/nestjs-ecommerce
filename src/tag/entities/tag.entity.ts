@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
+import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('tags')
@@ -20,4 +21,7 @@ export class Tag extends BaseEntity {
   @ManyToOne(() => User, (user) => user.deletedTags)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
+
+  @OneToMany(() => ProductTag, (items) => items.tags)
+  products: ProductTag[];
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductTagDto } from './dto/create-product-tag.dto';
-import { UpdateProductTagDto } from './dto/update-product-tag.dto';
 
 @Injectable()
 export class ProductTagService {
@@ -15,11 +14,6 @@ export class ProductTagService {
   findOne(id: number) {
     return `This action returns a #${id} productTag`;
   }
-
-  update(id: number, updateProductTagDto: UpdateProductTagDto) {
-    return `This action updates a #${id} productTag`;
-  }
-
   remove(id: number) {
     return `This action removes a #${id} productTag`;
   }

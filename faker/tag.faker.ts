@@ -17,6 +17,7 @@ export const generateTag = (id: number = 1): Tag => ({
   ...generateBaseEntity(id),
   ...createTag(),
   id,
+  products: [],
 });
 
 export const generateManyTags = (size: number): Tag[] => {

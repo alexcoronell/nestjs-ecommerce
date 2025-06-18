@@ -6,9 +6,9 @@ import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
 import { CreateProductTagDto } from 'src/product-tag/dto/create-product-tag.dto';
 
 export const createProductTag = (): CreateProductTagDto => ({
-  products: faker.number.int(),
-  tags: faker.number.int(),
-  createdBy: faker.number.int(),
+  products: faker.number.int({ min: 1, max: 100 }),
+  tags: faker.number.int({ min: 1, max: 100 }),
+  createdBy: faker.number.int({ min: 1, max: 100 }),
 });
 
 export const generateProductTag = (id: number = 1): ProductTag => ({

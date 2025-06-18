@@ -1,14 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Entities */
-import { ProductTag } from './entities/product-tag.entity';
+import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Product } from '@product/entities/product.entity';
 import { Tag } from '@tag/entities/tag.entity';
 
 /* DTO's */
-import { CreateProductTagDto } from './dto/create-product-tag.dto';
+import { CreateProductTagDto } from '@product_tag/dto/create-product-tag.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
@@ -35,6 +38,19 @@ export class ProductTagService {
     };
   }
 
+  async findOne(id: ProductTag['id']): Promise<Result<ProductTag>> {
+    const productTag = await this.repo.findOne({
+      where: { id },
+    });
+    if (!productTag) {
+      throw new NotFoundException(`The Product Tag with id: ${id} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: productTag,
+    };
+  }
+
   async findAllByProduct(id: Product['id']): Promise<Result<ProductTag[]>> {
     const [productTags, total] = await this.repo.findAndCount({
       relations: ['product', 'tag'],
@@ -56,19 +72,6 @@ export class ProductTagService {
       statusCode: HttpStatus.OK,
       data: productTags,
       total,
-    };
-  }
-
-  async findOne(id: ProductTag['id']): Promise<Result<ProductTag>> {
-    const productTag = await this.repo.findOne({
-      where: { id },
-    });
-    if (!productTag) {
-      throw new NotFoundException(`The Product Tag with id: ${id} not found`);
-    }
-    return {
-      statusCode: HttpStatus.OK,
-      data: productTag,
     };
   }
 

@@ -2,7 +2,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
-import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
+import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('tags')

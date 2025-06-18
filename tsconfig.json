@@ -28,7 +28,7 @@
       "@payment_method/*": ["src/payment-method/*"],
       "@product/*": ["src/product/*"],
       "@product_images/*": ["src/product-images/*"],
-      "@product_tags/*": ["src/product-tags/*"],
+      "@product_tag/*": ["src/product-tag/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
       "@subcategory/*": ["src/subcategory/*"],
       "@store_detail/*": ["src/store-detail/*"],

@@ -8,7 +8,7 @@ import { Discount } from '@discount/entities/discount.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Product } from '@product/entities/product.entity';
 import { ProductImage } from '@product_images/entities/product-image.entity';
-import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
+import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';

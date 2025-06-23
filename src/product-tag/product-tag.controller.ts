@@ -28,11 +28,6 @@ export class ProductTagController {
     return this.productTagService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productTagService.findOne(+id);
-  }
-
   @Get('by-product/:id')
   findAllByProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productTagService.findAllByProduct(+id);
@@ -41,6 +36,11 @@ export class ProductTagController {
   @Get('by-tag/:id')
   findAllByTag(@Param('id', ParseIntPipe) id: number) {
     return this.productTagService.findAllByTag(+id);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productTagService.findOne(+id);
   }
 
   @Post()

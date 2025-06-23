@@ -101,6 +101,7 @@
       "@payment_method/(.*)": "<rootDir>/src/payment-method/$1",
       "@product/(.*)": "<rootDir>/src/product/$1",
       "@product_images/(.*)": "<rootDir>/src/product-images/$1",
+      "@product_supplier/(.*)": "<rootDir>/src/product-supplier/$1",
       "@product_tag/(.*)": "<rootDir>/src/product-tag/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",
       "@store_detail/(.*)": "<rootDir>/src/store-detail/$1",

@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
+import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('suppliers')
@@ -34,4 +35,7 @@ export class Supplier extends BaseEntity {
   @ManyToOne(() => User, (user) => user.deletedSuppliers)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
+
+  @OneToMany(() => ProductSupplier, (items) => items.supplier)
+  productSuppliers: ProductSupplier[];
 }

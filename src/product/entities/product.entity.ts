@@ -50,8 +50,8 @@ export class Product extends BaseEntity {
   @OneToMany(() => ProductImage, (items) => items.product)
   images: ProductImage[];
 
-  @OneToMany(() => ProductImage, (items) => items.product)
-  suppliers: ProductSupplier[];
+  @OneToMany(() => ProductSupplier, (items) => items.product)
+  productSuppliers: ProductSupplier[];
 
   @OneToMany(() => ProductTag, (items) => items.products)
   tags: ProductTag[];

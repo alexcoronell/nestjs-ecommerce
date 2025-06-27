@@ -7,6 +7,7 @@ export const createProductSupplier = () => ({
   costPrice: parseFloat(faker.commerce.price({ min: 1, max: 1000 })),
   isPrimarySupplier: faker.datatype.boolean(),
   product: faker.number.int(),
+  supplier: faker.number.int(),
   createdBy: faker.number.int(),
   updatedBy: faker.number.int(),
   deletedBy: null,

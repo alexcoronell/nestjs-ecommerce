@@ -19,6 +19,7 @@ export const createSupplier = (): CreateSupplierDto => ({
 export const generateSupplier = (id: number = 1): Supplier => ({
   ...generateBaseEntity(id),
   ...createSupplier(),
+  productSuppliers: [],
 });
 
 export const generateManySuppliers = (size: number): Supplier[] => {

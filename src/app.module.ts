@@ -20,6 +20,7 @@ import { ProductImagesModule } from './product-images/product-images.module';
 import { DiscountModule } from './discount/discount.module';
 import { ProductTagModule } from './product-tag/product-tag.module';
 import { ProductSupplierModule } from './product-supplier/product-supplier.module';
+import { ProductDiscountModule } from './product-discount/product-discount.module';
 
 /* Config */
 import config from './config';
@@ -47,6 +48,7 @@ import config from './config';
     DiscountModule,
     ProductTagModule,
     ProductSupplierModule,
+    ProductDiscountModule,
   ],
   controllers: [AppController],
   providers: [AppService],

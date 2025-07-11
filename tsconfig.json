@@ -27,6 +27,7 @@
       "@faker/*": ["faker/*"],
       "@payment_method/*": ["src/payment-method/*"],
       "@product/*": ["src/product/*"],
+      "@product_discount/*": ["src/product-discount/*"],
       "@product_images/*": ["src/product-images/*"],
       "@product_supplier/*": ["src/product-supplier/*"],
       "@product_tag/*": ["src/product-tag/*"],

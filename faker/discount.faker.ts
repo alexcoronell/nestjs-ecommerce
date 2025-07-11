@@ -30,6 +30,7 @@ export const generateDiscount = (id: number = 1): Discount => ({
   ...generateBaseEntity(id),
   ...createDiscount(),
   id,
+  productDiscounts: [],
 });
 
 export const generateManyDiscounts = (size: number): Discount[] => {

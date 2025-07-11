@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
+import { ProductDiscount } from '@product_discount/entities/product-discount.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('discounts')
@@ -63,4 +64,7 @@ export class Discount extends BaseEntity {
   @ManyToOne(() => User, (user) => user.deletedDiscounts)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
+
+  @OneToMany(() => ProductDiscount, (items) => items.discount)
+  productDiscounts: ProductDiscount[];
 }

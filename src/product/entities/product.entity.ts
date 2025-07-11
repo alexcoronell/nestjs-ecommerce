@@ -3,10 +3,11 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
-import { Subcategory } from '@subcategory/entities/subcategory.entity';
+import { ProductDiscount } from '@product_discount/entities/product-discount.entity';
 import { ProductImage } from '@product_images/entities/product-image.entity';
 import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
+import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('products')
@@ -46,6 +47,9 @@ export class Product extends BaseEntity {
   @ManyToOne(() => User, (user) => user.deletedProducts)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
+
+  @OneToMany(() => ProductDiscount, (items) => items.product)
+  productDiscounts: ProductDiscount[];
 
   @OneToMany(() => ProductImage, (items) => items.product)
   images: ProductImage[];

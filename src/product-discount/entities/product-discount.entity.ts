@@ -35,11 +35,11 @@ export class ProductDiscount {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'product_id' })
-  product: Product;
+  product: number;
 
   @ManyToOne(() => Discount, (discount) => discount.productDiscounts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'discount_id' })
-  discount: Discount;
+  discount: number;
 }

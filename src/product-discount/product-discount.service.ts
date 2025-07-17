@@ -88,6 +88,7 @@ export class ProductDiscountService {
     return {
       statusCode: HttpStatus.CREATED,
       data: productDiscount,
+      message: 'Product Discount created successfully',
     };
   }
 
@@ -100,6 +101,7 @@ export class ProductDiscountService {
     return {
       statusCode: HttpStatus.CREATED,
       data: productDiscounts,
+      message: 'The Product Discounts were created',
     };
   }
 

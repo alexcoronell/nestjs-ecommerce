@@ -8,9 +8,9 @@ export class ProductDiscountController {
     private readonly productDiscountService: ProductDiscountService,
   ) {}
 
-  @Post()
-  create(@Body() createProductDiscountDto: CreateProductDiscountDto) {
-    return this.productDiscountService.create(createProductDiscountDto);
+  @Get('count')
+  countAll() {
+    return this.productDiscountService.countAll();
   }
 
   @Get()
@@ -18,13 +18,37 @@ export class ProductDiscountController {
     return this.productDiscountService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productDiscountService.findOne(+id);
+  @Get('product/:id')
+  findAllByProduct(@Param('id') id: number) {
+    return this.productDiscountService.findAllByProduct(+id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productDiscountService.remove(+id);
+  @Get('discount/:id')
+  findAllByDiscount(@Param('id') id: number) {
+    return this.productDiscountService.findAllByDiscount(+id);
+  }
+
+  @Get('one')
+  findOne(
+    @Body() criteria: Partial<{ productId: number; discountId: number }>,
+  ) {
+    return this.productDiscountService.findOne(criteria);
+  }
+
+  @Post()
+  create(@Body() createProductDiscountDto: CreateProductDiscountDto) {
+    return this.productDiscountService.create(createProductDiscountDto);
+  }
+
+  @Post('many')
+  createMany(
+    @Body() dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
+  ) {
+    return this.productDiscountService.createMany(dtos);
+  }
+
+  @Delete()
+  delete(@Body() criteria: Partial<{ productId: number; discountId: number }>) {
+    return this.productDiscountService.delete(criteria);
   }
 }

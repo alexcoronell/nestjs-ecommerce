@@ -29,21 +29,24 @@ export class ProductTagService {
   }
 
   async findAll(): Promise<Result<ProductTag[]>> {
-    const [productImages, total] = await this.repo.findAndCount();
-
+    const [productTags, total] = await this.repo.findAndCount();
     return {
       statusCode: HttpStatus.OK,
-      data: productImages,
+      data: productTags,
       total,
     };
   }
 
-  async findOne(id: ProductTag['id']): Promise<Result<ProductTag>> {
+  async findOne(
+    criteria: Partial<Pick<ProductTag, 'productId' | 'tagId'>>,
+  ): Promise<Result<ProductTag>> {
     const productTag = await this.repo.findOne({
-      where: { id },
+      where: criteria,
     });
     if (!productTag) {
-      throw new NotFoundException(`The Product Tag with id: ${id} not found`);
+      throw new NotFoundException(
+        `The Product Tag with criteria: ${JSON.stringify(criteria)} not found`,
+      );
     }
     return {
       statusCode: HttpStatus.OK,
@@ -76,8 +79,20 @@ export class ProductTagService {
   }
 
   async create(
-    dtos: CreateProductTagDto | CreateProductTagDto[],
+    createProductTagDto: CreateProductTagDto,
   ): Promise<Result<ProductTag>> {
+    const productTag = this.repo.create(createProductTagDto);
+    await this.repo.save(productTag);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: productTag,
+      message: 'Product Tag created successfully',
+    };
+  }
+
+  async createMany(
+    dtos: CreateProductTagDto | CreateProductTagDto[],
+  ): Promise<Result<ProductTag[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];
     const newProductTags = this.repo.create(dtosArray);
     const productTags = await this.repo.save(newProductTags);
@@ -88,15 +103,18 @@ export class ProductTagService {
     };
   }
 
-  async remove(id: ProductTag['id']) {
-    const { data } = await this.findOne(id);
-    if (!data) {
-      throw new NotFoundException(`The Product Tag with id: ${id} not found`);
+  async delete(
+    criteria: Partial<Pick<ProductTag, 'productId' | 'tagId'>>,
+  ): Promise<Result<void>> {
+    const result = await this.repo.delete(criteria);
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `The Product Tag with criteria: ${JSON.stringify(criteria)} not found`,
+      );
     }
-    await this.repo.delete(id);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Product Tag with id: ${id} has been deleted`,
+      message: `The Product Tag with criteria: ${JSON.stringify(criteria)} deleted successfully`,
     };
   }
 }

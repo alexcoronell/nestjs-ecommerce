@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 
 /* Services */
 import { ProductTagService } from './product-tag.service';
@@ -18,7 +10,7 @@ import { CreateProductTagDto } from './dto/create-product-tag.dto';
 export class ProductTagController {
   constructor(private readonly productTagService: ProductTagService) {}
 
-  @Get('count-all')
+  @Get('count')
   countAll() {
     return this.productTagService.countAll();
   }
@@ -28,28 +20,33 @@ export class ProductTagController {
     return this.productTagService.findAll();
   }
 
-  @Get('by-product/:id')
-  findAllByProduct(@Param('id', ParseIntPipe) id: number) {
+  @Get('product/:id')
+  findAllByProduct(@Param('id') id: number) {
     return this.productTagService.findAllByProduct(+id);
   }
 
-  @Get('by-tag/:id')
-  findAllByTag(@Param('id', ParseIntPipe) id: number) {
+  @Get('tag/:id')
+  findAllByTag(@Param('id') id: number) {
     return this.productTagService.findAllByTag(+id);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productTagService.findOne(+id);
+  @Get('one')
+  findOne(@Body() criteria: Partial<{ productId: number; tagId: number }>) {
+    return this.productTagService.findOne(criteria);
   }
 
   @Post()
-  create(@Body() payload: CreateProductTagDto) {
-    return this.productTagService.create(payload);
+  create(@Body() createProductTagDto: CreateProductTagDto) {
+    return this.productTagService.create(createProductTagDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productTagService.remove(+id);
+  @Post('many')
+  createMany(@Body() dtos: CreateProductTagDto | CreateProductTagDto[]) {
+    return this.productTagService.createMany(dtos);
+  }
+
+  @Delete()
+  delete(@Body() criteria: Partial<{ productId: number; tagId: number }>) {
+    return this.productTagService.delete(criteria);
   }
 }

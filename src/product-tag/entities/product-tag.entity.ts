@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
@@ -11,8 +11,11 @@ import { User } from '@user/entities/user.entity';
 
 @Entity('products_tags')
 export class ProductTag {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({ name: 'product_id' })
+  productId: number;
+
+  @PrimaryColumn({ name: 'tag_id' })
+  tagId: number;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -21,15 +24,19 @@ export class ProductTag {
   })
   createdAt: Date;
 
-  @ManyToOne(() => Product, (product) => product.tags)
-  @JoinColumn({ name: 'product_id', referencedColumnName: 'id' })
-  products: number;
-
-  @ManyToOne(() => Tag, (Tag) => Tag.products)
-  @JoinColumn({ name: 'tag_id' })
-  tags: number;
-
   @ManyToOne(() => User, (user) => user.createdProductsTags)
   @JoinColumn({ name: 'created_by_user_id' })
   createdBy: number;
+
+  @ManyToOne(() => Product, (product) => product.tags, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'product_id' })
+  products: number;
+
+  @ManyToOne(() => Tag, (tag) => tag.products, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'tag_id' })
+  tags: number;
 }

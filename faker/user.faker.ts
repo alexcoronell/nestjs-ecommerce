@@ -95,4 +95,5 @@ const generateUserRelations = () => ({
   createdUsers: [],
   updatedUsers: [],
   deletedUsers: [],
+  wishlists: [],
 });

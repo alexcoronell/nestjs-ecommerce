@@ -16,6 +16,7 @@ import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { Tag } from '@tag/entities/tag.entity';
+import { Wishlist } from '@wishlist/entities/wishlist.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -184,4 +185,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Tag, (items) => items.deletedBy)
   deletedTags: Tag[];
+
+  @OneToMany(() => Wishlist, (items) => items.user)
+  wishlists: Wishlist[];
 }

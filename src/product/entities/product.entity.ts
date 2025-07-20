@@ -9,6 +9,7 @@ import { ProductSupplier } from '@product_supplier/entities/product-supplier.ent
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { User } from '@user/entities/user.entity';
+import { Wishlist } from '@wishlist/entities/wishlist.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -59,4 +60,7 @@ export class Product extends BaseEntity {
 
   @OneToMany(() => ProductTag, (items) => items.products)
   tags: ProductTag[];
+
+  @OneToMany(() => Wishlist, (items) => items.product)
+  wishlists: Wishlist[];
 }

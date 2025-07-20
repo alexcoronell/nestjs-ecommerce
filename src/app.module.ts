@@ -21,6 +21,7 @@ import { DiscountModule } from './discount/discount.module';
 import { ProductTagModule } from './product-tag/product-tag.module';
 import { ProductSupplierModule } from './product-supplier/product-supplier.module';
 import { ProductDiscountModule } from './product-discount/product-discount.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 /* Config */
 import config from './config';
@@ -49,6 +50,7 @@ import config from './config';
     ProductTagModule,
     ProductSupplierModule,
     ProductDiscountModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

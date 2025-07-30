@@ -13,6 +13,7 @@ import { WishlistService } from './wishlist.service';
 
 /* DTO's */
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
+import { Wishlist } from './entities/wishlist.entity';
 
 @Controller('wishlist')
 export class WishlistController {
@@ -42,7 +43,7 @@ export class WishlistController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: Wishlist['id']) {
     return this.wishlistService.findOne(+id);
   }
 
@@ -52,7 +53,7 @@ export class WishlistController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: Wishlist['id']) {
     return this.wishlistService.remove(+id);
   }
 }

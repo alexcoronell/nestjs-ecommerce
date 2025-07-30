@@ -1,24 +1,54 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
+
+/* Services */
 import { WishlistService } from './wishlist.service';
+
+/* DTO's */
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 
 @Controller('wishlist')
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
-  @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistService.create(createWishlistDto);
-  }
-
   @Get()
   findAll() {
     return this.wishlistService.findAll();
   }
 
+  @Get('user/:userId/product/:productId')
+  findOneByUserAndProduct(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('productId', ParseIntPipe) productId: number,
+  ) {
+    return this.wishlistService.findOneByUserAndProduct(userId, productId);
+  }
+
+  @Get('user/:userId')
+  findAllByUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.wishlistService.findAllByUser(userId);
+  }
+
+  @Get('product/:productId')
+  findAllByProduct(@Param('productId', ParseIntPipe) productId: number) {
+    return this.wishlistService.findAllByProduct(productId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.wishlistService.findOne(+id);
+  }
+
+  @Post()
+  create(@Body() createWishlistDto: CreateWishlistDto) {
+    return this.wishlistService.create(createWishlistDto);
   }
 
   @Delete(':id')

@@ -18,11 +18,11 @@ export class Wishlist {
 
   @ManyToOne(() => User, (user) => user.wishlists, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: number;
 
   @ManyToOne(() => Product, (product) => product.wishlists, { nullable: false })
   @JoinColumn({ name: 'product_id' })
-  product: Product;
+  product: number;
 
   @Column({
     name: 'added_date',

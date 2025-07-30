@@ -4,18 +4,12 @@ import { Repository } from 'typeorm';
 
 import { Wishlist } from './entities/wishlist.entity';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
-import { User } from '../user/entities/user.entity';
-import { Product } from '../product/entities/product.entity';
 
 @Injectable()
 export class WishlistService {
   constructor(
     @InjectRepository(Wishlist)
     private readonly repo: Repository<Wishlist>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(Product)
-    private readonly productRepo: Repository<Product>,
   ) {}
 
   async findAll() {
@@ -45,24 +39,11 @@ export class WishlistService {
   }
 
   async create(dto: CreateWishlistDto) {
-    const user = await this.userRepo.findOne({ where: { id: dto.user } });
-    if (!user)
-      throw new NotFoundException(`User with id: ${dto.user} not found`);
-
-    const product = await this.productRepo.findOne({
-      where: { id: dto.product },
-    });
-    if (!product)
-      throw new NotFoundException(`Product with id: ${dto.product} not found`);
-
-    const wishlist = this.repo.create({
-      user,
-      product,
-    });
-    const saved = await this.repo.save(wishlist);
+    const newItem = this.repo.create(dto);
+    const data = await this.repo.save(newItem);
     return {
       statusCode: HttpStatus.CREATED,
-      data: saved,
+      data,
       message: 'Wishlist item created',
     };
   }

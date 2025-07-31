@@ -60,17 +60,17 @@ export class Sale {
 
   @ManyToOne(() => User, (user) => user.sales)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: number;
 
   @ManyToOne(() => User, (user) => user.cancelledSales)
   @JoinColumn({ name: 'cancelled_by_user_id' })
-  cancelledBy: User;
+  cancelledBy: number | null;
 
   @ManyToOne(() => PaymentMethod, (paymentMethod) => paymentMethod.sales)
   @JoinColumn({ name: 'payment_method_id' })
-  paymentMethod: PaymentMethod;
+  paymentMethod: number;
 
   @ManyToOne(() => ShippingCompany, (shippingCompany) => shippingCompany.sales)
   @JoinColumn({ name: 'shipping_company_id' })
-  shippingCompany: ShippingCompany;
+  shippingCompany: number;
 }

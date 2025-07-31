@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { SaleDetailService } from './sale-detail.service';
 import { CreateSaleDetailDto } from './dto/create-sale-detail.dto';
-import { UpdateSaleDetailDto } from './dto/update-sale-detail.dto';
 
 @Controller('sale-detail')
 export class SaleDetailController {
   constructor(private readonly saleDetailService: SaleDetailService) {}
 
   @Post()
-  create(@Body() createSaleDetailDto: CreateSaleDetailDto) {
-    return this.saleDetailService.create(createSaleDetailDto);
+  create(@Body() dtos: CreateSaleDetailDto[]) {
+    return this.saleDetailService.create(dtos);
   }
 
   @Get()
@@ -20,15 +19,5 @@ export class SaleDetailController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.saleDetailService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSaleDetailDto: UpdateSaleDetailDto) {
-    return this.saleDetailService.update(+id, updateSaleDetailDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.saleDetailService.remove(+id);
   }
 }

@@ -1,26 +1,72 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/await-thenable */
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+/* Entities */
+import { SaleDetail } from './entities/sale-detail.entity';
+
+/* DTO's */
 import { CreateSaleDetailDto } from './dto/create-sale-detail.dto';
-import { UpdateSaleDetailDto } from './dto/update-sale-detail.dto';
+
+/* Types */
+import { Result } from '@commons/types/result.type';
 
 @Injectable()
 export class SaleDetailService {
-  create(createSaleDetailDto: CreateSaleDetailDto) {
-    return 'This action adds a new saleDetail';
+  constructor(
+    @InjectRepository(SaleDetail)
+    private readonly repo: Repository<SaleDetail>,
+  ) {}
+
+  async count() {
+    const total = await this.repo.count();
+    return { statusCode: HttpStatus.OK, total };
   }
 
-  findAll() {
-    return `This action returns all saleDetail`;
+  async findAll(): Promise<Result<SaleDetail[]>> {
+    const [saleDetails, total] = await this.repo.findAndCount({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data: saleDetails,
+      total,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} saleDetail`;
+  async findOne(id: number) {
+    const saleDetail = await this.repo.findOne({
+      where: { id },
+    });
+    if (!saleDetail) {
+      throw new NotFoundException(`SaleDetail with ID ${id} not found`);
+    }
+    return saleDetail;
   }
 
-  update(id: number, updateSaleDetailDto: UpdateSaleDetailDto) {
-    return `This action updates a #${id} saleDetail`;
+  async findBySaleId(saleId: number): Promise<Result<SaleDetail[]>> {
+    const [saleDetails, total] = await this.repo.findAndCount({
+      where: { sale: saleId },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data: saleDetails,
+      total,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} saleDetail`;
+  async create(dtos: CreateSaleDetailDto[]): Promise<Result<SaleDetail[]>> {
+    const saleDetails = await this.repo.create(dtos);
+    await this.repo.save(saleDetails);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: saleDetails,
+    };
   }
 }

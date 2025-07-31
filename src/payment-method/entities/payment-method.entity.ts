@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { User } from '@user/entities/user.entity';
+import { Sale } from '@sale/entities/sale.entity';
 
 @Entity('payment_methods')
 export class PaymentMethod extends BaseEntity {
@@ -20,4 +21,7 @@ export class PaymentMethod extends BaseEntity {
   @ManyToOne(() => User, (user) => user.deletedPaymentMethods)
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy: number | null;
+
+  @OneToMany(() => Sale, (sales) => sales.paymentMethod)
+  sales: Sale[];
 }

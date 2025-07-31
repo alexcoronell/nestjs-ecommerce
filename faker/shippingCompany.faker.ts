@@ -19,6 +19,7 @@ export const createShippingCompany = (): CreateShippingCompanyDto => ({
 export const generateShippingCompany = (id: number = 1): ShippingCompany => ({
   ...generateBaseEntity(id),
   ...createShippingCompany(),
+  ...generateRelations(),
 });
 
 export const generateManyShippingCompanies = (
@@ -30,3 +31,7 @@ export const generateManyShippingCompanies = (
   }
   return shippingCompanies;
 };
+
+const generateRelations = () => ({
+  sales: [],
+});

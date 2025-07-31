@@ -16,6 +16,7 @@ export const createPaymentMethod = (): CreatePaymentMethodDto => ({
 export const generatePaymentMethod = (id: number = 1): PaymentMethod => ({
   ...generateBaseEntity(id),
   ...createPaymentMethod(),
+  ...generateRelations(),
   id,
 });
 
@@ -26,3 +27,7 @@ export const generateManyPaymentMethods = (size: number): PaymentMethod[] => {
   }
   return paymentMethods;
 };
+
+const generateRelations = () => ({
+  sales: [],
+});

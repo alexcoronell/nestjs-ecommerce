@@ -31,6 +31,7 @@
       "@product_images/*": ["src/product-images/*"],
       "@product_supplier/*": ["src/product-supplier/*"],
       "@product_tag/*": ["src/product-tag/*"],
+      "@sale/*": ["src/sale/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
       "@subcategory/*": ["src/subcategory/*"],
       "@store_detail/*": ["src/store-detail/*"],

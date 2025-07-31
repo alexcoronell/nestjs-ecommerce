@@ -7,6 +7,7 @@ import { ProductDiscount } from '@product_discount/entities/product-discount.ent
 import { ProductImage } from '@product_images/entities/product-image.entity';
 import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
+import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { User } from '@user/entities/user.entity';
 import { Wishlist } from '@wishlist/entities/wishlist.entity';
@@ -60,6 +61,9 @@ export class Product extends BaseEntity {
 
   @OneToMany(() => ProductTag, (items) => items.products)
   tags: ProductTag[];
+
+  @OneToMany(() => SaleDetail, (items) => items.product)
+  saleDetails: SaleDetail[];
 
   @OneToMany(() => Wishlist, (items) => items.product)
   wishlists: Wishlist[];

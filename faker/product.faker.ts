@@ -28,6 +28,7 @@ export const generateProduct = (id: number = 1): Product => ({
   tags: [],
   productDiscounts: [],
   wishlists: [],
+  saleDetails: [],
 });
 
 export const generateManyProducts = (size: number): Product[] => {

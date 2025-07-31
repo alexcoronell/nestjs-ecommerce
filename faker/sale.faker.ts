@@ -15,6 +15,7 @@ export const createSale = (): CreateSaleDto => ({
 
 export const generateSale = (id: number = 1): Sale => ({
   ...createSale(),
+  ...generateRelations(),
   id,
   saleDate: faker.date.recent(),
   cancelledAt: null,
@@ -29,3 +30,7 @@ export const generateManySales = (size: number): Sale[] => {
   }
   return sales;
 };
+
+const generateRelations = () => ({
+  details: [],
+});

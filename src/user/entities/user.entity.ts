@@ -12,6 +12,7 @@ import { ProductImage } from '@product_images/entities/product-image.entity';
 import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Sale } from '@sale/entities/sale.entity';
+import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
@@ -140,11 +141,16 @@ export class User extends BaseEntity {
   @OneToMany(() => ProductTag, (items) => items.createdBy)
   createdProductsTags: ProductTag[];
 
+  /* Sales */
   @OneToMany(() => Sale, (sale) => sale.user)
   sales: Sale[];
 
   @OneToMany(() => Sale, (sale) => sale.cancelledBy)
   cancelledSales: Sale[];
+
+  /* Sale Details */
+  @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.user)
+  createdSaleDetails: SaleDetail[];
 
   /* Shipping Companies */
   @OneToMany(() => ShippingCompany, (items) => items.createdBy)

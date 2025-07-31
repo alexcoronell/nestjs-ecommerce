@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { faker } from '@faker-js/faker/.';
 
 import { generateBaseEntity } from '@faker/base.faker';
@@ -80,6 +76,7 @@ const generateUserRelations = () => ({
   createdProductsTags: [],
   sales: [],
   cancelledSales: [],
+  createdSaleDetails: [],
   createdShippingCompanies: [],
   updatedShippingCompanies: [],
   deletedShippingCompanies: [],

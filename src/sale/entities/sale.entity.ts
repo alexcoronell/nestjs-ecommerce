@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { User } from '@user/entities/user.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
+import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 
 @Entity('sales')
 export class Sale {
@@ -80,4 +82,7 @@ export class Sale {
   @ManyToOne(() => ShippingCompany, (shippingCompany) => shippingCompany.sales)
   @JoinColumn({ name: 'shipping_company_id' })
   shippingCompany: number;
+
+  @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.sale)
+  details: SaleDetail[];
 }

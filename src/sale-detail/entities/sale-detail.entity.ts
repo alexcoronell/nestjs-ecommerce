@@ -64,13 +64,4 @@ export class SaleDetail {
   @ManyToOne(() => User, (user) => user.createdSaleDetails, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   user: number;
-
-  @Column({
-    name: 'price',
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-    nullable: false,
-  })
-  price: number;
 }

@@ -6,9 +6,14 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
-  @Post()
-  create(@Body() createSaleDto: CreateSaleDto) {
-    return this.saleService.create(createSaleDto);
+  @Get('count-all')
+  countAll() {
+    return this.saleService.countAll();
+  }
+
+  @Get('count')
+  count() {
+    return this.saleService.count();
   }
 
   @Get()
@@ -16,13 +21,28 @@ export class SaleController {
     return this.saleService.findAll();
   }
 
+  @Get('user/:userId')
+  findAllByUser(@Param('userId') userId: number) {
+    return this.saleService.findAllByUserId(userId);
+  }
+
+  @Get('payment-method/:paymentMethod')
+  findAllByPaymentMethod(@Param('paymentMethodId') paymentMethodId: number) {
+    return this.saleService.findAllByPaymentMethodId(paymentMethodId);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.saleService.findOne(+id);
   }
 
+  @Post()
+  create(@Body() dto: CreateSaleDto) {
+    return this.saleService.create(dto);
+  }
+
   @Delete(':id')
-  cancel(@Param('id') id: string) {
+  cancel(@Param('id') id: number) {
     return this.saleService.cancel(+id);
   }
 }

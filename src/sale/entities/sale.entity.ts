@@ -58,6 +58,13 @@ export class Sale {
   })
   cancelledAt: Date | null;
 
+  @Column({
+    name: 'is_cancelled',
+    type: 'boolean',
+    default: false,
+  })
+  isCancelled: boolean;
+
   @ManyToOne(() => User, (user) => user.sales)
   @JoinColumn({ name: 'user_id' })
   user: number;

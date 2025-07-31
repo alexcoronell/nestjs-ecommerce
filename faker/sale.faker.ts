@@ -19,6 +19,7 @@ export const generateSale = (id: number = 1): Sale => ({
   saleDate: faker.date.recent(),
   cancelledAt: null,
   cancelledBy: null,
+  isCancelled: false,
 });
 
 export const generateManySales = (size: number): Sale[] => {

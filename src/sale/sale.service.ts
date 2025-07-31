@@ -1,26 +1,117 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+/* Entities */
+import { Sale } from './entities/sale.entity';
+
+/* DTOS's */
 import { CreateSaleDto } from './dto/create-sale.dto';
-import { UpdateSaleDto } from './dto/update-sale.dto';
+
+/* Types */
+import { Result } from '@commons/types/result.type';
 
 @Injectable()
 export class SaleService {
-  create(createSaleDto: CreateSaleDto) {
-    return 'This action adds a new sale';
+  constructor(
+    @InjectRepository(Sale)
+    private readonly repo: Repository<Sale>,
+  ) {}
+
+  async countAll() {
+    const total = await this.repo.count();
+    return { statusCode: HttpStatus.OK, total };
   }
 
-  findAll() {
-    return `This action returns all sale`;
+  async coount() {
+    const total = await this.repo.count({
+      where: {
+        isCancelled: false,
+      },
+    });
+    return { statusCode: HttpStatus.OK, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sale`;
+  async findAll(): Promise<Result<Sale[]>> {
+    const [sales, total] = await this.repo.findAndCount({
+      where: {
+        isCancelled: false,
+      },
+      order: {
+        saleDate: 'DESC',
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data: sales,
+      total,
+    };
   }
 
-  update(id: number, updateSaleDto: UpdateSaleDto) {
-    return `This action updates a #${id} sale`;
+  async findAllByUserId(userId: number): Promise<Result<Sale[]>> {
+    const [sales, total] = await this.repo.findAndCount({
+      where: {
+        user: userId,
+        isCancelled: false,
+      },
+      order: {
+        saleDate: 'DESC',
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data: sales,
+      total,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sale`;
+  async findAllByPaymentMethodId(
+    paymentMethodId: number,
+  ): Promise<Result<Sale[]>> {
+    const [sales, total] = await this.repo.findAndCount({
+      where: {
+        paymentMethod: paymentMethodId,
+        isCancelled: false,
+      },
+      order: {
+        saleDate: 'DESC',
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: sales,
+      total,
+    };
+  }
+
+  async findOne(id: Sale['id']): Promise<Result<Sale>> {
+    const sale = await this.repo.findOne({
+      where: { id, isCancelled: false },
+      relations: ['user', 'paymentMethod', 'shippingCompany'],
+    });
+
+    if (!sale) {
+      throw new NotFoundException(`Sale with ID ${id} not found`);
+    }
+
+    return { statusCode: HttpStatus.OK, data: sale };
+  }
+
+  async create(createSaleDto: CreateSaleDto): Promise<Result<Sale>> {
+    const sale = this.repo.create(createSaleDto);
+    const savedSale = await this.repo.save(sale);
+    return { statusCode: HttpStatus.CREATED, data: savedSale };
+  }
+
+  async cancel(id: number) {
+    const { data } = await this.findOne(id);
+    const changes = { id, isCancelled: true };
+    this.repo.merge(data as Sale, changes);
+    return this.repo.save(data as Sale).then((sale) => ({
+      statusCode: HttpStatus.OK,
+      data: sale,
+      message: `The Sale with id: ${id} cancelled successfully`,
+    }));
   }
 }

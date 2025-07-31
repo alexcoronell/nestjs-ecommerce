@@ -23,7 +23,7 @@ export class SaleService {
     return { statusCode: HttpStatus.OK, total };
   }
 
-  async coount() {
+  async count() {
     const total = await this.repo.count({
       where: {
         isCancelled: false,

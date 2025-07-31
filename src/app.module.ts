@@ -23,6 +23,7 @@ import { ProductSupplierModule } from './product-supplier/product-supplier.modul
 import { ProductDiscountModule } from './product-discount/product-discount.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { SaleModule } from './sale/sale.module';
+import { SaleDetailModule } from './sale-detail/sale-detail.module';
 
 /* Config */
 import config from './config';
@@ -53,6 +54,7 @@ import config from './config';
     ProductDiscountModule,
     WishlistModule,
     SaleModule,
+    SaleDetailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

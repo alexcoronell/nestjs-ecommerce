@@ -37,14 +37,17 @@ export class SaleDetailService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Result<SaleDetail>> {
     const saleDetail = await this.repo.findOne({
       where: { id },
     });
     if (!saleDetail) {
-      throw new NotFoundException(`SaleDetail with ID ${id} not found`);
+      throw new NotFoundException(`The Sale Detail with ID ${id} not found`);
     }
-    return saleDetail;
+    return {
+      statusCode: HttpStatus.OK,
+      data: saleDetail,
+    };
   }
 
   async findBySaleId(saleId: number): Promise<Result<SaleDetail[]>> {

@@ -49,7 +49,7 @@ export class PurchaseController
   }
 
   @Get('supplier/:id')
-  findOneByUserId(@Param('id', ParseIntPipe) id: number) {
+  findOneBySupplierId(@Param('id', ParseIntPipe) id: number) {
     return this.purchaseService.findBySupplierId(id);
   }
 

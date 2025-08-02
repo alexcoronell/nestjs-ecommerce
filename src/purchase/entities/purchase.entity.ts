@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { User } from '@user/entities/user.entity';
 import {
@@ -64,9 +63,9 @@ export class Purchase {
   @JoinColumn({ name: 'updated_by_user_id' })
   updatedBy: number;
 
-  @ManyToOne(() => User, (user) => user.deletedPurchases, { nullable: false })
+  @ManyToOne(() => User, (user) => user.deletedPurchases, { nullable: true })
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number;
+  deletedBy: number | null;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.purchases, {
     nullable: false,

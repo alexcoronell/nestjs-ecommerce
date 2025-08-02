@@ -61,7 +61,7 @@ export class PurchaseService
     });
 
     if (!purchase) {
-      throw new NotFoundException(`Purchase with ID ${id} not found`);
+      throw new NotFoundException(`The Purchase with ID ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,

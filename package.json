@@ -104,6 +104,7 @@
       "@product_discount/(.*)": "<rootDir>/src/product-discount/$1",
       "@product_supplier/(.*)": "<rootDir>/src/product-supplier/$1",
       "@product_tag/(.*)": "<rootDir>/src/product-tag/$1",
+      "@purchase/(.*)": "<rootDir>/src/purchase/$1",
       "@sale/(.*)": "<rootDir>/src/sale/$1",
       "@sale_detail/(.*)": "<rootDir>/src/sale-detail/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",

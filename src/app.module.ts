@@ -24,6 +24,7 @@ import { ProductDiscountModule } from './product-discount/product-discount.modul
 import { WishlistModule } from './wishlist/wishlist.module';
 import { SaleModule } from './sale/sale.module';
 import { SaleDetailModule } from './sale-detail/sale-detail.module';
+import { PurchaseModule } from './purchase/purchase.module';
 
 /* Config */
 import config from './config';
@@ -55,6 +56,7 @@ import config from './config';
     WishlistModule,
     SaleModule,
     SaleDetailModule,
+    PurchaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

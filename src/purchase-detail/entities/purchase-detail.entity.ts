@@ -71,5 +71,5 @@ export class PurchaseDetail extends BaseEntity {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number;
+  deletedBy: number | null;
 }

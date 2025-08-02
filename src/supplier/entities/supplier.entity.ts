@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
+import { Purchase } from '@purchase/entities/purchase.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('suppliers')
@@ -38,4 +40,7 @@ export class Supplier extends BaseEntity {
 
   @OneToMany(() => ProductSupplier, (items) => items.supplier)
   productSuppliers: ProductSupplier[];
+
+  @OneToMany(() => Purchase, (items) => items.supplier)
+  purchases: Purchase[];
 }

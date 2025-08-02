@@ -20,6 +20,7 @@ export const generateSupplier = (id: number = 1): Supplier => ({
   ...generateBaseEntity(id),
   ...createSupplier(),
   productSuppliers: [],
+  purchases: [],
 });
 
 export const generateManySuppliers = (size: number): Supplier[] => {

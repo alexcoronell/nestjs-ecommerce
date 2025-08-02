@@ -1,14 +1,17 @@
-import { Supplier } from '@supplier/entities/supplier.entity';
-import { User } from '@user/entities/user.entity';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PurchaseDetail } from '@purchase_detail/entities/purchase-detail.entity';
+import { Supplier } from '@supplier/entities/supplier.entity';
+import { User } from '@user/entities/user.entity';
 
 @Entity('purchases')
 export class Purchase {
@@ -72,4 +75,7 @@ export class Purchase {
   })
   @JoinColumn({ name: 'supplier_id' })
   supplier: number;
+
+  @OneToMany(() => PurchaseDetail, (detail) => detail.purchase)
+  purchaseDetails: PurchaseDetail[];
 }

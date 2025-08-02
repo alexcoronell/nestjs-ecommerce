@@ -105,6 +105,7 @@
       "@product_supplier/(.*)": "<rootDir>/src/product-supplier/$1",
       "@product_tag/(.*)": "<rootDir>/src/product-tag/$1",
       "@purchase/(.*)": "<rootDir>/src/purchase/$1",
+      "@purchase_detail/(.*)": "<rootDir>/src/purchase-detail/$1",
       "@sale/(.*)": "<rootDir>/src/sale/$1",
       "@sale_detail/(.*)": "<rootDir>/src/sale-detail/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",

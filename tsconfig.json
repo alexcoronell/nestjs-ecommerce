@@ -32,6 +32,7 @@
       "@product_supplier/*": ["src/product-supplier/*"],
       "@product_tag/*": ["src/product-tag/*"],
       "@purchase/*": ["src/purchase/*"],
+      "@purchase_detail/*": ["src/purchase-detail/*"],
       "@sale/*": ["src/sale/*"],
       "@sale_detail/*": ["src/sale-detail/*"],
       "@shipping_company/*": ["src/shipping-company/*"],

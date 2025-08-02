@@ -23,6 +23,7 @@ export const generatePurchase = (id: number = 1): Purchase => ({
   deletedAt: null,
   isDeleted: false,
   deletedBy: null,
+  purchaseDetails: [],
 });
 
 export const generateManyPurchases = (size: number): Purchase[] => {

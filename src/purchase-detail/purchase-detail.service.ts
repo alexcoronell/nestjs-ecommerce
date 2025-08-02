@@ -63,12 +63,14 @@ export class PurchaseDetailService
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: PurchaseDetail['id']) {
     const purchaseDetail = await this.repo.findOne({
       where: { id, isDeleted: false },
     });
     if (!purchaseDetail) {
-      throw new NotFoundException(`PurchaseDetail with id ${id} not found`);
+      throw new NotFoundException(
+        `The Purchase Detail with ID ${id} not found`,
+      );
     }
     return {
       statusCode: HttpStatus.OK,
@@ -116,7 +118,7 @@ export class PurchaseDetailService
     await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,
-      message: `The PurchaseDetail with id: ${id} has been deleted`,
+      message: `The Purchase Detail with ID: ${id} has been deleted`,
     };
   }
 }

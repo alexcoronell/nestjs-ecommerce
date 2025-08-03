@@ -54,7 +54,7 @@ export class PurchaseDetailController
   }
 
   @Get('purchase/:id')
-  findOneByPurchaseId(@Param('id', ParseIntPipe) id: number) {
+  findByPurchaseId(@Param('id', ParseIntPipe) id: number) {
     return this.purchaseDetailService.findByPurchaseId(+id);
   }
 

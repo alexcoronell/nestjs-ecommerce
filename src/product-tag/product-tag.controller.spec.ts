@@ -35,7 +35,7 @@ describe('ProductTagController', () => {
     findAllByTag: jest.fn().mockResolvedValue(mockProductTags),
     findOne: jest.fn().mockResolvedValue(mockProductTag),
     create: jest.fn().mockResolvedValue(mockNewProductTag),
-    remove: jest.fn().mockResolvedValue(1),
+    delete: jest.fn().mockResolvedValue(1),
   };
 
   beforeEach(async () => {
@@ -81,7 +81,9 @@ describe('ProductTagController', () => {
     });
 
     it('should call findOne product service', async () => {
-      expect(await controller.findOne(1)).toBe(mockProductTag);
+      expect(await controller.findOne({ productId: 1, tagId: 1 })).toBe(
+        mockProductTag,
+      );
       expect(service.findOne).toHaveBeenCalledTimes(1);
     });
   });
@@ -95,8 +97,8 @@ describe('ProductTagController', () => {
 
   describe('remove product tag controller', () => {
     it('should call remove product tag service', async () => {
-      await controller.remove(1);
-      expect(service.remove).toHaveBeenCalledTimes(1);
+      await controller.delete({ productId: 1, tagId: 1 });
+      expect(service.delete).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -75,37 +75,41 @@ describe('ProductTagService', () => {
 
     it('findOne should return a product tag', async () => {
       const mock = generateProductTag();
-      const id = mock.id;
+      const productTag = { productId: 1, tagId: 1 };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.findOne(id);
+      const { statusCode, data } = await service.findOne(productTag);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.findOne).toHaveBeenCalledWith({
-        where: { id },
+        where: productTag,
       });
       expect(statusCode).toBe(200);
       expect(data).toEqual(mock);
     });
 
     it('findOne should throw NotFoundException if  tags does not exist', async () => {
-      const id = 1;
+      const productTag = { productId: 1, tagId: 1 };
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.findOne(id);
+        await service.findOne(productTag);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Product Tag with id: ${id} not found`);
+        expect(error.message).toBe(
+          `The Product Tag with productId: ${productTag.productId} and tagId: ${productTag.tagId} not found`,
+        );
       }
     });
 
     it('findOne should throw NotFoundException if product tag does not exist with Rejects', async () => {
-      const id = 1;
+      const productTag = { productId: 99, tagId: 99 };
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Product Tag with id: ${id} not found`),
+      await expect(service.findOne(productTag)).rejects.toThrowError(
+        new NotFoundException(
+          `The Product Tag with productId: ${productTag.productId} and tagId: ${productTag.tagId} not found`,
+        ),
       );
     });
 
@@ -146,11 +150,11 @@ describe('ProductTagService', () => {
         .mockReturnValue([createdMock] as unknown as ProductTag);
       jest
         .spyOn(repository, 'save')
-        .mockResolvedValue([createdMock] as unknown as ProductTag);
+        .mockResolvedValue(createdMock as unknown as ProductTag);
 
       const result = await service.create(dto);
 
-      expect(repository.create).toHaveBeenCalledWith([dto]);
+      expect(repository.create).toHaveBeenCalledWith(dto);
       expect(repository.save).toHaveBeenCalledWith([createdMock]);
       expect(result.statusCode).toBe(201);
       expect(result.data).toEqual([createdMock]);
@@ -183,7 +187,7 @@ describe('ProductTagService', () => {
   describe('remove product tag service', () => {
     it('should remove a product tag successfully', async () => {
       const mock = generateProductTag();
-      const id = mock.id;
+      const productTag = { productId: 1, tagId: 1 };
 
       jest.spyOn(service, 'findOne').mockResolvedValue({
         statusCode: 200,
@@ -191,26 +195,30 @@ describe('ProductTagService', () => {
       } as any);
       jest.spyOn(repository, 'delete').mockResolvedValue({} as any);
 
-      const result = await service.remove(id);
+      const result = await service.delete(productTag);
 
-      expect(service.findOne).toHaveBeenCalledWith(id);
-      expect(repository.delete).toHaveBeenCalledWith(id);
+      expect(service.findOne).toHaveBeenCalledWith(productTag);
+      expect(repository.delete).toHaveBeenCalledWith(productTag);
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe(
-        `The Product Tag with id: ${id} has been deleted`,
+        `The Product Tag with productId: ${productTag.productId} and tagId: ${productTag.tagId} deleted`,
       );
     });
 
     it('should throw NotFoundException if product tag does not exist', async () => {
-      const id = 999;
+      const productTag = { productId: 99, tagId: 99 };
       jest.spyOn(service, 'findOne').mockImplementation(async () => {
-        throw new NotFoundException(`The Product Tag with id: ${id} not found`);
+        throw new NotFoundException(
+          `The Product Tag with productId: ${productTag.productId} and tagId: ${productTag.tagId} not found`,
+        );
       });
 
-      await expect(service.remove(id)).rejects.toThrowError(
-        new NotFoundException(`The Product Tag with id: ${id} not found`),
+      await expect(service.delete(productTag)).rejects.toThrowError(
+        new NotFoundException(
+          `The Product Tag with productId: ${productTag.productId} and tagId: ${productTag.tagId} not found`,
+        ),
       );
-      expect(service.findOne).toHaveBeenCalledWith(id);
+      expect(service.findOne).toHaveBeenCalledWith(productTag);
     });
   });
 });

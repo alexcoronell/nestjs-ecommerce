@@ -45,7 +45,7 @@ export class ProductTagService {
     });
     if (!productTag) {
       throw new NotFoundException(
-        `The Product Tag with criteria: ${JSON.stringify(criteria)} not found`,
+        `The Product Tag with productId: ${criteria.productId} and tagId: ${criteria.tagId} not found`,
       );
     }
     return {
@@ -86,7 +86,7 @@ export class ProductTagService {
     return {
       statusCode: HttpStatus.CREATED,
       data: productTag,
-      message: 'Product Tag created successfully',
+      message: 'The Product Tags were created',
     };
   }
 
@@ -106,15 +106,11 @@ export class ProductTagService {
   async delete(
     criteria: Partial<Pick<ProductTag, 'productId' | 'tagId'>>,
   ): Promise<Result<void>> {
-    const result = await this.repo.delete(criteria);
-    if (result.affected === 0) {
-      throw new NotFoundException(
-        `The Product Tag with criteria: ${JSON.stringify(criteria)} not found`,
-      );
-    }
+    await this.findOne(criteria);
+    await this.repo.delete(criteria);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Product Tag with criteria: ${JSON.stringify(criteria)} deleted successfully`,
+      message: `The Product Tag with productId: ${criteria.productId} and tagId: ${criteria.tagId} deleted`,
     };
   }
 }

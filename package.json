@@ -108,6 +108,7 @@
       "@purchase_detail/(.*)": "<rootDir>/src/purchase-detail/$1",
       "@sale/(.*)": "<rootDir>/src/sale/$1",
       "@sale_detail/(.*)": "<rootDir>/src/sale-detail/$1",
+      "@shipment/(.*)": "<rootDir>/src/shipment/$1",
       "@shipping_company/(.*)": "<rootDir>/src/shipping-company/$1",
       "@store_detail/(.*)": "<rootDir>/src/store-detail/$1",
       "@subcategory/(.*)": "<rootDir>/src/subcategory/$1",

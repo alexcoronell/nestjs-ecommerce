@@ -35,6 +35,7 @@
       "@purchase_detail/*": ["src/purchase-detail/*"],
       "@sale/*": ["src/sale/*"],
       "@sale_detail/*": ["src/sale-detail/*"],
+      "@shipment/*": ["src/shipment/*"],
       "@shipping_company/*": ["src/shipping-company/*"],
       "@subcategory/*": ["src/subcategory/*"],
       "@store_detail/*": ["src/store-detail/*"],

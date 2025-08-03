@@ -34,4 +34,5 @@ export const generateManyShippingCompanies = (
 
 const generateRelations = () => ({
   sales: [],
+  shipments: [],
 });

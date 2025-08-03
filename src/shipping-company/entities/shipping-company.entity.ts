@@ -3,6 +3,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Sale } from '@sale/entities/sale.entity';
+import { Shipment } from '@shipment/entities/shipment.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('shipping_companies')
@@ -39,4 +40,7 @@ export class ShippingCompany extends BaseEntity {
 
   @OneToMany(() => Sale, (sales) => sales.shippingCompany)
   sales: Sale[];
+
+  @OneToMany(() => Shipment, (shipment) => shipment.shippingCompany)
+  shipments: Shipment[];
 }

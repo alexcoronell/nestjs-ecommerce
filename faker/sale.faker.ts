@@ -33,4 +33,5 @@ export const generateManySales = (size: number): Sale[] => {
 
 const generateRelations = () => ({
   details: [],
+  shipments: [],
 });

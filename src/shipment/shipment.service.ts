@@ -77,7 +77,7 @@ export class ShipmentService
       where: { id, isDeleted: false },
     });
     if (!shipment) {
-      throw new NotFoundException(`The Shipment with id: ${id} not found`);
+      throw new NotFoundException(`The Shipment with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -103,14 +103,17 @@ export class ShipmentService
     };
   }
 
-  async findBySaleId(id: Sale['id']): Promise<Result<Shipment[]>> {
-    const shipments = await this.repo.find({
+  async findOneBySaleId(id: Sale['id']): Promise<Result<Shipment>> {
+    const shipment = await this.repo.findOne({
       relations: ['sale', 'shippingCompany', 'createdBy', 'updatedBy'],
       where: { sale: id, isDeleted: false },
     });
+    if (!shipment) {
+      throw new NotFoundException(`The Shipment with sale ID: ${id} not found`);
+    }
     return {
       statusCode: HttpStatus.OK,
-      data: shipments,
+      data: shipment,
     };
   }
 
@@ -143,7 +146,7 @@ export class ShipmentService
     await this.repo.save(data as Shipment);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Shipment with id: ${id} has been deleted`,
+      message: `The Shipment with ID: ${id} has been deleted`,
     };
   }
 }

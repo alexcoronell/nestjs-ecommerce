@@ -39,24 +39,24 @@ export class Shipment extends BaseEntity {
 
   @ManyToOne(() => Sale, (sale) => sale.shipments)
   @JoinColumn({ name: 'sale_id' })
-  sale: Sale;
+  sale: number;
 
   @ManyToOne(
     () => ShippingCompany,
     (shippingCompany) => shippingCompany.shipments,
   )
   @JoinColumn({ name: 'shipping_company_id' })
-  shippingCompany: ShippingCompany;
+  shippingCompany: number;
 
   @ManyToOne(() => User, (user) => user.createdShipments)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: User;
+  createdBy: number;
 
   @ManyToOne(() => User, (user) => user.updatedShipments)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: User;
+  updatedBy: number;
 
   @ManyToOne(() => User, (user) => user.deletedShipments)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: User;
+  deletedBy: number | null;
 }

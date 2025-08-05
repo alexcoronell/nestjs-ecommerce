@@ -59,7 +59,7 @@ export class ShipmentController
   }
 
   @Get('sale/:id')
-  findBySaleId(@Param('id', ParseIntPipe) id: number) {
+  findOneBySaleId(@Param('id', ParseIntPipe) id: number) {
     return this.shipmentService.findOneBySaleId(+id);
   }
 

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migrations1754088125624 implements MigrationInterface {
-  name = 'Migrations1754088125624';
+export class Migrations1754434948264 implements MigrationInterface {
+  name = 'Migrations1754434948264';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -20,6 +20,12 @@ export class Migrations1754088125624 implements MigrationInterface {
       `CREATE TABLE "product_images" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "file_path" character varying(256) NOT NULL, "title" character varying(256) NOT NULL, "is_main" boolean NOT NULL DEFAULT false, "product_id" integer, "uploaded_by_user_id" integer, CONSTRAINT "PK_1974264ea7265989af8392f63a1" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
+      `CREATE TABLE "purchase_details" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "quantity" integer NOT NULL DEFAULT '1', "unit_price" numeric(10,2) NOT NULL, "subtotal" numeric(10,2) NOT NULL, "purchase_id" integer NOT NULL, "product_id" integer NOT NULL, "created_by_user_id" integer NOT NULL, "updated_by_user_id" integer, "deleted_by_user_id" integer, CONSTRAINT "UQ_de27b4793e5a45ab80f2160ea06" UNIQUE ("purchase_id", "product_id"), CONSTRAINT "PK_d3ebfb1c6f9af260a2a63af7204" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "purchases" ("id" SERIAL NOT NULL, "purchase_date" TIMESTAMP NOT NULL DEFAULT now(), "total_amount" numeric(10,2) NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "created_by_user_id" integer NOT NULL, "updated_by_user_id" integer NOT NULL, "deleted_by_user_id" integer, "supplier_id" integer NOT NULL, CONSTRAINT "PK_1d55032f37a34c6eceacbbca6b8" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
       `CREATE TABLE "suppliers" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "name" character varying(255) NOT NULL, "contact_name" character varying(255) NOT NULL, "phone_number" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "created_by_user_id" integer, "updated_by_user_id" integer, "deleted_by_user_id" integer, CONSTRAINT "UQ_5b5720d9645cee7396595a16c93" UNIQUE ("name"), CONSTRAINT "UQ_973ef1681425ad1146fbbeafe1d" UNIQUE ("contact_name"), CONSTRAINT "UQ_66181e465a65c2ddcfa9c00c9c7" UNIQUE ("email"), CONSTRAINT "PK_b70ac51766a9e3144f778cfe81e" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
@@ -36,6 +42,12 @@ export class Migrations1754088125624 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE TABLE "shipping_companies" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "name" character varying(255) NOT NULL, "contact_name" character varying(255) NOT NULL, "phone_number" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "created_by_user_id" integer, "updated_by_user_id" integer, "deleted_by_user_id" integer, CONSTRAINT "UQ_1f03c466e47e3ead5f2cab2ac28" UNIQUE ("name"), CONSTRAINT "UQ_221d5888a11f2ef225b53f98481" UNIQUE ("contact_name"), CONSTRAINT "UQ_92ad65d9a6a57bf6e8af4d54bb8" UNIQUE ("email"), CONSTRAINT "PK_122b86979b5555bc48d807d7f13" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."shipments_status_enum" AS ENUM('Label Created', 'In Transit', 'Out for Delivery', 'Delivered', 'Attempted Delivery', 'Held at Facility', 'Lost', 'Returned to Sender')`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "shipments" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "is_deleted" boolean NOT NULL DEFAULT false, "tracking_number" character varying(100) NOT NULL, "shipment_date" TIMESTAMP, "estimated_delivery_date" TIMESTAMP, "status" "public"."shipments_status_enum" NOT NULL DEFAULT 'Label Created', "sale_id" integer, "shipping_company_id" integer, "created_by_user_id" integer, "updated_by_user_id" integer, "deleted_by_user_id" integer, CONSTRAINT "UQ_832ea4b3ec94a18cd3f0e21b9c3" UNIQUE ("sale_id", "shipping_company_id"), CONSTRAINT "PK_6deda4532ac542a93eab214b564" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "sales" ("id" SERIAL NOT NULL, "sale_date" TIMESTAMP NOT NULL DEFAULT now(), "total_amount" numeric(10,2) NOT NULL DEFAULT '0', "shipping_address" character varying(255) NOT NULL, "billing_status" character varying(100) NOT NULL, "cancelled_at" TIMESTAMP DEFAULT now(), "is_cancelled" boolean NOT NULL DEFAULT false, "user_id" integer, "cancelled_by_user_id" integer, "payment_method_id" integer, "shipping_company_id" integer, CONSTRAINT "PK_4f0bc990ae81dba46da680895ea" PRIMARY KEY ("id"))`,
@@ -104,6 +116,33 @@ export class Migrations1754088125624 implements MigrationInterface {
       `ALTER TABLE "product_images" ADD CONSTRAINT "FK_433a2be51a1f46991fcf210ba23" FOREIGN KEY ("uploaded_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
+      `ALTER TABLE "purchase_details" ADD CONSTRAINT "FK_7769941f7424a0030e1f6c7b7d3" FOREIGN KEY ("purchase_id") REFERENCES "purchases"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" ADD CONSTRAINT "FK_802cd8f2a3c2e09932fc1bfad88" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" ADD CONSTRAINT "FK_12a79156fe302c9bd6e92a5c8b5" FOREIGN KEY ("created_by_user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" ADD CONSTRAINT "FK_6df107b3911f837c3b906c6cf49" FOREIGN KEY ("updated_by_user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" ADD CONSTRAINT "FK_f7a65d6e51dba96a7c457e4d76d" FOREIGN KEY ("deleted_by_user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" ADD CONSTRAINT "FK_3d9bbd03998046359d6557f7526" FOREIGN KEY ("created_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" ADD CONSTRAINT "FK_c77fc82c7f9fd6fbf7c8be66cb9" FOREIGN KEY ("updated_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" ADD CONSTRAINT "FK_e5658a71158651e46027c8fbd9c" FOREIGN KEY ("deleted_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" ADD CONSTRAINT "FK_d5fec047f705d5b510c19379b95" FOREIGN KEY ("supplier_id") REFERENCES "suppliers"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "suppliers" ADD CONSTRAINT "FK_5fa7dd93144dd478fc3606eda1d" FOREIGN KEY ("created_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -162,6 +201,21 @@ export class Migrations1754088125624 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "shipping_companies" ADD CONSTRAINT "FK_03aa7d8acba8e6a0e430ab646ce" FOREIGN KEY ("deleted_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" ADD CONSTRAINT "FK_b533d593dd587e21d804e0c581d" FOREIGN KEY ("sale_id") REFERENCES "sales"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" ADD CONSTRAINT "FK_5a12eea89dda83ae4c08688f9cf" FOREIGN KEY ("shipping_company_id") REFERENCES "shipping_companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" ADD CONSTRAINT "FK_26adb813223d773e10fb79a3366" FOREIGN KEY ("created_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" ADD CONSTRAINT "FK_fb9d9cb84f7284e3b95cba6a438" FOREIGN KEY ("updated_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" ADD CONSTRAINT "FK_895682a559be2bda746e33b4499" FOREIGN KEY ("deleted_by_user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "sales" ADD CONSTRAINT "FK_5f282f3656814ec9ca2675aef6f" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -305,6 +359,21 @@ export class Migrations1754088125624 implements MigrationInterface {
       `ALTER TABLE "sales" DROP CONSTRAINT "FK_5f282f3656814ec9ca2675aef6f"`,
     );
     await queryRunner.query(
+      `ALTER TABLE "shipments" DROP CONSTRAINT "FK_895682a559be2bda746e33b4499"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" DROP CONSTRAINT "FK_fb9d9cb84f7284e3b95cba6a438"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" DROP CONSTRAINT "FK_26adb813223d773e10fb79a3366"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" DROP CONSTRAINT "FK_5a12eea89dda83ae4c08688f9cf"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "shipments" DROP CONSTRAINT "FK_b533d593dd587e21d804e0c581d"`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "shipping_companies" DROP CONSTRAINT "FK_03aa7d8acba8e6a0e430ab646ce"`,
     );
     await queryRunner.query(
@@ -365,6 +434,33 @@ export class Migrations1754088125624 implements MigrationInterface {
       `ALTER TABLE "suppliers" DROP CONSTRAINT "FK_5fa7dd93144dd478fc3606eda1d"`,
     );
     await queryRunner.query(
+      `ALTER TABLE "purchases" DROP CONSTRAINT "FK_d5fec047f705d5b510c19379b95"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" DROP CONSTRAINT "FK_e5658a71158651e46027c8fbd9c"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" DROP CONSTRAINT "FK_c77fc82c7f9fd6fbf7c8be66cb9"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchases" DROP CONSTRAINT "FK_3d9bbd03998046359d6557f7526"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" DROP CONSTRAINT "FK_f7a65d6e51dba96a7c457e4d76d"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" DROP CONSTRAINT "FK_6df107b3911f837c3b906c6cf49"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" DROP CONSTRAINT "FK_12a79156fe302c9bd6e92a5c8b5"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" DROP CONSTRAINT "FK_802cd8f2a3c2e09932fc1bfad88"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "purchase_details" DROP CONSTRAINT "FK_7769941f7424a0030e1f6c7b7d3"`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "product_images" DROP CONSTRAINT "FK_433a2be51a1f46991fcf210ba23"`,
     );
     await queryRunner.query(
@@ -416,12 +512,16 @@ export class Migrations1754088125624 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "products"`);
     await queryRunner.query(`DROP TABLE "sale_detail"`);
     await queryRunner.query(`DROP TABLE "sales"`);
+    await queryRunner.query(`DROP TABLE "shipments"`);
+    await queryRunner.query(`DROP TYPE "public"."shipments_status_enum"`);
     await queryRunner.query(`DROP TABLE "shipping_companies"`);
     await queryRunner.query(`DROP TABLE "payment_methods"`);
     await queryRunner.query(`DROP TABLE "products_tags"`);
     await queryRunner.query(`DROP TABLE "tags"`);
     await queryRunner.query(`DROP TABLE "product_suppliers"`);
     await queryRunner.query(`DROP TABLE "suppliers"`);
+    await queryRunner.query(`DROP TABLE "purchases"`);
+    await queryRunner.query(`DROP TABLE "purchase_details"`);
     await queryRunner.query(`DROP TABLE "product_images"`);
     await queryRunner.query(`DROP TABLE "product_discounts"`);
     await queryRunner.query(`DROP TABLE "discounts"`);

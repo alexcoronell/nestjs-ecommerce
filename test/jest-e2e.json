@@ -1,9 +1,36 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@auth/(.*)$": "<rootDir>/src/auth/$1",
+    "^@brand/(.*)$": "<rootDir>/src/brand/$1",
+    "^@category/(.*)$": "<rootDir>/src/category/$1",
+    "^@commons/(.*)$": "<rootDir>/src/commons/$1",
+    "^@config/(.*)$": "<rootDir>/src/config/$1",
+    "^@discount/(.*)$": "<rootDir>/src/discount/$1",
+    "^@faker/(.*)$": "<rootDir>/faker/$1",
+    "^@payment_method/(.*)$": "<rootDir>/src/payment-method/$1",
+    "^@product/(.*)$": "<rootDir>/src/product/$1",
+    "^@product_images/(.*)$": "<rootDir>/src/product-images/$1",
+    "^@product_discount/(.*)$": "<rootDir>/src/product-discount/$1",
+    "^@product_supplier/(.*)$": "<rootDir>/src/product-supplier/$1",
+    "^@product_tag/(.*)$": "<rootDir>/src/product-tag/$1",
+    "^@purchase/(.*)$": "<rootDir>/src/purchase/$1",
+    "^@purchase_detail/(.*)$": "<rootDir>/src/purchase-detail/$1",
+    "^@sale/(.*)$": "<rootDir>/src/sale/$1",
+    "^@sale_detail/(.*)$": "<rootDir>/src/sale-detail/$1",
+    "^@shipment/(.*)$": "<rootDir>/src/shipment/$1",
+    "^@shipping_company/(.*)$": "<rootDir>/src/shipping-company/$1",
+    "^@store_detail/(.*)$": "<rootDir>/src/store-detail/$1",
+    "^@subcategory/(.*)$": "<rootDir>/src/subcategory/$1",
+    "^@supplier/(.*)$": "<rootDir>/src/supplier/$1",
+    "^@tag/(.*)$": "<rootDir>/src/tag/$1",
+    "^@user/(.*)$": "<rootDir>/src/user/$1",
+    "^@wishlist/(.*)$": "<rootDir>/src/wishlist/$1"
   }
 }

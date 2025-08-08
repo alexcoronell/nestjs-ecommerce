@@ -10,7 +10,7 @@ import { UserRoleEnum } from '@commons/enums/user-role.enum';
 /* Faker */
 import { createUser, generateUser, generateManyUsers } from '@faker/user.faker';
 
-export const newAdminUser: CreateUserDto = {
+export const seedNewAdminUser: CreateUserDto = {
   firstname: 'John',
   lastname: 'Doe',
   email: 'johndoe@email.com',
@@ -24,8 +24,8 @@ export const newAdminUser: CreateUserDto = {
   deletedBy: null,
 };
 
-export const newUser = createUser();
+export const seedNewUser = createUser();
 
-export const user: User = generateUser();
+export const seedUser: User = generateUser();
 
-export const users: User[] = generateManyUsers(10);
+export const seedUsers: User[] = generateManyUsers(10);

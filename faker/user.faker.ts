@@ -20,8 +20,8 @@ export const createUser = (): CreateUserDto => ({
   neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),
   role: faker.helpers.arrayElement(Object.values(UserRoleEnum)),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
+  createdBy: 1,
+  updatedBy: 1,
   deletedBy: null,
 });
 
@@ -29,7 +29,7 @@ export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   ...generateBaseEntity(id, isDeleted),
   ...createUser(),
   isActive: true,
-  ...generateUserRelations(),
+  id,
 });
 
 export const generateManyUsers = (size: number): User[] => {
@@ -48,7 +48,7 @@ export const generateManyDeletedUsers = (size: number): User[] => {
   return users;
 };
 
-const generateUserRelations = () => ({
+export const generateUserRelations = () => ({
   createdBrands: [],
   updatedBrands: [],
   deletedBrands: [],

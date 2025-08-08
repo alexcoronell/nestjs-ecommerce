@@ -43,13 +43,13 @@ import { User } from '../../src/user/entities/user.entity';
 // Wishlist
 import { Wishlist } from '../../src/wishlist/entities/wishlist.entity';
 
-const dataSource = new DataSource({
+export const dataSource = new DataSource({
   type: 'postgres',
   host: process.env.POSTGRES_HOST || 'localhost',
-  port: Number(process.env.POSTGRES_PORT) || 5432,
-  username: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'postgres',
-  database: process.env.POSTGRES_DB || 'test_db',
+  port: Number(process.env.POSTGRES_PORT) || 5433,
+  username: process.env.POSTGRES_USER || 'e2e',
+  password: process.env.POSTGRES_PASSWORD || 'e2e123',
+  database: process.env.POSTGRES_DB || 'db_e2e',
   entities: [
     Brand,
     Category,

@@ -15,10 +15,8 @@ import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 
-import { apiRoute } from '@config/index';
-
 @ApiTags('Auth')
-@Controller(apiRoute + 'auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 

@@ -63,185 +63,185 @@ export class User extends BaseEntity {
   /* Users */
   @ManyToOne(() => User, (user) => user.createdUsers)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy?: number;
 
   @ManyToOne(() => User, (user) => user.updatedUsers)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy?: number;
 
   @ManyToOne(() => User, (user) => user.deletedUsers)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy?: number | null;
 
   @OneToMany(() => User, (users) => users.createdBy)
-  createdUsers: User[];
+  createdUsers?: User[];
 
   @OneToMany(() => User, (users) => users.updatedBy)
-  updatedUsers: User[];
+  updatedUsers?: User[];
 
   @OneToMany(() => User, (users) => users.deletedBy)
-  deletedUsers: User[];
+  deletedUsers?: User[];
 
   /* Brands */
   @OneToMany(() => Brand, (items) => items.createdBy)
-  createdBrands: Brand[];
+  createdBrands?: Brand[];
 
   @OneToMany(() => Brand, (items) => items.updatedBy)
-  updatedBrands: Brand[];
+  updatedBrands?: Brand[];
 
   @OneToMany(() => Brand, (items) => items.deletedBy)
-  deletedBrands: Brand[];
+  deletedBrands?: Brand[];
 
   /* Categories */
   @OneToMany(() => Category, (items) => items.createdBy)
-  createdCategories: Category[];
+  createdCategories?: Category[];
 
   @OneToMany(() => Category, (items) => items.updatedBy)
-  updatedCategories: Category[];
+  updatedCategories?: Category[];
 
   @OneToMany(() => Category, (items) => items.deletedBy)
-  deletedCategories: Category[];
+  deletedCategories?: Category[];
 
   /* Discounts */
   @OneToMany(() => Discount, (items) => items.createdBy)
-  createdDiscounts: Discount[];
+  createdDiscounts?: Discount[];
 
   @OneToMany(() => Discount, (items) => items.updatedBy)
-  updatedDiscounts: Discount[];
+  updatedDiscounts?: Discount[];
 
   @OneToMany(() => Discount, (items) => items.deletedBy)
-  deletedDiscounts: Discount[];
+  deletedDiscounts?: Discount[];
 
   /* Payment Methods */
   @OneToMany(() => PaymentMethod, (items) => items.createdBy)
-  createdPaymentMethods: PaymentMethod[];
+  createdPaymentMethods?: PaymentMethod[];
 
   @OneToMany(() => PaymentMethod, (items) => items.updatedBy)
-  updatedPaymentMethods: PaymentMethod[];
+  updatedPaymentMethods?: PaymentMethod[];
 
   @OneToMany(() => PaymentMethod, (items) => items.deletedBy)
-  deletedPaymentMethods: PaymentMethod[];
+  deletedPaymentMethods?: PaymentMethod[];
 
   /* Products */
   @OneToMany(() => Product, (items) => items.createdBy)
-  createdProducts: Product[];
+  createdProducts?: Product[];
 
   @OneToMany(() => Product, (items) => items.updatedBy)
-  updatedProducts: Product[];
+  updatedProducts?: Product[];
 
   @OneToMany(() => Product, (items) => items.deletedBy)
-  deletedProducts: Product[];
+  deletedProducts?: Product[];
 
   /* Products Discounts */
   @OneToMany(() => ProductDiscount, (items) => items.createdBy)
-  createdProductDiscounts: ProductDiscount[];
+  createdProductDiscounts?: ProductDiscount[];
 
   /* Product Images */
   @OneToMany(() => ProductImage, (items) => items.uploadedBy)
-  uploadedProductImages: ProductImage[];
+  uploadedProductImages?: ProductImage[];
 
   /* Product Suppliers */
   @OneToMany(() => ProductSupplier, (items) => items.createdBy)
-  createdProductSuppliers: ProductSupplier[];
+  createdProductSuppliers?: ProductSupplier[];
 
   @OneToMany(() => ProductSupplier, (items) => items.updatedBy)
-  updatedProductSuppliers: ProductSupplier[];
+  updatedProductSuppliers?: ProductSupplier[];
 
   @OneToMany(() => ProductSupplier, (items) => items.deletedBy)
-  deletedProductSuppliers: ProductSupplier[];
+  deletedProductSuppliers?: ProductSupplier[];
 
   /* Product Tags */
   @OneToMany(() => ProductTag, (items) => items.createdBy)
-  createdProductsTags: ProductTag[];
+  createdProductsTags?: ProductTag[];
 
   /* Purchases */
   @OneToMany(() => Purchase, (items) => items.createdBy)
-  createdPurchases: Purchase[];
+  createdPurchases?: Purchase[];
 
   @OneToMany(() => Purchase, (items) => items.updatedBy)
-  updatedPurchases: Purchase[];
+  updatedPurchases?: Purchase[];
 
   @OneToMany(() => Purchase, (items) => items.deletedBy)
-  deletedPurchases: Purchase[];
+  deletedPurchases?: Purchase[];
 
   /* Purchase Details */
   @OneToMany(() => PurchaseDetail, (items) => items.createdBy)
-  createdPurchaseDetails: PurchaseDetail[];
+  createdPurchaseDetails?: PurchaseDetail[];
 
   @OneToMany(() => PurchaseDetail, (items) => items.updatedBy)
-  updatedPurchaseDetails: PurchaseDetail[];
+  updatedPurchaseDetails?: PurchaseDetail[];
 
   @OneToMany(() => PurchaseDetail, (items) => items.deletedBy)
-  deletedPurchaseDetails: PurchaseDetail[];
+  deletedPurchaseDetails?: PurchaseDetail[];
 
   /* Sales */
   @OneToMany(() => Sale, (sale) => sale.user)
-  sales: Sale[];
+  sales?: Sale[];
 
   @OneToMany(() => Sale, (sale) => sale.cancelledBy)
-  cancelledSales: Sale[];
+  cancelledSales?: Sale[];
 
   /* Sale Details */
   @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.user)
-  createdSaleDetails: SaleDetail[];
+  createdSaleDetails?: SaleDetail[];
 
   /* Shipments */
   @OneToMany(() => Shipment, (items) => items.createdBy)
-  createdShipments: Shipment[];
+  createdShipments?: Shipment[];
 
   @OneToMany(() => Shipment, (items) => items.updatedBy)
-  updatedShipments: Shipment[];
+  updatedShipments?: Shipment[];
 
   @OneToMany(() => Shipment, (items) => items.deletedBy)
-  deletedShipments: Shipment[];
+  deletedShipments?: Shipment[];
 
   /* Shipping Companies */
   @OneToMany(() => ShippingCompany, (items) => items.createdBy)
-  createdShippingCompanies: ShippingCompany[];
+  createdShippingCompanies?: ShippingCompany[];
 
   @OneToMany(() => ShippingCompany, (items) => items.updatedBy)
-  updatedShippingCompanies: ShippingCompany[];
+  updatedShippingCompanies?: ShippingCompany[];
 
   @OneToMany(() => ShippingCompany, (items) => items.deletedBy)
-  deletedShippingCompanies: ShippingCompany[];
+  deletedShippingCompanies?: ShippingCompany[];
 
   /* Store Details */
   @OneToMany(() => StoreDetail, (items) => items.createdBy)
-  createdStoreDetail: StoreDetail[];
+  createdStoreDetail?: StoreDetail[];
 
   @OneToMany(() => StoreDetail, (items) => items.updatedBy)
-  updatedStoreDetail: StoreDetail[];
+  updatedStoreDetail?: StoreDetail[];
 
   /* Subcategories */
   @OneToMany(() => Subcategory, (items) => items.createdBy)
-  createdSubcategories: Subcategory[];
+  createdSubcategories?: Subcategory[];
 
   @OneToMany(() => Subcategory, (items) => items.updatedBy)
-  updatedSubcategories: Subcategory[];
+  updatedSubcategories?: Subcategory[];
 
   @OneToMany(() => Subcategory, (items) => items.deletedBy)
-  deletedSubcategories: Subcategory[];
+  deletedSubcategories?: Subcategory[];
 
   /* Suppliers */
   @OneToMany(() => Supplier, (items) => items.createdBy)
-  createdSuppliers: Supplier[];
+  createdSuppliers?: Supplier[];
 
   @OneToMany(() => Supplier, (items) => items.updatedBy)
-  updatedSuppliers: Supplier[];
+  updatedSuppliers?: Supplier[];
 
   @OneToMany(() => Supplier, (items) => items.deletedBy)
-  deletedSuppliers: Supplier[];
+  deletedSuppliers?: Supplier[];
 
   /* Tags */
   @OneToMany(() => Tag, (items) => items.createdBy)
-  createdTags: Tag[];
+  createdTags?: Tag[];
 
   @OneToMany(() => Tag, (items) => items.updatedBy)
-  updatedTags: Tag[];
+  updatedTags?: Tag[];
 
   @OneToMany(() => Tag, (items) => items.deletedBy)
-  deletedTags: Tag[];
+  deletedTags?: Tag[];
 
   @OneToMany(() => Wishlist, (items) => items.user)
-  wishlists: Wishlist[];
+  wishlists?: Wishlist[];
 }

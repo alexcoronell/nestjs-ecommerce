@@ -5,8 +5,11 @@ import {
   IsEmail,
   IsNumber,
   IsOptional,
+  IsEnum,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -40,6 +43,12 @@ export class CreateUserDto {
   @IsPhoneNumber()
   @ApiProperty()
   readonly phoneNumber: string;
+
+  @IsEnum(UserRoleEnum, {
+    message: `Role must be a valid enum value: ${Object.values(UserRoleEnum).join(', ')}`,
+  })
+  @IsNotEmpty()
+  readonly role: UserRoleEnum;
 
   @IsNumber()
   @IsNotEmpty()

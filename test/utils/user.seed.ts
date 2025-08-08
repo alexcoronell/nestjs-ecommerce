@@ -4,6 +4,9 @@ import { User } from '@user/entities/user.entity';
 /* DTO's */
 import { CreateUserDto } from '@user/dto/create-user.dto';
 
+/* Enums */
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
+
 /* Faker */
 import { createUser, generateUser, generateManyUsers } from '@faker/user.faker';
 
@@ -15,6 +18,7 @@ export const newAdminUser: CreateUserDto = {
   address: '555 Address',
   neighborhood: 'neighborhood test',
   phoneNumber: '555-55-55',
+  role: UserRoleEnum.ADMIN,
   createdBy: 1,
   updatedBy: 1,
   deletedBy: null,

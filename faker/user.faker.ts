@@ -5,7 +5,11 @@ import { generateBaseEntity } from '@faker/base.faker';
 /* Entities */
 import { User } from '@user/entities/user.entity';
 
+/* DTO's */
 import { CreateUserDto } from '@user/dto/create-user.dto';
+
+/* Enums */
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 export const createUser = (): CreateUserDto => ({
   firstname: faker.person.firstName(),
@@ -15,6 +19,7 @@ export const createUser = (): CreateUserDto => ({
   address: faker.location.streetAddress(),
   neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),
+  role: faker.helpers.arrayElement(Object.values(UserRoleEnum)),
   createdBy: faker.number.int(),
   updatedBy: faker.number.int(),
   deletedBy: null,
@@ -22,17 +27,8 @@ export const createUser = (): CreateUserDto => ({
 
 export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   ...generateBaseEntity(id, isDeleted),
-  firstname: faker.person.firstName(),
-  lastname: faker.person.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  address: faker.location.streetAddress(),
-  neighborhood: faker.location.county(),
-  phoneNumber: faker.phone.number(),
+  ...createUser(),
   isActive: true,
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
   ...generateUserRelations(),
 });
 

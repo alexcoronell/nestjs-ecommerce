@@ -33,7 +33,7 @@ export class CreateShipmentDto {
   @IsEnum(ShipmentStatusEnum, {
     message: `Status must be a valid enum value: ${Object.values(ShipmentStatusEnum).join(', ')}`,
   })
-  @IsNotEmpty() // Si el status es NOT NULL en la DB, también debe ser NoEmpty aquí
+  @IsNotEmpty()
   readonly status: ShipmentStatusEnum;
 
   @IsNumber()

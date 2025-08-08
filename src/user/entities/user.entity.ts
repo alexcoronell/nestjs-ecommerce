@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
+
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
@@ -48,6 +50,14 @@ export class User extends BaseEntity {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    default: UserRoleEnum.CUSTOMER,
+    nullable: false,
+  })
+  role: UserRoleEnum;
 
   /**************************** Relations ****************************/
   /* Users */

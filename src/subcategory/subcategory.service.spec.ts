@@ -250,11 +250,8 @@ describe('SubcategoryService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        console.log('try');
         await service.update(id, changes);
       } catch (error) {
-        console.log('catch');
-        console.log(error);
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
           `The Subcategory already exists in other category`,

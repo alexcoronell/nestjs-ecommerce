@@ -21,8 +21,6 @@ config({
   path: options.path,
 });
 
-console.log('CONFIG => ', options.path);
-
 export default registerAs('config', () => {
   return {
     postgres: {

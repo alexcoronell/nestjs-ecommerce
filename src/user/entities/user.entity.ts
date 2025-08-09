@@ -23,7 +23,6 @@ import { StoreDetail } from '@store_detail/entities/store-detail.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { Tag } from '@tag/entities/tag.entity';
-import { Wishlist } from '@wishlist/entities/wishlist.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -39,25 +38,19 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   password: string | undefined;
 
-  @Column({ type: 'varchar', length: 255 })
-  address: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  neighborhood: string;
-
   @Column({ name: 'phone_number', type: 'varchar', length: 255 })
   phoneNumber: string;
-
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
 
   @Column({
     type: 'enum',
     enum: UserRoleEnum,
-    default: UserRoleEnum.CUSTOMER,
+    default: UserRoleEnum.SELLER,
     nullable: false,
   })
   role: UserRoleEnum;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   /**************************** Relations ****************************/
   /* Users */
@@ -241,7 +234,4 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Tag, (items) => items.deletedBy)
   deletedTags?: Tag[];
-
-  @OneToMany(() => Wishlist, (items) => items.user)
-  wishlists?: Wishlist[];
 }

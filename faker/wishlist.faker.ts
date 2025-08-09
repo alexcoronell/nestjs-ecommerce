@@ -4,14 +4,12 @@ import { CreateWishlistDto } from '@wishlist/dto/create-wishlist.dto';
 
 // Faker para CreateWishlistDto
 export const createWishlist = (): CreateWishlistDto => ({
-  user: faker.number.int({ min: 1, max: 1000 }),
   product: faker.number.int({ min: 1, max: 1000 }),
 });
 
 // Faker para Wishlist entity
 export const generateWishlist = (id: number = 1): Wishlist => ({
   id,
-  user: { id: faker.number.int({ min: 1, max: 1000 }) } as unknown as number,
   product: { id: faker.number.int({ min: 1, max: 1000 }) } as unknown as number,
   addedDate: faker.date.recent(),
 });

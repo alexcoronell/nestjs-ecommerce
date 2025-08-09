@@ -7,18 +7,17 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
 import { Product } from '../../product/entities/product.entity';
 
 @Entity('wishlist')
-@Unique(['user', 'product'])
+/* @Unique(['user', 'product']) */
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.wishlists, { nullable: false })
+  /* @ManyToOne(() => User, (user) => user.wishlists, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: number; */
 
   @ManyToOne(() => Product, (product) => product.wishlists, { nullable: false })
   @JoinColumn({ name: 'product_id' })

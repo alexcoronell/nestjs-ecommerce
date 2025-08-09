@@ -36,7 +36,7 @@ export class WishlistService {
 
   async findOneByUserAndProduct(userId: User['id'], productId: Product['id']) {
     const [wishlist, total] = await this.repo.findAndCount({
-      where: { user: userId, product: productId },
+      where: { product: productId },
     });
 
     if (total === 0) {
@@ -52,7 +52,7 @@ export class WishlistService {
     };
   }
 
-  async findAllByUser(userId: User['id']) {
+  /* async findAllByUser(userId: User['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
       relations: ['product'],
       where: { user: userId },
@@ -62,7 +62,7 @@ export class WishlistService {
       data: wishlists,
       total,
     };
-  }
+  } */
 
   async findAllByProduct(productId: Product['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
@@ -90,7 +90,7 @@ export class WishlistService {
     };
   }
 
-  async create(dto: CreateWishlistDto) {
+  /* async create(dto: CreateWishlistDto) {
     const { user, product } = dto;
     try {
       await this.findOneByUserAndProduct(user, product);
@@ -109,7 +109,7 @@ export class WishlistService {
       }
       throw error;
     }
-  }
+  } */
 
   async remove(id: number) {
     const { data } = await this.findOne(id);

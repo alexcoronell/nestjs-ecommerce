@@ -32,10 +32,10 @@ export class WishlistController {
     return this.wishlistService.findOneByUserAndProduct(userId, productId);
   }
 
-  @Get('user/:userId')
+  /* @Get('user/:userId')
   findAllByUser(@Param('userId', ParseIntPipe) userId: number) {
     return this.wishlistService.findAllByUser(userId);
-  }
+  } */
 
   @Get('product/:productId')
   findAllByProduct(@Param('productId', ParseIntPipe) productId: number) {
@@ -47,10 +47,10 @@ export class WishlistController {
     return this.wishlistService.findOne(+id);
   }
 
-  @Post()
+  /* @Post()
   create(@Body() createWishlistDto: CreateWishlistDto) {
     return this.wishlistService.create(createWishlistDto);
-  }
+  } */
 
   @Delete(':id')
   remove(@Param('id') id: Wishlist['id']) {

@@ -168,7 +168,7 @@ export class UserService
     this.userRepo.merge(data as User, changes);
     await this.userRepo.save(data as User);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.NO_CONTENT,
       message: `The User with id: ${id} has been deleted`,
     };
   }

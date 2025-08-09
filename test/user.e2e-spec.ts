@@ -19,15 +19,9 @@ import { upSeed, downSeed } from './utils/seed';
 /* DataSource */
 import { dataSource } from './utils/seed';
 
-import { User } from '@user/entities/user.entity';
-
 /* Seed */
-import {
-  seedNewAdminUser,
-  seedNewUser,
-  seedUser,
-  seedUsers,
-} from './utils/user.seed';
+import { seedNewUser, seedUser, seedUsers } from './utils/user.seed';
+import { UpdateUserDto } from '@user/dto/update-user.dto';
 
 describe('UserControler (e2e)', () => {
   let app: INestApplication<App>;
@@ -148,6 +142,49 @@ describe('UserControler (e2e)', () => {
       expect(data.lastname).toEqual(seedUser.lastname);
       expect(data.email).toEqual(seedUser.email);
       expect(data.role).toEqual(seedUser.role);
+    });
+  });
+
+  describe('POST User', () => {
+    it('/ should create a user', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/user')
+        .send(seedNewUser);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(201);
+      expect(data.firstname).toEqual(seedNewUser.firstname);
+    });
+  });
+
+  describe('PATCH User', () => {
+    it('/:id should update a user', async () => {
+      await repo.save(seedUsers);
+      const id = seedUsers[0].id;
+      const updatedData: UpdateUserDto = {
+        firstname: 'Updated name',
+        lastname: 'Updated lastname',
+      };
+      const res = await request(app.getHttpServer())
+        .patch(`/user/${id}`)
+        .send(updatedData);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(200);
+      expect(data.firstname).toBe(updatedData.firstname);
+      expect(data.lastname).toBe(updatedData.lastname);
+    });
+  });
+
+  describe('DELETE User', () => {
+    it('/:id should delete a user', async () => {
+      await repo.save(seedUsers);
+      const id = seedUsers[0].id;
+      const res = await request(app.getHttpServer()).delete(`/user/${id}`);
+      const { statusCode } = res.body;
+      const deletedInDB = await repo.findOne({
+        where: { id, isDeleted: false },
+      });
+      expect(statusCode).toBe(204);
+      expect(deletedInDB).toBeNull();
     });
   });
 

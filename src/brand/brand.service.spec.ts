@@ -215,7 +215,7 @@ describe('BrandService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       const { statusCode, message } = await service.remove(id);
-      expect(statusCode).toBe(200);
+      expect(statusCode).toBe(204);
       expect(message).toEqual(`The Brand with id: ${id} has been deleted`);
     });
 

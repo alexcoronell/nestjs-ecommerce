@@ -111,7 +111,7 @@ export class BrandService
     this.repo.merge(data as Brand, changes);
     await this.repo.save(data as Brand);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.NO_CONTENT,
       message: `The Brand with id: ${id} has been deleted`,
     };
   }

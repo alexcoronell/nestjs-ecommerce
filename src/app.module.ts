@@ -27,6 +27,7 @@ import { SaleDetailModule } from './sale-detail/sale-detail.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { PurchaseDetailModule } from './purchase-detail/purchase-detail.module';
 import { ShipmentModule } from './shipment/shipment.module';
+import { CustomerModule } from './customer/customer.module';
 
 /* Config */
 import config from './config';
@@ -61,6 +62,7 @@ import config from './config';
     PurchaseModule,
     PurchaseDetailModule,
     ShipmentModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,7 +3,8 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
-import { BaseEntity } from '@commons/entities/baseEntity';
+import { PersonEntity } from '@commons/entities/personEntity';
+
 import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
 import { Discount } from '@discount/entities/discount.entity';
@@ -25,22 +26,7 @@ import { Supplier } from '@supplier/entities/supplier.entity';
 import { Tag } from '@tag/entities/tag.entity';
 
 @Entity({ name: 'users' })
-export class User extends BaseEntity {
-  @Column({ name: 'first_name', type: 'varchar', length: 255 })
-  firstname: string;
-
-  @Column({ name: 'last_name', type: 'varchar', length: 255 })
-  lastname: string;
-
-  @Column({ type: 'varchar', length: 255, unique: true })
-  email: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  password: string | undefined;
-
-  @Column({ name: 'phone_number', type: 'varchar', length: 255 })
-  phoneNumber: string;
-
+export class User extends PersonEntity {
   @Column({
     type: 'enum',
     enum: UserRoleEnum,
@@ -48,9 +34,6 @@ export class User extends BaseEntity {
     nullable: false,
   })
   role: UserRoleEnum;
-
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
 
   /**************************** Relations ****************************/
   /* Users */

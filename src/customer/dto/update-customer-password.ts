@@ -1,3 +1,3 @@
 import { UpdatePersonPasswordDto } from '@commons/dtos/UpdatePersonPassword.dto';
 
-export class UpdatePasswordDto extends UpdatePersonPasswordDto {}
+export class UpdateCustomerPasswordDto extends UpdatePersonPasswordDto {}

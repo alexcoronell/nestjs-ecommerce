@@ -16,8 +16,6 @@ export const createUser = (): CreateUserDto => ({
   lastname: faker.person.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  address: faker.location.streetAddress(),
-  neighborhood: faker.location.county(),
   phoneNumber: faker.phone.number(),
   role: faker.helpers.arrayElement(Object.values(UserRoleEnum)),
   createdBy: 1,

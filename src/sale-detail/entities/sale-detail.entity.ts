@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,7 +10,6 @@ import {
 
 import { Sale } from '@sale/entities/sale.entity';
 import { Product } from '@product/entities/product.entity';
-import { User } from '@user/entities/user.entity';
 
 @Entity('sale_detail')
 @Unique(['sale', 'product'])
@@ -60,8 +58,4 @@ export class SaleDetail {
   })
   @JoinColumn({ name: 'product_id' })
   product: number;
-
-  @ManyToOne(() => User, (user) => user.createdSaleDetails, { nullable: false })
-  @JoinColumn({ name: 'user_id' })
-  user: number;
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,6 +8,8 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
+
+import { Customer } from '@customer/entities/customer.entity';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Shipment } from '@shipment/entities/shipment.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
@@ -68,9 +69,9 @@ export class Sale {
   })
   isCancelled: boolean;
 
-  @ManyToOne(() => User, (user) => user.sales)
-  @JoinColumn({ name: 'user_id' })
-  user: number;
+  @ManyToOne(() => Customer, (customer) => customer.sales)
+  @JoinColumn({ name: 'customer_id' })
+  customer: number;
 
   @ManyToOne(() => User, (user) => user.cancelledSales)
   @JoinColumn({ name: 'cancelled_by_user_id' })

@@ -9,7 +9,6 @@ export const createSaleDetail = (): CreateSaleDetailDto => ({
   unitPrice: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
   subtotal: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
   sale: faker.number.int({ min: 1, max: 100 }),
-  user: faker.number.int({ min: 1, max: 100 }),
   product: faker.number.int({ min: 1, max: 100 }),
 });
 

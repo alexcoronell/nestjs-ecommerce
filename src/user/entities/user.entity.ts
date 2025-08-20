@@ -17,7 +17,6 @@ import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Purchase } from '@purchase/entities/purchase.entity';
 import { PurchaseDetail } from '@purchase_detail/entities/purchase-detail.entity';
 import { Sale } from '@sale/entities/sale.entity';
-import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 import { Shipment } from '@shipment/entities/shipment.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
@@ -151,15 +150,8 @@ export class User extends PersonEntity {
   deletedPurchaseDetails?: PurchaseDetail[];
 
   /* Sales */
-  @OneToMany(() => Sale, (sale) => sale.user)
-  sales?: Sale[];
-
   @OneToMany(() => Sale, (sale) => sale.cancelledBy)
   cancelledSales?: Sale[];
-
-  /* Sale Details */
-  @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.user)
-  createdSaleDetails?: SaleDetail[];
 
   /* Shipments */
   @OneToMany(() => Shipment, (items) => items.createdBy)

@@ -22,7 +22,7 @@ export class CreateSaleDto {
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  user: number;
+  customer: number;
 
   @IsNumber()
   @Min(0)

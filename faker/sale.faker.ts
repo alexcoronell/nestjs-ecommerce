@@ -8,7 +8,7 @@ export const createSale = (): CreateSaleDto => ({
   totalAmount: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
   shippingAddress: faker.location.streetAddress(),
   shippingStatus: faker.lorem.word(),
-  user: faker.number.int({ min: 1, max: 100 }),
+  customer: faker.number.int({ min: 1, max: 100 }),
   paymentMethod: faker.number.int({ min: 1, max: 10 }),
   shippingCompany: faker.number.int({ min: 1, max: 10 }),
 });

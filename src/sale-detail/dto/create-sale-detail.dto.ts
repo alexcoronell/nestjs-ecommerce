@@ -31,10 +31,4 @@ export class CreateSaleDetailDto {
   @IsNotEmpty()
   @ApiProperty()
   product: number;
-
-  @IsNumber()
-  @Min(1)
-  @IsNotEmpty()
-  @ApiProperty()
-  user: number;
 }

@@ -19,7 +19,7 @@ import { UpdateUserDto } from '@user/dto/update-user.dto';
 import { UpdatePasswordDto } from '@user/dto/update-password-user';
 
 /* Faker */
-import { generateUser, generateManyUsers } from '@faker/user.faker';
+import { generateUser, generateManyUsers, createUser } from '@faker/user.faker';
 
 describe('UserService', () => {
   let service: UserService;
@@ -178,7 +178,7 @@ describe('UserService', () => {
   describe('create user services', () => {
     it('create should return a user', async () => {
       const user = generateUser();
-      const newUser = { ...user, password: 'password' };
+      const newUser: CreateUserDto = { ...createUser(), password: 'password' };
 
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(user);
@@ -191,12 +191,14 @@ describe('UserService', () => {
 
     it('create should return Conflict Exception when email exists', async () => {
       const user = generateUser();
+      const newUser: CreateUserDto = { ...createUser(), email: user.email };
+
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       jest.spyOn(repository, 'create').mockReturnValue(user);
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       try {
-        await service.create(user as CreateUserDto);
+        await service.create(newUser);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Email ${user.email} already exists`);
@@ -275,7 +277,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const { statusCode, message } = await service.remove(id);
-      expect(statusCode).toBe(200);
+      expect(statusCode).toBe(204);
       expect(message).toEqual(`The User with id: ${id} has been deleted`);
     });
 

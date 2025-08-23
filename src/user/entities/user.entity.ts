@@ -44,7 +44,7 @@ export class User extends PersonEntity {
   @JoinColumn({ name: 'updated_by_user_id' })
   updatedBy?: number;
 
-  @ManyToOne(() => User, (user) => user.deletedUsers)
+  @ManyToOne(() => User, (user) => user.deletedUsers, { nullable: true })
   @JoinColumn({ name: 'deleted_by_user_id' })
   deletedBy?: number | null;
 

@@ -48,10 +48,10 @@ export class SaleService {
     };
   }
 
-  async findAllByUserId(userId: number): Promise<Result<Sale[]>> {
+  async findAllByCustomerId(customerId: number): Promise<Result<Sale[]>> {
     const [sales, total] = await this.repo.findAndCount({
       where: {
-        user: userId,
+        customer: customerId,
         isCancelled: false,
       },
       order: {

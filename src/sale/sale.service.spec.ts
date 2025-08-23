@@ -73,18 +73,19 @@ describe('SaleService', () => {
       expect(data).toEqual(mocks);
     });
 
-    it('should return all sales by user id', async () => {
-      const userId = 1;
+    it('should return all sales by customer id', async () => {
+      const customerId = 1;
       const mocks = generateManySales(10);
       jest
         .spyOn(repository, 'findAndCount')
         .mockResolvedValue([mocks, mocks.length]);
 
-      const { statusCode, data, total } = await service.findAllByUserId(userId);
+      const { statusCode, data, total } =
+        await service.findAllByCustomerId(customerId);
 
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { user: userId, isCancelled: false },
+        where: { customer: customerId, isCancelled: false },
         order: { saleDate: 'DESC' },
       });
       expect(statusCode).toBe(200);

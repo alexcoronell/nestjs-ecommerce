@@ -24,7 +24,7 @@ describe('SaleController', () => {
     countAll: jest.fn().mockResolvedValue(mockSales.length),
     count: jest.fn().mockResolvedValue(mockSales.length),
     findAll: jest.fn().mockResolvedValue(mockSales),
-    findAllByUserId: jest.fn().mockResolvedValue(mockSales),
+    findAllByCustomerId: jest.fn().mockResolvedValue(mockSales),
     findAllByPaymentMethodId: jest.fn().mockResolvedValue(mockSales),
     findOne: jest.fn().mockResolvedValue(mockSale),
     create: jest.fn().mockResolvedValue(mockNewSale),
@@ -68,11 +68,11 @@ describe('SaleController', () => {
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call findAllByUserId sale service', async () => {
+    it('should call findAllByCustomerId sale service', async () => {
       const userId = 1;
-      expect(await controller.findAllByUser(userId)).toBe(mockSales);
-      expect(service.findAllByUserId).toHaveBeenCalledWith(userId);
-      expect(service.findAllByUserId).toHaveBeenCalledTimes(1);
+      expect(await controller.findAllBycustomer(userId)).toBe(mockSales);
+      expect(service.findAllByCustomerId).toHaveBeenCalledWith(userId);
+      expect(service.findAllByCustomerId).toHaveBeenCalledTimes(1);
     });
 
     it('should call findAllByPaymentMethodId sale service', async () => {

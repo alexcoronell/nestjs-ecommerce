@@ -21,9 +21,9 @@ export class SaleController {
     return this.saleService.findAll();
   }
 
-  @Get('user/:userId')
-  findAllByUser(@Param('userId') userId: number) {
-    return this.saleService.findAllByUserId(userId);
+  @Get('customer/:customerId')
+  findAllBycustomer(@Param('customerId') customerId: number) {
+    return this.saleService.findAllByCustomerId(customerId);
   }
 
   @Get('payment-method/:paymentMethod')

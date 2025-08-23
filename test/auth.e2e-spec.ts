@@ -129,7 +129,6 @@ describe('AuthController (e2e)', () => {
         .post('/auth/refresh-token')
         .send({ refresh: 'invalid_token' });
       const { body, statusCode } = data;
-      console.log(body);
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Unauthorized');
     });

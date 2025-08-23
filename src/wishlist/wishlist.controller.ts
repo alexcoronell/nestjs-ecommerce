@@ -24,18 +24,21 @@ export class WishlistController {
     return this.wishlistService.findAll();
   }
 
-  @Get('user/:userId/product/:productId')
-  findOneByUserAndProduct(
-    @Param('userId', ParseIntPipe) userId: number,
+  @Get('customer/:customerId/product/:productId')
+  findOneByCustomerAndProduct(
+    @Param('customerId', ParseIntPipe) customerId: number,
     @Param('productId', ParseIntPipe) productId: number,
   ) {
-    return this.wishlistService.findOneByUserAndProduct(userId, productId);
+    return this.wishlistService.findOneByCustomerAndProduct(
+      customerId,
+      productId,
+    );
   }
 
-  /* @Get('user/:userId')
-  findAllByUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.wishlistService.findAllByUser(userId);
-  } */
+  @Get('customer/:customerId')
+  findAllByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
+    return this.wishlistService.findAllByCustomer(customerId);
+  }
 
   @Get('product/:productId')
   findAllByProduct(@Param('productId', ParseIntPipe) productId: number) {
@@ -47,10 +50,10 @@ export class WishlistController {
     return this.wishlistService.findOne(+id);
   }
 
-  /* @Post()
+  @Post()
   create(@Body() createWishlistDto: CreateWishlistDto) {
     return this.wishlistService.create(createWishlistDto);
-  } */
+  }
 
   @Delete(':id')
   remove(@Param('id') id: Wishlist['id']) {

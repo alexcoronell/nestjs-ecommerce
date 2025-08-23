@@ -8,9 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Entities */
-import { Wishlist } from './entities/wishlist.entity';
-import { User } from '@user/entities/user.entity';
+import { Customer } from '@customer/entities/customer.entity';
 import { Product } from '@product/entities/product.entity';
+import { Wishlist } from './entities/wishlist.entity';
 
 /* DTO's */
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -34,14 +34,17 @@ export class WishlistService {
     };
   }
 
-  async findOneByUserAndProduct(userId: User['id'], productId: Product['id']) {
+  async findOneByCustomerAndProduct(
+    customerId: Customer['id'],
+    productId: Product['id'],
+  ) {
     const [wishlist, total] = await this.repo.findAndCount({
-      where: { product: productId },
+      where: { product: productId, customer: customerId },
     });
 
     if (total === 0) {
       throw new NotFoundException(
-        `Wishlist not found for user: ${userId}, product: ${productId}`,
+        `Wishlist not found for customer: ${customerId}, product: ${productId}`,
       );
     }
 
@@ -52,17 +55,17 @@ export class WishlistService {
     };
   }
 
-  /* async findAllByUser(userId: User['id']) {
+  async findAllByCustomer(customerId: Customer['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
       relations: ['product'],
-      where: { user: userId },
+      where: { customer: customerId },
     });
     return {
       statusCode: HttpStatus.OK,
       data: wishlists,
       total,
     };
-  } */
+  }
 
   async findAllByProduct(productId: Product['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
@@ -90,12 +93,12 @@ export class WishlistService {
     };
   }
 
-  /* async create(dto: CreateWishlistDto) {
-    const { user, product } = dto;
+  async create(dto: CreateWishlistDto) {
+    const { customer, product } = dto;
     try {
-      await this.findOneByUserAndProduct(user, product);
+      await this.findOneByCustomerAndProduct(customer, product);
       throw new ConflictException(
-        'Wishlist item already exists for this user and product',
+        'Wishlist item already exists for this customer and product',
       );
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -109,7 +112,7 @@ export class WishlistService {
       }
       throw error;
     }
-  } */
+  }
 
   async remove(id: number) {
     const { data } = await this.findOne(id);

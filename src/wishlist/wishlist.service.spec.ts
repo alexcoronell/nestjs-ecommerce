@@ -50,32 +50,30 @@ describe('WishlistService', () => {
       expect(total).toEqual(5);
     });
 
-    it('findOneByUserAndProduct should return a wishlist', async () => {
-      const userId = 1;
+    it('findOneByCustomerAndProduct should return a wishlist', async () => {
+      const customerId = 1;
       const productId = 2;
       const wishlist = generateManyWishlists(1);
 
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([wishlist, 1]);
 
-      const { statusCode, data, total } = await service.findOneByUserAndProduct(
-        userId,
-        productId,
-      );
+      const { statusCode, data, total } =
+        await service.findOneByCustomerAndProduct(customerId, productId);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { user: userId, product: productId },
+        where: { customer: customerId, product: productId },
       });
       expect(statusCode).toBe(200);
       expect(data).toEqual(wishlist);
       expect(total).toBe(1);
     });
 
-    it('findOneByUserAndProduct should throw NotFoundException if Wishlist does not exist', async () => {
-      const userId = 1;
+    it('findOneByCustomerAndProduct should throw NotFoundException if Wishlist does not exist', async () => {
+      const customerId = 1;
       const productId = 2;
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
 
       await expect(
-        service.findOneByUserAndProduct(userId, productId),
+        service.findOneByCustomerAndProduct(customerId, productId),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -88,12 +86,13 @@ describe('WishlistService', () => {
       );
     });
 
-    it('findAllByUser should return all wishlists for a user', async () => {
-      const userId = 1;
+    it('findAllByCustomer should return all wishlists for a customer', async () => {
+      const customerId = 1;
       const wishlists = generateManyWishlists(5);
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([wishlists, 5]);
 
-      const { statusCode, data, total } = await service.findAllByUser(userId);
+      const { statusCode, data, total } =
+        await service.findAllByCustomer(customerId);
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(data).toEqual(wishlists);
@@ -137,9 +136,9 @@ describe('WishlistService', () => {
       expect(data).toEqual(mock);
     });
 
-    it('should throw ConflictException if wishlist item with same user and product exists', async () => {
+    it('should throw ConflictException if wishlist item with same customer and product exists', async () => {
       const data = generateManyWishlists(1);
-      jest.spyOn(service, 'findOneByUserAndProduct').mockResolvedValue({
+      jest.spyOn(service, 'findOneByCustomerAndProduct').mockResolvedValue({
         statusCode: 200,
         data,
         total: 1,

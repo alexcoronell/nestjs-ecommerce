@@ -31,8 +31,8 @@ describe('WishlistController', () => {
 
   const mockService = {
     findAll: jest.fn().mockResolvedValue(mockWishlists),
-    findOneByUserAndProduct: jest.fn().mockResolvedValue(mockWishlist),
-    findAllByUser: jest.fn().mockResolvedValue(mockWishlists),
+    findOneByCustomerAndProduct: jest.fn().mockResolvedValue(mockWishlist),
+    findAllByCustomer: jest.fn().mockResolvedValue(mockWishlists),
     findAllByProduct: jest.fn().mockResolvedValue(mockWishlists),
     findOne: jest.fn().mockResolvedValue(mockWishlist),
     create: jest.fn().mockResolvedValue(mockNewWishlist),
@@ -64,24 +64,26 @@ describe('WishlistController', () => {
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call findOneByUserAndProduct wishlist service', async () => {
+    it('should call findOneByCustomerAndProduct wishlist service', async () => {
       expect(
-        await controller.findOneByUserAndProduct(
-          mockWishlist.user,
+        await controller.findOneByCustomerAndProduct(
+          mockWishlist.customer,
           mockWishlist.product,
         ),
       ).toEqual(mockWishlist);
-      expect(service.findOneByUserAndProduct).toHaveBeenCalledWith(
-        mockWishlist.user,
+      expect(service.findOneByCustomerAndProduct).toHaveBeenCalledWith(
+        mockWishlist.customer,
         mockWishlist.product,
       );
     });
 
-    it('should call findAllByUser wishlist service', async () => {
-      expect(await controller.findAllByUser(mockWishlist.user)).toEqual(
+    it('should call findAllByCustomer wishlist service', async () => {
+      expect(await controller.findAllByCustomer(mockWishlist.customer)).toEqual(
         mockWishlists,
       );
-      expect(service.findAllByUser).toHaveBeenCalledWith(mockWishlist.user);
+      expect(service.findAllByCustomer).toHaveBeenCalledWith(
+        mockWishlist.customer,
+      );
     });
 
     it('should call findAllByProduct wishlist service', async () => {

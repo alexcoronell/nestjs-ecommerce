@@ -15,8 +15,6 @@ export const seedNewAdminUser: CreateUserDto = {
   lastname: 'Doe',
   email: 'johndoe@email.com',
   password: 'john123',
-  address: '555 Address',
-  neighborhood: 'neighborhood test',
   phoneNumber: '555-55-55',
   role: UserRoleEnum.ADMIN,
   createdBy: 1,

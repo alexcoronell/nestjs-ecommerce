@@ -10,10 +10,27 @@
       "@category/*": ["src/category/*"],
       "@commons/*": ["src/commons/*"],
       "@config/*": ["src/config/*"],
+      "@customer/*": ["src/customer/*"],
+      "@discount/*": ["src/discount/*"],
       "@faker/*": ["faker/*"],
-      "@supplier/*": ["src/supplier/*"],
       "@payment_method/*": ["src/payment-method/*"],
-      "@user/*": ["src/user/*"]
+      "@product/*": ["src/product/*"],
+      "@product_discount/*": ["src/product-discount/*"],
+      "@product_images/*": ["src/product-images/*"],
+      "@product_supplier/*": ["src/product-supplier/*"],
+      "@product_tag/*": ["src/product-tag/*"],
+      "@purchase/*": ["src/purchase/*"],
+      "@purchase_detail/*": ["src/purchase-detail/*"],
+      "@sale/*": ["src/sale/*"],
+      "@sale_detail/*": ["src/sale-detail/*"],
+      "@shipment/*": ["src/shipment/*"],
+      "@shipping_company/*": ["src/shipping-company/*"],
+      "@subcategory/*": ["src/subcategory/*"],
+      "@store_detail/*": ["src/store-detail/*"],
+      "@supplier/*": ["src/supplier/*"],
+      "@tag/*": ["src/tag/*"],
+      "@user/*": ["src/user/*"],
+      "@wishlist/*": ["src/wishlist/*"]
     }
   }
 }

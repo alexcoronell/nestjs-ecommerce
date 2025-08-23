@@ -12,6 +12,7 @@
     "^@category/(.*)$": "<rootDir>/src/category/$1",
     "^@commons/(.*)$": "<rootDir>/src/commons/$1",
     "^@config/(.*)$": "<rootDir>/src/config/$1",
+    "^@customer/(.*)$": "<rootDir>/src/customer/$1",
     "^@discount/(.*)$": "<rootDir>/src/discount/$1",
     "^@faker/(.*)$": "<rootDir>/faker/$1",
     "^@payment_method/(.*)$": "<rootDir>/src/payment-method/$1",

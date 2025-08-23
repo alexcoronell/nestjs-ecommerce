@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -69,10 +68,7 @@ describe('AuthController (e2e)', () => {
     await upSeed();
     const hashedPassword = await bcrypt.hash(seedNewAdminUser.password, 10);
     const userToSave = { ...seedNewAdminUser, password: hashedPassword };
-    const res = await repo.save(userToSave);
-    console.log(userToSave);
-    console.log(seedNewAdminUser);
-    console.log('RES: ', res);
+    await repo.save(userToSave);
   });
 
   describe('POST Auth', () => {
@@ -85,8 +81,25 @@ describe('AuthController (e2e)', () => {
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
         .send(user);
-      console.log(user);
-      console.log(data.body);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(201);
+      expect(body).toHaveProperty('access_token');
+      expect(body.access_token).toBeTruthy();
+      expect(body.refresh_token).toBeTruthy();
+    });
+
+    it('should return 401 if user is not found', async () => {
+      const user = {
+        email: 'unknown@example.com',
+        password: 'wrongpassword',
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(user);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Not Allow');
     });
   });
 

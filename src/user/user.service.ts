@@ -1,6 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  HttpStatus,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -102,11 +106,28 @@ export class UserService
     };
   }
 
-  /* Find By Username */
+  /* Find By Email */
   async findOneByEmail(email: string): Promise<Result<User>> {
     const user = await this.userRepo.findOneBy({ email });
     if (!user) {
       throw new NotFoundException(`The User with email ${email} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: user,
+    };
+  }
+
+  /**
+   * Find a user by email and validate their existence
+   * This method will be used for login
+   * @param email
+   * @returns User or UnauthorizedException
+   */
+  async findAndValidateEmail(email: string): Promise<Result<User>> {
+    const user = await this.userRepo.findOneBy({ email });
+    if (!user) {
+      throw new UnauthorizedException(`Not Allow`);
     }
     return {
       statusCode: HttpStatus.OK,

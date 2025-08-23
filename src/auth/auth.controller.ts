@@ -13,7 +13,6 @@ import { User } from '@user/entities/user.entity';
 /* Guards */
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -25,13 +24,6 @@ export class AuthController {
   login(@Req() req: Request) {
     const { user } = req as any;
     return this.authService.generateJWT(user as User);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post('validate-password')
-  validatePassword(@Req() req: Request) {
-    const { username, password } = req.body;
-    return this.authService.validatePassword(username, password);
   }
 
   @UseGuards(RefreshJwtAuthGuard)

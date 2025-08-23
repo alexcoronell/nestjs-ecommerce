@@ -103,6 +103,38 @@ describe('AuthController (e2e)', () => {
     });
   });
 
+  describe('POST /auth/refresh', () => {
+    it('should return a new access token', async () => {
+      const user = {
+        email: seedNewAdminUser.email,
+        password: seedNewAdminUser.password,
+      };
+
+      const loginResponse: any = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(user);
+      const { refresh_token } = loginResponse.body;
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .send({ refresh: refresh_token });
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(201);
+      expect(body).toHaveProperty('access_token');
+      expect(body.access_token).toBeTruthy();
+    });
+
+    it('should return 401 if refresh token is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .send({ refresh: 'invalid_token' });
+      const { body, statusCode } = data;
+      console.log(body);
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Unauthorized');
+    });
+  });
+
   afterEach(async () => {
     await downSeed();
   });

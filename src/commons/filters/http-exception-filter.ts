@@ -37,8 +37,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
         exceptionResponse !== null
       ) {
         const responseObj = exceptionResponse as Record<string, any>;
-        message = responseObj.message || message;
+        // Puede ser string o array
+        if (Array.isArray(responseObj.message)) {
+          message = responseObj.message[0] || message;
+        } else {
+          message = responseObj.message || message;
+        }
         errorType = responseObj.error || exception.name;
+      }
+      // Forzar errorType si el mensaje es "Not Allow"
+      if (message === 'Not Allow') {
+        errorType = 'Not Allow';
       }
     } else if (exception instanceof QueryFailedError) {
       status = HttpStatus.NOT_FOUND;

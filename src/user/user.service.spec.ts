@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -171,6 +175,31 @@ describe('UserService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The User with email ${email} not found`);
+      }
+    });
+
+    it('findAndValidateEmail should return a user', async () => {
+      const user = generateUser();
+      const email = user.email;
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
+
+      const { statusCode, data } = await service.findAndValidateEmail(email);
+      const dataUser: User = data as User;
+      expect(repository.findOneBy).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(dataUser).toEqual(user);
+    });
+
+    it('findAndValidateEmail should throw NotFoundException if user does not exist', async () => {
+      const email = 'email';
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+
+      try {
+        await service.findAndValidateEmail(email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.message).toBe(`Not Allow`);
       }
     });
   });

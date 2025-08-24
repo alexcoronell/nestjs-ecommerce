@@ -11,8 +11,8 @@ import { AuthService } from './auth.service';
 import { User } from '@user/entities/user.entity';
 
 /* Guards */
-import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
+import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')

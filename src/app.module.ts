@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
 
 /* Modules */
 import { DatabaseModule } from './database/database.module';
@@ -29,13 +31,15 @@ import { PurchaseDetailModule } from './purchase-detail/purchase-detail.module';
 import { ShipmentModule } from './shipment/shipment.module';
 import { CustomerModule } from './customer/customer.module';
 
+/* Guards */
+import { ApiKeyGuard } from '@commons/guards/api-key.guard';
+
 /* Config */
 import config from './config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
       load: [config],
       isGlobal: true,
     }),
@@ -65,6 +69,6 @@ import config from './config';
     CustomerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ApiKeyGuard }],
 })
 export class AppModule {}

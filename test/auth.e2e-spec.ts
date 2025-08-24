@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import * as bcrypt from 'bcrypt';
 
 import config from '@config/index';
@@ -16,6 +17,9 @@ import config from '@config/index';
 /* Modules */
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
+
+/* Guards */
+import { ApiKeyGuard } from '@commons/guards/api-key.guard';
 
 /* Seed */
 import { upSeed, downSeed } from './utils/seed';
@@ -57,6 +61,12 @@ describe('AuthController (e2e)', () => {
         AuthModule,
         UserModule,
       ],
+      providers: [
+        {
+          provide: APP_GUARD,
+          useClass: ApiKeyGuard,
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -71,7 +81,9 @@ describe('AuthController (e2e)', () => {
     await repo.save(userToSave);
   });
 
-  describe('POST Auth', () => {
+  const API_KEY = process.env.API_KEY || 'api-e2e-key';
+
+  describe('POST Auth Login', () => {
     it('/login', async () => {
       const user = {
         email: seedNewAdminUser.email,
@@ -80,6 +92,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
+        .set('Authorization', API_KEY) // <-- aquí agregas la API key
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(201);
@@ -96,6 +109,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
+        .set('Authorization', API_KEY) // <-- aquí también
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -112,11 +126,13 @@ describe('AuthController (e2e)', () => {
 
       const loginResponse: any = await request(app.getHttpServer())
         .post('/auth/login')
+        .set('Authorization', API_KEY)
         .send(user);
       const { refresh_token } = loginResponse.body;
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/refresh-token')
+        .set('Authorization', API_KEY)
         .send({ refresh: refresh_token });
       const { body, statusCode } = data;
       expect(statusCode).toBe(201);
@@ -127,6 +143,7 @@ describe('AuthController (e2e)', () => {
     it('should return 401 if refresh token is invalid', async () => {
       const data: any = await request(app.getHttpServer())
         .post('/auth/refresh-token')
+        .set('Authorization', API_KEY)
         .send({ refresh: 'invalid_token' });
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);

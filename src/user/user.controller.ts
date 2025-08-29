@@ -25,8 +25,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user';
 
+/* Guards */
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { OwnerOrAdminGuard } from '@auth/guards/owner-or-admin-auth/owner-or-admin-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @Controller('user')
 /**
@@ -41,6 +45,7 @@ export class UserController
    * Counts all users in the system.
    * @returns The total number of users.
    */
+  @UseGuards(AdminGuard)
   @Get('count-all')
   countAll() {
     return this.userService.countAll();
@@ -81,6 +86,7 @@ export class UserController
    * @param id - The ID of the user to retrieve.
    * @returns The user with the specified ID.
    */
+  @UseGuards(OwnerOrAdminGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: User['id']) {
     return this.userService.findOne(+id);
@@ -91,6 +97,7 @@ export class UserController
    * @param email - The email of the user to retrieve.
    * @returns The user with the specified email.
    */
+  @UseGuards(AdminGuard)
   @Get('email/:email')
   findOneByEmail(@Param('email') email: string) {
     return this.userService.findOneByEmail(email);
@@ -113,6 +120,7 @@ export class UserController
    * @param changes - The changes to apply to the user.
    * @returns The updated user.
    */
+  @UseGuards(OwnerOrAdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -127,6 +135,7 @@ export class UserController
    * @param changes - The new password data.
    * @returns The updated user with the new password.
    */
+  @UseGuards(OwnerOrAdminGuard)
   @Patch('email/:id')
   updatePassword(
     @Param('id', ParseIntPipe) id: number,

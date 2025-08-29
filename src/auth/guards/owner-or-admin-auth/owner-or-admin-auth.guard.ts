@@ -10,16 +10,19 @@ import { Observable } from 'rxjs';
 import { PayloadToken } from '@auth/interfaces/token.interface';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class OwnerOrAdminGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user as PayloadToken;
-    if (!user || !user.isAdmin) {
-      throw new UnauthorizedException('Unauthorized: Admin access required');
-    }
+    const { id } = request.params;
 
+    if (!user || (!user.isAdmin && user.user !== +id)) {
+      throw new UnauthorizedException(
+        'Unauthorized: Admin or resource owner access required',
+      );
+    }
     return true;
   }
 }

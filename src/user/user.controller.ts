@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Get,
@@ -10,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -26,6 +24,8 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user';
+
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
 
 @ApiTags('Users')
 @Controller('user')
@@ -50,6 +50,7 @@ export class UserController
    * Counts specific users based on certain criteria.
    * @returns The count of users matching the criteria.
    */
+  @UseGuards(AdminGuard)
   @Get('count')
   count() {
     return this.userService.count();
@@ -59,6 +60,7 @@ export class UserController
    * Retrieves all users from the system.
    * @returns An array of all users.
    */
+  @UseGuards(AdminGuard)
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -68,6 +70,7 @@ export class UserController
    * Retrieves all active users from the system.
    * @returns An array of active users.
    */
+  @UseGuards(AdminGuard)
   @Get('actives')
   findAllActives() {
     return this.userService.findAllActives();
@@ -98,6 +101,7 @@ export class UserController
    * @param payload - The data for the new user.
    * @returns The created user.
    */
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() payload: CreateUserDto) {
     return this.userService.create(payload);
@@ -136,6 +140,7 @@ export class UserController
    * @param id - The ID of the user to remove.
    * @returns A confirmation of the removal operation.
    */
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);

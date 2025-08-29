@@ -2,8 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
+import { ConfigModule } from '@nestjs/config';
+
 import { AppModule } from './../src/app.module';
-import { ConfigModule } from '@nestjs/config'; // Importamos ConfigModule
+
+import config from '@config/index';
+
+const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -14,6 +19,7 @@ describe('AppController (e2e)', () => {
         ConfigModule.forRoot({
           isGlobal: true,
           envFilePath: '.env.e2e',
+          load: [config],
         }),
         AppModule,
       ],
@@ -26,6 +32,7 @@ describe('AppController (e2e)', () => {
   it('/ (GET)', () => {
     return request(app.getHttpServer())
       .get('/')
+      .set('Authorization', API_KEY)
       .expect(200)
       .expect('NestJS ECommerce API!');
   });

@@ -84,7 +84,7 @@ describe('AuthController (e2e)', () => {
   const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
   describe('POST Auth Login', () => {
-    it('/login', async () => {
+    it('/login should return an access token', async () => {
       const user = {
         email: seedNewAdminUser.email,
         password: seedNewAdminUser.password,
@@ -92,7 +92,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY) // <-- aquí agregas la API key
+        .set('Authorization', API_KEY)
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(201);
@@ -109,11 +109,55 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY) // <-- aquí también
+        .set('Authorization', API_KEY)
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Not Allow');
+    });
+
+    it('should return 401 if password is incorrect', async () => {
+      const user = {
+        email: seedNewAdminUser.email,
+        password: 'wrongpassword',
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/login')
+        .set('Authorization', API_KEY)
+        .send(user);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Not Allow');
+    });
+
+    it('should return 401 if api key is missing', async () => {
+      const user = {
+        email: seedNewAdminUser.email,
+        password: seedNewAdminUser.password,
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(user);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('should return 401 if api key is invalid', async () => {
+      const user = {
+        email: seedNewAdminUser.email,
+        password: seedNewAdminUser.password,
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/login')
+        .set('Authorization', 'invalid-api-key')
+        .send(user);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
     });
   });
 
@@ -148,6 +192,25 @@ describe('AuthController (e2e)', () => {
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Unauthorized');
+    });
+
+    it('should return 401 if api key is missing', async () => {
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .send({ refresh: 'some_refresh_token' });
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('should return 401 if api key is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .set('Authorization', 'invalid-api-key')
+        .send({ refresh: 'some_refresh_token' });
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
     });
   });
 

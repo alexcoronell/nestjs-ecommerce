@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 /* Modules */
+import { AppModule } from '../src/app.module';
 import { BrandModule } from '@brand/brand.module';
 import { UserModule } from '@user/user.module';
 
@@ -25,6 +26,8 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 import { createBrand, generateNewBrands } from '@faker/brand.faker';
 
 import { seedNewAdminUser } from './utils/user.seed';
+
+const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('BrandController (e2e)', () => {
   let app: INestApplication<App>;
@@ -44,6 +47,7 @@ describe('BrandController (e2e)', () => {
             ...dataSource.options,
           }),
         }),
+        AppModule,
         BrandModule,
         UserModule,
       ],
@@ -64,25 +68,65 @@ describe('BrandController (e2e)', () => {
     it('/count-all', async () => {
       const brands = generateNewBrands(10);
       await repo.save(brands);
-      const res = await request(app.getHttpServer()).get('/brand/count-all');
+      const res = await request(app.getHttpServer())
+        .get('/brand/count-all')
+        .set('Authorization', API_KEY);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
       expect(total).toEqual(brands.length);
+    });
+
+    it('/count-all should return 401 if api key is missing', async () => {
+      const data: any = await request(app.getHttpServer()).get(
+        '/brand/count-all',
+      );
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('/count-all should return 401 if api key is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .get('/brand/count-all')
+        .set('Authorization', 'invalid-api-key');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
     });
 
     it('/count', async () => {
       const brands = generateNewBrands(10);
       await repo.save(brands);
-      const res = await request(app.getHttpServer()).get('/brand/count');
+      const res = await request(app.getHttpServer())
+        .get('/brand/count')
+        .set('Authorization', API_KEY);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
       expect(total).toEqual(brands.length);
     });
 
+    it('/count should return 401 if api key is missing', async () => {
+      const data: any = await request(app.getHttpServer()).get('/brand/count');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('/count should return 401 if api key is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .get('/brand/count')
+        .set('Authorization', 'invalid-api-key');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
     it('/ should return all brands', async () => {
       const brands = generateNewBrands(10);
       await repo.save(brands);
-      const res = await request(app.getHttpServer()).get('/brand');
+      const res = await request(app.getHttpServer())
+        .get('/brand')
+        .set('Authorization', API_KEY);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
       expect(data.length).toEqual(brands.length);
@@ -96,12 +140,28 @@ describe('BrandController (e2e)', () => {
       });
     });
 
+    it('/ should return 401 if api key is missing', async () => {
+      const data: any = await request(app.getHttpServer()).get('/brand');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('/ should return 401 if api key is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .get('/brand')
+        .set('Authorization', 'invalid-api-key');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
     it('/:id should return an brand by id', async () => {
       const brand = createBrand();
       const dataNewBrand = await repo.save(brand);
-      const res = await request(app.getHttpServer()).get(
-        `/brand/${dataNewBrand.id}`,
-      );
+      const res = await request(app.getHttpServer())
+        .get(`/brand/${dataNewBrand.id}`)
+        .set('Authorization', API_KEY);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
       expect(data.id).toEqual(dataNewBrand.id);
@@ -111,13 +171,29 @@ describe('BrandController (e2e)', () => {
     it('/name/:name should return an brand by name', async () => {
       const brand = createBrand();
       const dataNewBrand = await repo.save(brand);
-      const res = await request(app.getHttpServer()).get(
-        `/brand/name/${brand.name}`,
-      );
+      const res = await request(app.getHttpServer())
+        .get(`/brand/name/${brand.name}`)
+        .set('Authorization', API_KEY);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
       expect(data.id).toEqual(dataNewBrand.id);
       expect(data.name).toEqual(dataNewBrand.name);
+    });
+
+    it('should return 401 if api key is missing', async () => {
+      const data: any = await request(app.getHttpServer()).get('/brand/count');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('should return 401 if api key is invalid', async () => {
+      const data: any = await request(app.getHttpServer())
+        .get('/brand/count')
+        .set('Authorization', 'invalid-api-key');
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
     });
   });
 
@@ -126,6 +202,7 @@ describe('BrandController (e2e)', () => {
       const newBrand = createBrand();
       const res = await request(app.getHttpServer())
         .post('/brand')
+        .set('Authorization', API_KEY)
         .send(newBrand);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(201);
@@ -143,6 +220,7 @@ describe('BrandController (e2e)', () => {
       };
       const res = await request(app.getHttpServer())
         .patch(`/brand/${id}`)
+        .set('Authorization', API_KEY)
         .send(updatedData);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
@@ -155,7 +233,9 @@ describe('BrandController (e2e)', () => {
       const newBrands = generateNewBrands(10);
       const dataNewBrands = await repo.save(newBrands);
       const id = dataNewBrands[0].id;
-      const res = await request(app.getHttpServer()).delete(`/brand/${id}`);
+      const res = await request(app.getHttpServer())
+        .delete(`/brand/${id}`)
+        .set('Authorization', API_KEY);
       const { statusCode } = res.body;
       const deletedInDB = await repo.findOne({
         where: { id, isDeleted: false },

@@ -6,8 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppModule } from './../src/app.module';
 
-import config from '@config/index';
-
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('AppController (e2e)', () => {
@@ -19,7 +17,6 @@ describe('AppController (e2e)', () => {
         ConfigModule.forRoot({
           isGlobal: true,
           envFilePath: '.env.e2e',
-          load: [config],
         }),
         AppModule,
       ],

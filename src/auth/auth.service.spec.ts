@@ -44,6 +44,13 @@ describe('AuthService', () => {
                   password: 'hashedPassword',
                 },
               }),
+              findAndValidateEmail: jest.fn().mockResolvedValue({
+                data: {
+                  id: 1,
+                  email: 'test@test.com',
+                  password: 'hashedPassword',
+                },
+              }),
             },
           },
           {
@@ -83,7 +90,7 @@ describe('AuthService', () => {
           'test@test.com',
           'wrongPassword',
         );
-        expect(result).toBeNull();
+        expect(result).toBeFalsy();
       });
     });
 

@@ -15,12 +15,12 @@ export class CreateUserDto extends CreatePersonDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  readonly createdBy: number;
+  readonly createdBy: number | null;
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  readonly updatedBy: number;
+  readonly updatedBy: number | null;
 
   @IsNumber()
   @IsOptional()

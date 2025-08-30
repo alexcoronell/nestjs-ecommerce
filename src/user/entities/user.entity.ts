@@ -38,11 +38,11 @@ export class User extends PersonEntity {
   /* Users */
   @ManyToOne(() => User, (user) => user.createdUsers)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy?: number;
+  createdBy?: number | null;
 
   @ManyToOne(() => User, (user) => user.updatedUsers)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy?: number;
+  updatedBy?: number | null;
 
   @ManyToOne(() => User, (user) => user.deletedUsers, { nullable: true })
   @JoinColumn({ name: 'deleted_by_user_id' })

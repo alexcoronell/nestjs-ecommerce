@@ -92,7 +92,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(201);
@@ -109,7 +109,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -124,7 +124,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -153,7 +153,7 @@ describe('AuthController (e2e)', () => {
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', 'invalid-api-key')
+        .set('x-api-key', 'invalid-api-key')
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -170,13 +170,13 @@ describe('AuthController (e2e)', () => {
 
       const loginResponse: any = await request(app.getHttpServer())
         .post('/auth/login')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send(user);
       const { refresh_token } = loginResponse.body;
 
       const data: any = await request(app.getHttpServer())
         .post('/auth/refresh-token')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send({ refresh: refresh_token });
       const { body, statusCode } = data;
       expect(statusCode).toBe(201);
@@ -187,7 +187,7 @@ describe('AuthController (e2e)', () => {
     it('should return 401 if refresh token is invalid', async () => {
       const data: any = await request(app.getHttpServer())
         .post('/auth/refresh-token')
-        .set('Authorization', API_KEY)
+        .set('x-api-key', API_KEY)
         .send({ refresh: 'invalid_token' });
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -206,7 +206,7 @@ describe('AuthController (e2e)', () => {
     it('should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
         .post('/auth/refresh-token')
-        .set('Authorization', 'invalid-api-key')
+        .set('x-api-key', 'invalid-api-key')
         .send({ refresh: 'some_refresh_token' });
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);

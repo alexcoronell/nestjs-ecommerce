@@ -466,6 +466,24 @@ describe('UserControler (e2e)', () => {
       expect(data.lastname).toBe(updatedData.lastname);
     });
 
+    it('/:id should return conflict exception with existing email', async () => {
+      await repo.save(seedUsers);
+
+      const user = seedUsers[0];
+      const id = seedUsers[1].id;
+      const updatedData: UpdateUserDto = {
+        email: user.email,
+      };
+      const res = await request(app.getHttpServer())
+        .patch(`/user/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(updatedData);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(409);
+      expect(message).toBe(`The Email ${user.email} is already in use`);
+    });
+
     it('/:id should return 401 if api key is missing', async () => {
       await repo.save(seedUsers);
       const id = seedUsers[0].id;

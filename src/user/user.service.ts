@@ -9,7 +9,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 /* Interfaces */
@@ -160,6 +160,17 @@ export class UserService
   /* Update  */
   async update(id: number, changes: UpdateUserDto) {
     const { data } = await this.findOne(id);
+    const changesEmail = changes.email?.toLowerCase();
+    if (changesEmail) {
+      const user = await this.userRepo.findOne({
+        where: { id: Not(id), email: changesEmail },
+      });
+      if (user) {
+        throw new ConflictException(
+          `The Email ${changesEmail} is already in use`,
+        );
+      }
+    }
     this.userRepo.merge(data as User, changes);
     const rta = await this.userRepo.save(data as User);
     rta.password = '';
@@ -173,8 +184,6 @@ export class UserService
   /* Update Password */
   async updatePassword(id: number, changes: UpdatePasswordDto) {
     const { data } = await this.findOne(id);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const hashPassword = await bcrypt.hash(changes.password, 10);
     const newPasswordChanges = {
       password: hashPassword,

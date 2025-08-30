@@ -239,9 +239,10 @@ describe('UserService', () => {
     it('update should return a message: have been modified', async () => {
       const user = generateUser();
       const id = user.id;
-      const changes: UpdateUserDto = { email: 'updatedEmail@email.com' };
+      const changes: UpdateUserDto = { firstname: 'updatedFirstname' };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(user);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...user, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
@@ -268,6 +269,26 @@ describe('UserService', () => {
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(message).toEqual('Password updated successfully');
+    });
+
+    it('update should throw Conflict Exception when email exists', async () => {
+      const users = generateManyUsers(2);
+      const email = users[0].email;
+      const id = users[1].id;
+      const changes: UpdateUserDto = { email };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(users[1]);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(users[1]);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(users[0]);
+      jest.spyOn(repository, 'merge').mockReturnValue(users[1]);
+      jest.spyOn(repository, 'save').mockResolvedValue(users[1]);
+
+      try {
+        await service.update(id, changes);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(`The Email ${email} is already in use`);
+      }
     });
 
     it('update should throw NotFoundException if user does not exist', async () => {

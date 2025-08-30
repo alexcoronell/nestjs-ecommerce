@@ -7,10 +7,16 @@ import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
 
+/* Modules */
 import { AppModule } from '../src/app.module';
 import { UserModule } from '@user/user.module';
 
+/* Interceptors */
+import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
+
+/* Entities */
 import { User } from '@user/entities/user.entity';
 
 /* Seed */
@@ -18,6 +24,9 @@ import { upSeed, downSeed } from './utils/seed';
 
 /* DataSource */
 import { dataSource } from './utils/seed';
+
+/* Faker */
+import { createUser } from '@faker/user.faker';
 
 /* Seed */
 import {
@@ -35,6 +44,7 @@ const API_KEY = process.env.API_KEY || 'api-e2e-key';
 describe('UserControler (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let adminUser: User | null = null;
   let sellerUser: User | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
@@ -55,6 +65,13 @@ describe('UserControler (e2e)', () => {
         AppModule,
         UserModule,
       ],
+      providers: [
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: AuditInterceptor,
+        },
+        Reflector,
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -72,7 +89,7 @@ describe('UserControler (e2e)', () => {
       ...seedNewSellerUser,
       password: await bcrypt.hash(seedNewSellerUser.password, 10),
     };
-    await repo.save(adminUserToSave);
+    adminUser = await repo.save(adminUserToSave);
     sellerUser = await repo.save(sellerUserToSave);
     const loginAdmin = await request(app.getHttpServer())
       .post('/auth/login')
@@ -371,6 +388,11 @@ describe('UserControler (e2e)', () => {
 
   describe('POST User', () => {
     it('/ should return 201 and created user', async () => {
+      const newUser = createUser();
+      const seedNewUser = {
+        ...newUser,
+        password: await bcrypt.hash(newUser.password, 10),
+      };
       const res = await request(app.getHttpServer())
         .post('/user')
         .set('x-api-key', API_KEY)
@@ -379,6 +401,7 @@ describe('UserControler (e2e)', () => {
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(201);
       expect(data.firstname).toEqual(seedNewUser.firstname);
+      expect(data.createdBy).toEqual(adminUser?.id);
     });
 
     it('/ should  return conflict exception with existing email', async () => {
@@ -464,6 +487,7 @@ describe('UserControler (e2e)', () => {
       expect(statusCode).toBe(200);
       expect(data.firstname).toBe(updatedData.firstname);
       expect(data.lastname).toBe(updatedData.lastname);
+      expect(data.updatedBy).toEqual(sellerUser?.id);
     });
 
     it('/:id should return conflict exception with existing email', async () => {
@@ -574,8 +598,16 @@ describe('UserControler (e2e)', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, message } = res.body;
       const deletedInDB = await repo.findOne({
+        relations: ['createdBy', 'updatedBy', 'deletedBy'],
         where: { id, isDeleted: false },
       });
+      const deletedInDBWithDeleted = await repo.findOne({
+        relations: ['createdBy', 'updatedBy', 'deletedBy'],
+        where: { id, isDeleted: true },
+      });
+      expect(deletedInDBWithDeleted).not.toBeNull();
+      expect(deletedInDBWithDeleted.isDeleted).toBe(true);
+      expect(deletedInDBWithDeleted.deletedBy.id).toBe(adminUser?.id);
       expect(statusCode).toBe(204);
       expect(deletedInDB).toBeNull();
       expect(message).toBe(`The User with id: ${id} has been deleted`);

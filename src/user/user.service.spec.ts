@@ -319,23 +319,25 @@ describe('UserService', () => {
     it('remove should return status and message', async () => {
       const user = generateUser();
       const id = user.id;
+      const deletedBy = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       jest
         .spyOn(repository, 'merge')
-        .mockReturnValue({ ...user, isDeleted: true });
+        .mockReturnValue({ ...user, isDeleted: true, deletedBy });
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, deletedBy);
       expect(statusCode).toBe(204);
       expect(message).toEqual(`The User with id: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if user does not exist with Rejects', async () => {
       const id = 1;
+      const deletedBy = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, deletedBy)).rejects.toThrowError(
         new NotFoundException(`The User with id: ${id} not found`),
       );
     });

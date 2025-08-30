@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -113,7 +115,12 @@ describe('UserController', () => {
 
     describe('remove user controller', () => {
       it('shoudl call remove user service', async () => {
-        await controller.remove(1);
+        const mockRequest = {
+          user: {
+            user: 123,
+          },
+        } as any;
+        await controller.remove(1, mockRequest);
         expect(service.remove).toHaveBeenCalledTimes(1);
       });
     });

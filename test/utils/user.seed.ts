@@ -18,7 +18,7 @@ export const seedNewAdminUser: CreateUserDto = {
   phoneNumber: '555-55-55',
   role: UserRoleEnum.ADMIN,
   createdBy: 1,
-  updatedBy: 1,
+  updatedBy: null,
   deletedBy: null,
 };
 
@@ -30,7 +30,7 @@ export const seedNewSellerUser: CreateUserDto = {
   phoneNumber: '555-55-55',
   role: UserRoleEnum.SELLER,
   createdBy: 1,
-  updatedBy: 1,
+  updatedBy: null,
   deletedBy: null,
 };
 

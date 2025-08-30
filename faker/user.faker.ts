@@ -18,16 +18,23 @@ export const createUser = (): CreateUserDto => ({
   password: faker.internet.password(),
   phoneNumber: faker.phone.number(),
   role: faker.helpers.arrayElement(Object.values(UserRoleEnum)),
-  createdBy: 1,
-  updatedBy: 1,
+  createdBy: null,
+  updatedBy: null,
   deletedBy: null,
 });
 
-export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
+export const generateUser = (
+  id: User['id'] = 1,
+  isDeleted = false,
+  auditUser = 1,
+): User => ({
   ...generateBaseEntity(id, isDeleted),
   ...createUser(),
   isActive: true,
   id,
+  createdBy: auditUser,
+  updatedBy: auditUser,
+  deletedBy: null,
 });
 
 export const generateManyUsers = (size: number): User[] => {

@@ -112,30 +112,6 @@ describe('AuditInterceptor', () => {
     expect(request.body.updatedBy).toBe(userId);
   });
 
-  it('should add deletedBy in DELETE request', () => {
-    const userId = 1;
-    const request = {
-      method: 'DELETE',
-      body: {} as any,
-      user: { user: userId, isAdmin: true },
-    };
-
-    const context: ExecutionContext = {
-      switchToHttp: () => ({
-        getRequest: () => request,
-      }),
-      getHandler: () => {},
-      getClass: () => {},
-    } as any;
-
-    const next: CallHandler = {
-      handle: () => of(null),
-    };
-
-    interceptor.intercept(context, next);
-    expect(request.body.deletedBy).toBe(userId);
-  });
-
   it('should not update the body if the route is "public"', () => {
     const request = {
       method: 'POST',
@@ -155,7 +131,6 @@ describe('AuditInterceptor', () => {
       handle: () => of(null),
     };
 
-    // ✅ Simula que el decorador @NoAudit() está presente
     jest.spyOn(reflector, 'get').mockReturnValue(true);
 
     interceptor.intercept(context, next);

@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { RequestWithUser } from '@commons/interfaces/request-with-user.interface';
 
 /* Interfaces */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
@@ -29,6 +30,7 @@ import { UpdatePasswordDto } from './dto/update-password-user';
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 import { OwnerOrAdminGuard } from '@auth/guards/owner-or-admin-auth/owner-or-admin-auth.guard';
+import { Req } from '@nestjs/common';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Users')
@@ -151,7 +153,8 @@ export class UserController
    */
   @UseGuards(AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    const deletedByUserId = req.user.user;
+    return this.userService.remove(id, deletedByUserId);
   }
 }

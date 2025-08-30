@@ -35,8 +35,6 @@ export class AuditInterceptor implements NestInterceptor {
         body.updatedBy = authenticatedUser.user;
       } else if (method === 'PATCH' || method === 'PUT') {
         body.updatedBy = authenticatedUser.user;
-      } else if (method === 'DELETE') {
-        body.deletedBy = authenticatedUser.user;
       }
     }
 

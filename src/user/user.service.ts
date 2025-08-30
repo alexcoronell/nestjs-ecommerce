@@ -109,6 +109,21 @@ export class UserService
     };
   }
 
+  /* Find One - Without relations */
+  async findOneWithoutRelations(id: User['id']): Promise<Result<User>> {
+    const user = await this.userRepo.findOne({
+      where: { id, isDeleted: false },
+    });
+    if (!user) {
+      throw new NotFoundException(`The User with id: ${id} not found`);
+    }
+    user.password = undefined;
+    return {
+      statusCode: HttpStatus.OK,
+      data: user,
+    };
+  }
+
   /* Find By Email */
   async findOneByEmail(email: string): Promise<Result<User>> {
     const user = await this.userRepo.findOneBy({ email });
@@ -198,12 +213,18 @@ export class UserService
   }
 
   /* Remove */
-  async remove(id: User['id']) {
-    const { data } = await this.findOne(id);
+  async remove(id: User['id'], deletedBy: User['id']) {
+    const { data } = await this.findOneWithoutRelations(id);
+    const user = data as User;
 
-    const changes = { isDeleted: true };
-    this.userRepo.merge(data as User, changes);
-    await this.userRepo.save(data as User);
+    const changes = {
+      deletedBy,
+      isDeleted: true,
+      deletedAt: new Date(),
+    };
+
+    this.userRepo.merge(user, changes);
+    await this.userRepo.save(user);
     return {
       statusCode: HttpStatus.NO_CONTENT,
       message: `The User with id: ${id} has been deleted`,

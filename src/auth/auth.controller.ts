@@ -14,6 +14,10 @@ import { User } from '@user/entities/user.entity';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 
+/* Decorators */
+import { NoAudit } from '@commons/decorators/no-audit.decorator';
+
+@NoAudit()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {

@@ -14,7 +14,7 @@ import { UserRoleEnum } from '@commons/enums/user-role.enum';
 export const createUser = (): CreateUserDto => ({
   firstname: faker.person.firstName(),
   lastname: faker.person.lastName(),
-  email: faker.internet.email(),
+  email: faker.internet.email().toLowerCase(),
   password: faker.internet.password(),
   phoneNumber: faker.phone.number(),
   role: faker.helpers.arrayElement(Object.values(UserRoleEnum)),

@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
   HttpStatus,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -137,8 +140,12 @@ export class UserService
 
   /* Create */
   async create(dto: CreateUserDto) {
+    const email = dto.email.toLowerCase();
+    const existUserEmail = await this.userRepo.findOneBy({ email });
+    if (existUserEmail) {
+      throw new ConflictException(`The Email ${email} is already in use`);
+    }
     const newUser = this.userRepo.create(dto);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const hashPassword = await bcrypt.hash(newUser.password, 10);
     newUser.password = hashPassword;
     const user = await this.userRepo.save(newUser);

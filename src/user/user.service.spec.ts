@@ -230,7 +230,7 @@ describe('UserService', () => {
         await service.create(newUser);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(`Email ${user.email} already exists`);
+        expect(error.message).toBe(`The Email ${user.email} is already in use`);
       }
     });
   });

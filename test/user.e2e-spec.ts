@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { ConflictException, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -379,6 +379,25 @@ describe('UserControler (e2e)', () => {
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(201);
       expect(data.firstname).toEqual(seedNewUser.firstname);
+    });
+
+    it('/ should  return conflict exception with existing email', async () => {
+      await repo.save(seedUsers);
+      const user = seedUsers[0];
+      const newUser = {
+        ...seedNewUser,
+        email: user.email,
+      };
+      try {
+        await request(app.getHttpServer())
+          .post('/user')
+          .set('x-api-key', API_KEY)
+          .set('Authorization', `Bearer ${adminAccessToken}`)
+          .send(newUser);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(`The Email ${user.email} is already in use`);
+      }
     });
 
     it('/ should return 401 if api key is missing', async () => {

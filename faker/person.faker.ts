@@ -11,7 +11,7 @@ import { CreatePersonDto } from '@commons/dtos/CreatePerson.dto';
 export const createPerson = (): CreatePersonDto => ({
   firstname: faker.person.firstName(),
   lastname: faker.person.lastName(),
-  email: faker.internet.email(),
+  email: faker.internet.email().toLowerCase(),
   password: faker.internet.password(),
   phoneNumber: faker.phone.number(),
 });

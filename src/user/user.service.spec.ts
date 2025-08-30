@@ -267,7 +267,7 @@ describe('UserService', () => {
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(message).toEqual('The password was updated');
+      expect(message).toEqual('Password updated successfully');
     });
 
     it('update should throw NotFoundException if user does not exist', async () => {

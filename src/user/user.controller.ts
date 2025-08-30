@@ -136,7 +136,7 @@ export class UserController
    * @returns The updated user with the new password.
    */
   @UseGuards(OwnerOrAdminGuard)
-  @Patch('email/:id')
+  @Patch('password/:id')
   updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body() changes: UpdatePasswordDto,

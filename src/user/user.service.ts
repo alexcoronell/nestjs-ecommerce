@@ -177,7 +177,7 @@ export class UserService
     rta.password = '';
     return {
       statusCode: HttpStatus.OK,
-      message: 'The password was updated',
+      message: 'Password updated successfully',
     };
   }
 

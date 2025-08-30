@@ -22,6 +22,18 @@ export const seedNewAdminUser: CreateUserDto = {
   deletedBy: null,
 };
 
+export const seedNewSellerUser: CreateUserDto = {
+  firstname: 'Jane',
+  lastname: 'Doe',
+  email: 'janedoe@email.com',
+  password: 'jane123',
+  phoneNumber: '555-55-55',
+  role: UserRoleEnum.SELLER,
+  createdBy: 1,
+  updatedBy: 1,
+  deletedBy: null,
+};
+
 export const seedNewUser = createUser();
 
 export const seedUser: User = generateUser();

@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpStatus,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -84,6 +89,14 @@ export class BrandService
   }
 
   async create(dto: CreateBrandDto) {
+    const brandExists = await this.repo.findOne({
+      where: { name: dto.name },
+    });
+    if (brandExists) {
+      throw new ConflictException(
+        `The Brand name: ${dto.name} is already in use`,
+      );
+    }
     const newBrand = this.repo.create(dto);
     const brand = await this.repo.save(newBrand);
     return {
@@ -95,6 +108,17 @@ export class BrandService
 
   async update(id: number, changes: UpdateBrandDto) {
     const { data } = await this.findOne(id);
+    const changesName = changes.name;
+    if (changesName) {
+      const brand = await this.repo.findOne({
+        where: { id: Not(id), name: changesName },
+      });
+      if (brand) {
+        throw new ConflictException(
+          `The Brand name: ${changesName} is already in use`,
+        );
+      }
+    }
     this.repo.merge(data as Brand, changes);
     const rta = await this.repo.save(data as Brand);
     return {

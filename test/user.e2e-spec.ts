@@ -8,6 +8,7 @@ import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
+import * as bcrypt from 'bcrypt';
 
 /* Modules */
 import { AppModule } from '../src/app.module';
@@ -37,7 +38,6 @@ import {
   seedNewSellerUser,
 } from './utils/user.seed';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
 
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 

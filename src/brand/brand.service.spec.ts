@@ -149,6 +149,7 @@ describe('BrandService', () => {
     it('create should return a brand', async () => {
       const brand = generateBrand();
 
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(brand);
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
@@ -160,6 +161,7 @@ describe('BrandService', () => {
     it('create should return Conflict Exception when name brand exists', async () => {
       const brand = generateBrand();
 
+      jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
       jest.spyOn(repository, 'create').mockReturnValue(brand);
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
@@ -167,7 +169,9 @@ describe('BrandService', () => {
         await service.create(brand);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(`Brand ${brand.name} already exists`);
+        expect(error.message).toBe(
+          `The Brand name: ${brand.name} is already in use`,
+        );
       }
     });
   });
@@ -178,12 +182,13 @@ describe('BrandService', () => {
       const id = brand.id;
       const changes: UpdateBrandDto = { name: 'newName' };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brand);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...brand, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       const { statusCode, message } = await service.update(id, changes);
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(repository.findOne).toHaveBeenCalledTimes(2);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
@@ -199,6 +204,29 @@ describe('BrandService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Brand with id: ${id} not found`);
+      }
+    });
+
+    it('update should throw ConflictException if the new name already exists', async () => {
+      const brands = generateManyBrands(2);
+      const name = brands[0].name;
+      const id = brands[1].id;
+      const changes: UpdateBrandDto = { name };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(brands[1]);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brands[1]);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brands[0]);
+      jest.spyOn(repository, 'merge').mockReturnValue(brands[1]);
+      jest.spyOn(repository, 'save').mockResolvedValue(brands[1]);
+
+      try {
+        await service.update(id, changes);
+      } catch (error) {
+        expect(repository.findOne).toHaveBeenCalledTimes(2);
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Brand name: ${changes.name} is already in use`,
+        );
       }
     });
   });

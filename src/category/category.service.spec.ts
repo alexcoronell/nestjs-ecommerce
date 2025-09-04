@@ -152,6 +152,7 @@ describe('CategoryService', () => {
     it('create should return a category', async () => {
       const category = generateCategory();
 
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(category);
       jest.spyOn(repository, 'save').mockResolvedValue(category);
 
@@ -163,6 +164,7 @@ describe('CategoryService', () => {
     it('create should return Conflict Exception when name category exists', async () => {
       const category = generateCategory();
 
+      jest.spyOn(repository, 'findOne').mockResolvedValue(category);
       jest.spyOn(repository, 'create').mockReturnValue(category);
       jest.spyOn(repository, 'save').mockResolvedValue(category);
 
@@ -170,7 +172,9 @@ describe('CategoryService', () => {
         await service.create(category);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(`Category ${category.name} already exists`);
+        expect(error.message).toBe(
+          `The Category name: ${category.name} is already in use`,
+        );
       }
     });
   });
@@ -181,18 +185,39 @@ describe('CategoryService', () => {
       const id = category.id;
       const changes: UpdateCategoryDto = { name: 'newName' };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(category);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(category);
       jest
         .spyOn(repository, 'merge')
         .mockReturnValue({ ...category, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(category);
 
       const { statusCode, message } = await service.update(id, changes);
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(repository.findOne).toHaveBeenCalledTimes(2);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Category with id: ${id} has been modified`);
+    });
+
+    it('update should return Conflict Exception when name category exists', async () => {
+      const categories = generateManyCategories(2);
+      const name = categories[0].name;
+      const id = categories[1].id;
+      const changes: UpdateCategoryDto = { name };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(categories[1]);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(categories[0]);
+
+      try {
+        await service.update(id, changes);
+      } catch (error) {
+        expect(repository.findOne).toHaveBeenCalledTimes(1);
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Category name: ${name} is already in use`,
+        );
+      }
     });
 
     it('update should throw NotFoundException if Category does not exist', async () => {

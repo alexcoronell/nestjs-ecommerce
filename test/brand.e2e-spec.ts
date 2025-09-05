@@ -8,12 +8,13 @@ import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
-import * as bcrypt from 'bcrypt';
 
 /* Modules */
 import { AppModule } from '../src/app.module';
 import { BrandModule } from '@brand/brand.module';
 import { UserModule } from '@user/user.module';
+
+import { User } from '@user/entities/user.entity';
 
 /* Interceptors */
 import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
@@ -31,13 +32,20 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 import { createBrand, generateNewBrands } from '@faker/brand.faker';
 
 /* Seed */
-import { seedNewAdminUser, seedNewSellerUser } from './utils/user.seed';
+import {
+  seedNewAdminUser,
+  adminPassword,
+  seedNewSellerUser,
+  sellerPassword,
+} from './utils/user.seed';
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('BrandController (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;
+  let adminUser: User | null = null;
+  let sellerUser: User | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
 
@@ -75,30 +83,22 @@ describe('BrandController (e2e)', () => {
 
   beforeEach(async () => {
     await upSeed();
-    const adminUserToSave = {
-      ...seedNewAdminUser,
-      password: await bcrypt.hash(seedNewAdminUser.password, 10),
-    };
-    const sellerUserToSave = {
-      ...seedNewSellerUser,
-      password: await bcrypt.hash(seedNewSellerUser.password, 10),
-    };
-    await repoUser.save(adminUserToSave);
-    await repoUser.save(sellerUserToSave);
+    adminUser = await repoUser.save(await seedNewAdminUser());
+    sellerUser = await repoUser.save(await seedNewSellerUser());
     const loginAdmin = await request(app.getHttpServer())
       .post('/auth/login')
       .set('x-api-key', API_KEY)
       .send({
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: adminUser?.email,
+        password: adminPassword,
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
     const loginSeller = await request(app.getHttpServer())
       .post('/auth/login')
       .set('x-api-key', API_KEY)
       .send({
-        email: seedNewSellerUser.email,
-        password: seedNewSellerUser.password,
+        email: sellerUser?.email,
+        password: sellerPassword,
       });
     const { access_token: tempSellerAccessToken } = loginSeller.body;
     adminAccessToken = tempAdminAccessToken;

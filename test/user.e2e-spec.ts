@@ -35,7 +35,9 @@ import {
   seedUser,
   seedUsers,
   seedNewAdminUser,
+  adminPassword,
   seedNewSellerUser,
+  sellerPassword,
 } from './utils/user.seed';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
 
@@ -81,30 +83,22 @@ describe('UserControler (e2e)', () => {
 
   beforeEach(async () => {
     await upSeed();
-    const adminUserToSave = {
-      ...seedNewAdminUser,
-      password: await bcrypt.hash(seedNewAdminUser.password, 10),
-    };
-    const sellerUserToSave = {
-      ...seedNewSellerUser,
-      password: await bcrypt.hash(seedNewSellerUser.password, 10),
-    };
-    adminUser = await repo.save(adminUserToSave);
-    sellerUser = await repo.save(sellerUserToSave);
+    adminUser = await repo.save(await seedNewAdminUser());
+    sellerUser = await repo.save(await seedNewSellerUser());
     const loginAdmin = await request(app.getHttpServer())
       .post('/auth/login')
       .set('x-api-key', API_KEY)
       .send({
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: adminUser?.email,
+        password: adminPassword,
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
     const loginSeller = await request(app.getHttpServer())
       .post('/auth/login')
       .set('x-api-key', API_KEY)
       .send({
-        email: seedNewSellerUser.email,
-        password: seedNewSellerUser.password,
+        email: sellerUser?.email,
+        password: sellerPassword,
       });
     const { access_token: tempSellerAccessToken } = loginSeller.body;
     adminAccessToken = tempAdminAccessToken;

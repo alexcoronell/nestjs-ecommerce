@@ -72,7 +72,7 @@ describe('ApiKeyGuard', () => {
       const result = guard.canActivate(mockExecutionContext);
 
       expect(result).toBe(true);
-      expect(mockRequest.header).toHaveBeenCalledWith('Authorization');
+      expect(mockRequest.header).toHaveBeenCalledWith('x-api-key');
     });
 
     it('should throw UnauthorizedException if the API key is invalid', () => {
@@ -83,10 +83,10 @@ describe('ApiKeyGuard', () => {
       expect(() => guard.canActivate(mockExecutionContext)).toThrow(
         new UnauthorizedException('Invalid API key'),
       );
-      expect(mockRequest.header).toHaveBeenCalledWith('Authorization');
+      expect(mockRequest.header).toHaveBeenCalledWith('x-api-key');
     });
 
-    it('should throw UnauthorizedException if the Authorization header is missing', () => {
+    it('should throw UnauthorizedException if the x-api-key header is missing', () => {
       jest.spyOn(reflector, 'get').mockReturnValue(false);
       const mockRequest = mockExecutionContext.switchToHttp().getRequest();
       mockRequest.header.mockReturnValue(undefined);
@@ -94,7 +94,7 @@ describe('ApiKeyGuard', () => {
       expect(() => guard.canActivate(mockExecutionContext)).toThrow(
         new UnauthorizedException('Invalid API key'),
       );
-      expect(mockRequest.header).toHaveBeenCalledWith('Authorization');
+      expect(mockRequest.header).toHaveBeenCalledWith('x-api-key');
     });
   });
 });

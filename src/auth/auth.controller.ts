@@ -8,10 +8,12 @@ import { Request } from 'express';
 import { AuthService } from './auth.service';
 
 /* Entities */
+import { Customer } from '@customer/entities/customer.entity';
 import { User } from '@user/entities/user.entity';
 
 /* Guards */
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
+import { LocalCustomerStrategy } from './strategies/local-customer.strategy';
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 
 /* Decorators */
@@ -24,10 +26,17 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('user/login')
   login(@Req() req: Request) {
     const { user } = req as any;
     return this.authService.generateJWT(user as User);
+  }
+
+  @UseGuards(LocalCustomerStrategy)
+  @Post('customer/login')
+  loginCustomer(@Req() req: Request) {
+    const { customer } = req as any;
+    return this.authService.generateCustomerJWT(customer as Customer);
   }
 
   @UseGuards(RefreshJwtAuthGuard)

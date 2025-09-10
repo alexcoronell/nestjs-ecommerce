@@ -6,21 +6,28 @@ import { AuthController } from './auth.controller';
 /* Services */
 import { AuthService } from './auth.service';
 
+/* Faker */
+import { faker } from '@faker-js/faker/.';
+
+const jwt = faker.internet.jwt();
+
+const mockService = {
+  login: jest.fn().mockReturnValue(jwt),
+  loginCustomer: jest.fn().mockReturnValue(jwt),
+  refreshToken: jest.fn().mockReturnValue(jwt),
+};
+
 describe('AuthController', () => {
   let controller: AuthController;
   let service: AuthService;
 
-   beforeEach(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
         {
           provide: AuthService,
-          useValue: {
-            login: jest.fn(),
-            validateToken: jest.fn(),
-            refreshToken: jest.fn(),
-          },
+          useValue: mockService,
         },
       ],
     }).compile();

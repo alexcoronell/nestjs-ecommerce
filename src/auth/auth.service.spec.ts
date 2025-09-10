@@ -13,6 +13,7 @@ import { UserService } from '@user/user.service';
 /* Config */
 import config from '@config/index';
 
+import { generateCustomer } from '@faker/customer.faker';
 import { generateUser } from '@faker/user.faker';
 
 describe('AuthService', () => {
@@ -140,6 +141,17 @@ describe('AuthService', () => {
       it('should generate access and refresh tokens', async () => {
         const user = generateUser();
         const result = await service.generateJWT(user);
+        expect(result).toEqual({
+          access_token: 'mockedJwtToken',
+          refresh_token: 'mockedRefreshToken',
+        });
+      });
+    });
+
+    describe('generateCustomerJWT', () => {
+      it('should generate access and refresh tokens', async () => {
+        const customer = generateCustomer();
+        const result = await service.generateCustomerJWT(customer);
         expect(result).toEqual({
           access_token: 'mockedJwtToken',
           refresh_token: 'mockedRefreshToken',

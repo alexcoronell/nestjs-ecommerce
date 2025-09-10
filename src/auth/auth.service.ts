@@ -39,6 +39,11 @@ export class AuthService {
       configService.jwtRefreshTokenExpirationTime as unknown as number;
   }
 
+  /**
+   * @param email
+   * @param password
+   * @returns user
+   */
   async validateUser(email: string, password: string) {
     const { data } = await this.userService.findAndValidateEmail(email);
     const user = data as User;
@@ -49,6 +54,11 @@ export class AuthService {
     }
   }
 
+  /**
+   * @param email
+   * @param password
+   * @returns customer
+   */
   async validateCustomer(email: string, password: string) {
     const { data } = await this.customerService.findAndValidateEmail(email);
     const customer = data as Customer;
@@ -59,6 +69,10 @@ export class AuthService {
     }
   }
 
+  /**
+   * @param user
+   * @returns access_token and refresh_token
+   */
   async generateJWT(user: User) {
     const payload: PayloadToken = {
       user: user.id,
@@ -72,6 +86,27 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param customer
+   * @returns access_token and refresh_token
+   */
+  async generateCustomerJWT(customer: Customer) {
+    const payload: PayloadToken = {
+      user: customer.id,
+      isAdmin: false,
+      isCustomer: true,
+    };
+    const expiresIn = 604800;
+    return {
+      access_token: this.jwtService.sign(payload, { expiresIn }),
+      refresh_token: await this.generateRefreshToken(payload),
+    };
+  }
+
+  /**
+   * @param payload
+   * @returns refreshToken
+   */
   private async generateRefreshToken(payload: PayloadToken) {
     const secret = this.jwtRefreshTokenSecret;
     if (!secret) {
@@ -85,6 +120,10 @@ export class AuthService {
     return await refreshToken;
   }
 
+  /**
+   * @param payload
+   * @returns refreshToken
+   */
   async refreshToken(dto: TokenDto) {
     const expiresIn = 60;
     const userToken = this.jwtService.decode(dto.refresh);
@@ -95,7 +134,7 @@ export class AuthService {
     const payload: PayloadToken = {
       user,
       isAdmin: userToken.isAdmin,
-      isCustomer: false,
+      isCustomer: userToken.isCustomer,
     };
     return {
       access_token: await this.jwtService.signAsync(payload, { expiresIn }),

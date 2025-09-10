@@ -9,9 +9,11 @@ import { ConfigType } from '@nestjs/config';
 import config from '@config/index';
 
 /* Services */
+import { CustomerService } from '@customer/customer.service';
 import { UserService } from '@user/user.service';
 
 /* Entities */
+import { Customer } from '@customer/entities/customer.entity';
 import { User } from '@user/entities/user.entity';
 
 /* Interfaces */
@@ -27,6 +29,7 @@ export class AuthService {
   jwtRefreshTokenExpirationTime: number | null = null;
 
   constructor(
+    private customerService: CustomerService,
     private userService: UserService,
     private jwtService: JwtService,
     @Inject(config.KEY) configService: ConfigType<typeof config>,
@@ -46,14 +49,14 @@ export class AuthService {
     }
   }
 
-  async validatePassword(email: string, password: string) {
-    const { data } = await this.userService.findOneByEmail(email);
-    const user = data as User;
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (user && isMatch) {
-      return true;
+  async validateCustomer(email: string, password: string) {
+    const { data } = await this.customerService.findAndValidateEmail(email);
+    const customer = data as Customer;
+    const isMatch = await bcrypt.compare(password, customer.password);
+    if (customer && isMatch) {
+      customer.password = undefined;
+      return customer;
     }
-    return false;
   }
 
   async generateJWT(user: User) {

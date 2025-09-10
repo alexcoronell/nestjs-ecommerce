@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 /* Services */
 import { AuthService } from './auth.service';
+import { CustomerService } from '@customer/customer.service';
 import { UserService } from '@user/user.service';
 
 /* Config */
@@ -18,6 +18,7 @@ import { generateUser } from '@faker/user.faker';
 describe('AuthService', () => {
   let service: AuthService;
   let jwtService: JwtService;
+  let customerService: CustomerService;
   let userService: UserService;
 
   describe('AuthService', () => {
@@ -54,6 +55,25 @@ describe('AuthService', () => {
             },
           },
           {
+            provide: CustomerService,
+            useValue: {
+              findOneByEmail: jest.fn().mockResolvedValue({
+                data: {
+                  id: 1,
+                  email: 'test@test.com',
+                  password: 'hashedPassword',
+                },
+              }),
+              findAndValidateEmail: jest.fn().mockResolvedValue({
+                data: {
+                  id: 1,
+                  email: 'test@test.com',
+                  password: 'hashedPassword',
+                },
+              }),
+            },
+          },
+          {
             provide: config.KEY,
             useValue: {
               apikey: undefined,
@@ -68,6 +88,7 @@ describe('AuthService', () => {
 
       service = module.get<AuthService>(AuthService);
       jwtService = module.get<JwtService>(JwtService);
+      customerService = module.get<CustomerService>(CustomerService);
       userService = module.get<UserService>(UserService);
     });
 
@@ -75,6 +96,7 @@ describe('AuthService', () => {
       expect(service).toBeDefined();
       expect(jwtService).toBeDefined();
       expect(userService).toBeDefined();
+      expect(customerService).toBeDefined();
     });
 
     describe('validateUser', () => {
@@ -94,23 +116,23 @@ describe('AuthService', () => {
       });
     });
 
-    describe('validatePassword', () => {
-      it('should return true if password is valid', async () => {
+    describe('validateCustomer', () => {
+      it('should return customer data if credentials are valid', async () => {
         jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
-        const result = await service.validatePassword(
+        const result = await service.validateCustomer(
           'test@test.com',
           'password',
         );
-        expect(result).toBe(true);
+        expect(result).toEqual({ id: 1, email: 'test@test.com' });
       });
 
-      it('should return false if password is invalid', async () => {
+      it('should return null if credentials are invalid', async () => {
         jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
-        const result = await service.validatePassword(
+        const result = await service.validateCustomer(
           'test@test.com',
           'wrongPassword',
         );
-        expect(result).toBe(false);
+        expect(result).toBeFalsy();
       });
     });
 

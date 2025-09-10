@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { faker } from '@faker-js/faker/.';
 
 import { Customer } from '@customer/entities/customer.entity';
@@ -8,8 +7,10 @@ import { CreateCustomerDto } from '@customer/dto/create-customer.dto';
 
 export const createCustomer = (): CreateCustomerDto => ({
   ...createPerson(),
-  address: faker.word.words(3),
-  neighborhood: faker.word.words(1),
+  department: faker.location.state(),
+  city: faker.location.city(),
+  address: faker.location.streetAddress(),
+  neighborhood: faker.location.street(),
 });
 
 export const generateCustomer = (

@@ -7,6 +7,12 @@ import { Wishlist } from '@wishlist/entities/wishlist.entity';
 
 @Entity('customers')
 export class Customer extends PersonEntity {
+  @Column({ type: 'varchar', length: 100 })
+  department: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  city: string;
+
   @Column({ type: 'varchar', length: 255 })
   address: string;
 

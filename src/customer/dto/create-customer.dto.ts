@@ -7,6 +7,16 @@ export class CreateCustomerDto extends CreatePersonDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
+  readonly department: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
   readonly address: string;
 
   @IsString()

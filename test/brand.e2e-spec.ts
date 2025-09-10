@@ -31,13 +31,15 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 /* Faker */
 import { createBrand, generateNewBrands } from '@faker/brand.faker';
 
-/* Seed */
+/* Users for Login */
 import {
   seedNewAdminUser,
   adminPassword,
   seedNewSellerUser,
   sellerPassword,
 } from './utils/user.seed';
+
+/* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('BrandController (e2e)', () => {

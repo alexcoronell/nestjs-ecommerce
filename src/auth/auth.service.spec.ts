@@ -139,12 +139,16 @@ describe('AuthService', () => {
       it('should throw an error if refresh token secret is not defined', async () => {
         service.jwtRefreshTokenSecret = null;
         await expect(
-          service['generateRefreshToken']({ user: 1, isAdmin: false }),
+          service['generateRefreshToken']({
+            user: 1,
+            isAdmin: false,
+            isCustomer: false,
+          }),
         ).rejects.toThrow('JWT refresh token secret is not defined');
       });
 
       it('should generate a refresh token', async () => {
-        const payload = { user: 1, isAdmin: false };
+        const payload = { user: 1, isAdmin: false, isCustomer: false };
         const result = await service['generateRefreshToken'](payload);
         expect(result).toBe('mockedRefreshToken');
       });

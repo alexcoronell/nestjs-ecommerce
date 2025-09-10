@@ -28,7 +28,7 @@ describe('JwtStrategy', () => {
   });
 
   it('should return payload on validate', () => {
-    const payload = { user: 1, isAdmin: true };
+    const payload = { user: 1, isAdmin: true, isCustomer: false };
     expect(strategy.validate(payload)).toEqual(payload);
   });
 });

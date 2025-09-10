@@ -60,6 +60,7 @@ export class AuthService {
     const payload: PayloadToken = {
       user: user.id,
       isAdmin: user.role === UserRoleEnum.ADMIN,
+      isCustomer: false,
     };
     const expiresIn = 604800;
     return {
@@ -88,7 +89,11 @@ export class AuthService {
       throw new UnauthorizedException('Not Allow');
     }
     const { user } = userToken as PayloadToken;
-    const payload: PayloadToken = { user, isAdmin: userToken.isAdmin };
+    const payload: PayloadToken = {
+      user,
+      isAdmin: userToken.isAdmin,
+      isCustomer: false,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload, { expiresIn }),
     };

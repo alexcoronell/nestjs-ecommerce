@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -161,7 +165,7 @@ describe('CustomerService', () => {
       expect(dataCustomer).toEqual(customer);
     });
 
-    it('findOneByEEmail should throw NotFoundException if customer does not exist', async () => {
+    it('findOneByEmail should throw NotFoundException if customer does not exist', async () => {
       const email = 'email';
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
@@ -172,6 +176,31 @@ describe('CustomerService', () => {
         expect(error.message).toBe(
           `The Customer with email ${email} not found`,
         );
+      }
+    });
+
+    it('findAndValidateEmail should return a customer', async () => {
+      const customer = generateCustomer();
+      const email = customer.email;
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(customer);
+
+      const { statusCode, data } = await service.findAndValidateEmail(email);
+      const dataCustomer: Customer = data as Customer;
+      expect(repository.findOneBy).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(dataCustomer).toEqual(customer);
+    });
+
+    it('findAndValidateEmail should throw NotFoundException if customer does not exist', async () => {
+      const email = 'badEmail@email.com';
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+
+      try {
+        await service.findAndValidateEmail(email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.message).toBe(`Not Allow`);
       }
     });
   });

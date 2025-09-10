@@ -10,7 +10,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import * as bcrypt from 'bcrypt';
 
 import config from '@config/index';
 
@@ -27,11 +26,12 @@ import { upSeed, downSeed } from './utils/seed';
 /* DataSource */
 import { dataSource } from './utils/seed';
 
-import { seedNewAdminUser } from './utils/user.seed';
+import { seedNewAdminUser, adminPassword } from './utils/user.seed';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let userAdmin: any = undefined;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -76,9 +76,8 @@ describe('AuthController (e2e)', () => {
 
   beforeEach(async () => {
     await upSeed();
-    const hashedPassword = await bcrypt.hash(seedNewAdminUser.password, 10);
-    const userToSave = { ...seedNewAdminUser, password: hashedPassword };
-    await repo.save(userToSave);
+    userAdmin = await seedNewAdminUser();
+    await repo.save(userAdmin);
   });
 
   const API_KEY = process.env.API_KEY || 'api-e2e-key';
@@ -86,8 +85,8 @@ describe('AuthController (e2e)', () => {
   describe('POST Auth Login', () => {
     it('/login should return an access token', async () => {
       const user = {
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: userAdmin.email,
+        password: adminPassword,
       };
 
       const data: any = await request(app.getHttpServer())
@@ -118,7 +117,7 @@ describe('AuthController (e2e)', () => {
 
     it('should return 401 if password is incorrect', async () => {
       const user = {
-        email: seedNewAdminUser.email,
+        email: userAdmin.email,
         password: 'wrongpassword',
       };
 
@@ -133,8 +132,8 @@ describe('AuthController (e2e)', () => {
 
     it('should return 401 if api key is missing', async () => {
       const user = {
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: userAdmin.email,
+        password: adminPassword,
       };
 
       const data: any = await request(app.getHttpServer())
@@ -147,8 +146,8 @@ describe('AuthController (e2e)', () => {
 
     it('should return 401 if api key is invalid', async () => {
       const user = {
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: userAdmin.email,
+        password: adminPassword,
       };
 
       const data: any = await request(app.getHttpServer())
@@ -164,8 +163,8 @@ describe('AuthController (e2e)', () => {
   describe('POST /auth/refresh', () => {
     it('should return a new access token', async () => {
       const user = {
-        email: seedNewAdminUser.email,
-        password: seedNewAdminUser.password,
+        email: userAdmin.email,
+        password: adminPassword,
       };
 
       const loginResponse: any = await request(app.getHttpServer())

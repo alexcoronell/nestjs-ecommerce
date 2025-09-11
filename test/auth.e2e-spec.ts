@@ -90,7 +90,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const data: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
@@ -107,7 +107,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const data: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
@@ -122,7 +122,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const data: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .set('x-api-key', API_KEY)
         .send(user);
       const { body, statusCode } = data;
@@ -137,7 +137,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const data: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .send(user);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -151,7 +151,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const data: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .set('x-api-key', 'invalid-api-key')
         .send(user);
       const { body, statusCode } = data;
@@ -168,7 +168,7 @@ describe('AuthController (e2e)', () => {
       };
 
       const loginResponse: any = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/auth/user/login')
         .set('x-api-key', API_KEY)
         .send(user);
       const { refresh_token } = loginResponse.body;

@@ -13,7 +13,7 @@ import { User } from '@user/entities/user.entity';
 
 /* Guards */
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
-import { LocalCustomerStrategy } from './strategies/local-customer.strategy';
+import { LocalCustomerAuthGuard } from './guards/local-customer-auth/local-customer-auth.guard';
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 
 /* Decorators */
@@ -32,7 +32,7 @@ export class AuthController {
     return this.authService.generateJWT(user as User);
   }
 
-  @UseGuards(LocalCustomerStrategy)
+  @UseGuards(LocalCustomerAuthGuard)
   @Post('customer/login')
   loginCustomer(@Req() req: Request) {
     const { customer } = req as any;

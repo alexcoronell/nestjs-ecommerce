@@ -88,7 +88,7 @@ describe('BrandController (e2e)', () => {
     adminUser = await repoUser.save(await seedNewAdminUser());
     sellerUser = await repoUser.save(await seedNewSellerUser());
     const loginAdmin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/auth/user/login')
       .set('x-api-key', API_KEY)
       .send({
         email: adminUser?.email,
@@ -96,7 +96,7 @@ describe('BrandController (e2e)', () => {
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
     const loginSeller = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/auth/user/login')
       .set('x-api-key', API_KEY)
       .send({
         email: sellerUser?.email,

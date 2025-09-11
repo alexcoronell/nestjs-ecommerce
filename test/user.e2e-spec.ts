@@ -86,7 +86,7 @@ describe('UserControler (e2e)', () => {
     adminUser = await repo.save(await seedNewAdminUser());
     sellerUser = await repo.save(await seedNewSellerUser());
     const loginAdmin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/auth/user/login')
       .set('x-api-key', API_KEY)
       .send({
         email: adminUser?.email,
@@ -94,7 +94,7 @@ describe('UserControler (e2e)', () => {
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
     const loginSeller = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/auth/user/login')
       .set('x-api-key', API_KEY)
       .send({
         email: sellerUser?.email,

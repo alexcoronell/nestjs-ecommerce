@@ -9,6 +9,7 @@ import { UserModule } from '@user/user.module';
 
 /* Strategies */
 import { LocalStrategy } from '@auth/strategies/local.strategy';
+import { LocalCustomerStrategy } from './strategies/local-customer.strategy';
 import { JwtStrategy } from '@auth/strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from '@auth/strategies/jwt-refresh-token.strategy';
 
@@ -38,7 +39,13 @@ import config from '@config/index';
     CustomerModule,
     UserModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    LocalCustomerStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

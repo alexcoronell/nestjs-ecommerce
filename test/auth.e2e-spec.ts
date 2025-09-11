@@ -26,12 +26,18 @@ import { upSeed, downSeed } from './utils/seed';
 /* DataSource */
 import { dataSource } from './utils/seed';
 
-import { seedNewAdminUser, adminPassword } from './utils/user.seed';
+import {
+  seedNewAdminUser,
+  adminPassword,
+  seedNewSellerUser,
+  sellerPassword,
+} from './utils/user.seed';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let userAdmin: any = undefined;
+  let userSeller: any = undefined;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -77,16 +83,35 @@ describe('AuthController (e2e)', () => {
   beforeEach(async () => {
     await upSeed();
     userAdmin = await seedNewAdminUser();
+    userSeller = await seedNewSellerUser();
     await repo.save(userAdmin);
+    await repo.save(userSeller);
   });
 
   const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-  describe('POST Auth Login', () => {
-    it('/login should return an access token', async () => {
+  describe('POST /user/login  Auth Login Users', () => {
+    it('should return an access token with Admin User', async () => {
       const user = {
         email: userAdmin.email,
         password: adminPassword,
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/user/login')
+        .set('x-api-key', API_KEY)
+        .send(user);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(201);
+      expect(body).toHaveProperty('access_token');
+      expect(body.access_token).toBeTruthy();
+      expect(body.refresh_token).toBeTruthy();
+    });
+
+    it('should return and access token with Seller User', async () => {
+      const user = {
+        email: userSeller.email,
+        password: sellerPassword,
       };
 
       const data: any = await request(app.getHttpServer())

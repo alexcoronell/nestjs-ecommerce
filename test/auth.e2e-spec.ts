@@ -15,6 +15,7 @@ import config from '@config/index';
 
 /* Modules */
 import { AuthModule } from '@auth/auth.module';
+import { CustomerModule } from '@customer/customer.module';
 import { UserModule } from '@user/user.module';
 
 /* Guards */
@@ -26,6 +27,7 @@ import { upSeed, downSeed } from './utils/seed';
 /* DataSource */
 import { dataSource } from './utils/seed';
 
+/* User Seed */
 import {
   seedNewAdminUser,
   adminPassword,
@@ -33,11 +35,16 @@ import {
   sellerPassword,
 } from './utils/user.seed';
 
+/* Customer Seed */
+import { seedNewCustomer, customerPasword } from './utils/customer.seed';
+
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let repoCustomer: any = undefined;
   let userAdmin: any = undefined;
   let userSeller: any = undefined;
+  let customer: any = undefined;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -65,6 +72,7 @@ describe('AuthController (e2e)', () => {
           },
         }),
         AuthModule,
+        CustomerModule,
         UserModule,
       ],
       providers: [
@@ -78,14 +86,17 @@ describe('AuthController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     repo = app.get('UserRepository');
+    repoCustomer = app.get('CustomerRepository');
   });
 
   beforeEach(async () => {
     await upSeed();
     userAdmin = await seedNewAdminUser();
     userSeller = await seedNewSellerUser();
+    customer = await seedNewCustomer();
     await repo.save(userAdmin);
     await repo.save(userSeller);
+    await repoCustomer.save(customer);
   });
 
   const API_KEY = process.env.API_KEY || 'api-e2e-key';
@@ -182,6 +193,29 @@ describe('AuthController (e2e)', () => {
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+  });
+
+  xdescribe('POST /customer/login  Auth Login Customers', () => {
+    it('should return an access token', async () => {
+      const loginCustomer = {
+        email: customer.email,
+        password: customerPasword,
+      };
+
+      const customerMock = await repoCustomer.findOneBy({
+        email: customer.email,
+      });
+      console.log(customerMock);
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/customer/login')
+        .set('x-api-key', API_KEY)
+        .send(loginCustomer);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(201);
+      expect(body).toHaveProperty('access_token');
+      expect(body.access_token).toBeTruthy();
+      expect(body.refresh_token).toBeTruthy();
     });
   });
 

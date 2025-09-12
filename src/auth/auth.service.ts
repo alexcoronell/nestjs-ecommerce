@@ -91,6 +91,8 @@ export class AuthService {
    * @returns access_token and refresh_token
    */
   async generateCustomerJWT(customer: Customer) {
+    //const { id } = customer;
+    console.log(customer);
     const payload: PayloadToken = {
       user: customer.id,
       isAdmin: false,

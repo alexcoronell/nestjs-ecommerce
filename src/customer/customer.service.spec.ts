@@ -190,6 +190,7 @@ describe('CustomerService', () => {
       expect(repository.findOneBy).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(dataCustomer).toEqual(customer);
+      expect(dataCustomer.id).toEqual(customer.id);
     });
 
     it('findAndValidateEmail should throw NotFoundException if customer does not exist', async () => {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
@@ -35,8 +37,8 @@ export class AuthController {
   @UseGuards(LocalCustomerAuthGuard)
   @Post('customer/login')
   loginCustomer(@Req() req: Request) {
-    const { customer } = req as any;
-    return this.authService.generateCustomerJWT(customer as Customer);
+    const { body } = req as any;
+    return this.authService.generateCustomerJWT(body as Customer);
   }
 
   @UseGuards(RefreshJwtAuthGuard)

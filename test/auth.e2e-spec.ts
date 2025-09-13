@@ -151,7 +151,7 @@ describe('AuthController (e2e)', () => {
       expect(body).toHaveProperty('message', 'Not Allow');
     });
 
-    it('should return 401 if password is incorrect', async () => {
+    it('should return 401 if user password is incorrect', async () => {
       const user = {
         email: userAdmin.email,
         password: 'wrongpassword',
@@ -196,17 +196,12 @@ describe('AuthController (e2e)', () => {
     });
   });
 
-  xdescribe('POST /customer/login  Auth Login Customers', () => {
+  describe('POST /customer/login  Auth Login Customers', () => {
     it('should return an access token', async () => {
       const loginCustomer = {
         email: customer.email,
         password: customerPasword,
       };
-
-      const customerMock = await repoCustomer.findOneBy({
-        email: customer.email,
-      });
-      console.log(customerMock);
       const data: any = await request(app.getHttpServer())
         .post('/auth/customer/login')
         .set('x-api-key', API_KEY)
@@ -216,6 +211,65 @@ describe('AuthController (e2e)', () => {
       expect(body).toHaveProperty('access_token');
       expect(body.access_token).toBeTruthy();
       expect(body.refresh_token).toBeTruthy();
+    });
+
+    it('should return 401 if customer is not found', async () => {
+      const customer = {
+        email: 'unknown@example.com',
+        password: 'wrongpassword',
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/customer/login')
+        .set('x-api-key', API_KEY)
+        .send(customer);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Not Allow');
+    });
+
+    it('should return 401 if customer password is incorrect', async () => {
+      const customerMock = {
+        email: customer.email,
+        password: 'wrongpassword',
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/customer/login')
+        .set('x-api-key', API_KEY)
+        .send(customerMock);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Not Allow');
+    });
+
+    it('should return 401 if api key is missing', async () => {
+      const customerMock = {
+        email: customer.email,
+        password: customerPasword,
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/customer/login')
+        .send(customerMock);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('should return 401 if api key is invalid', async () => {
+      const customerMock = {
+        email: customer.email,
+        password: customerPasword,
+      };
+
+      const data: any = await request(app.getHttpServer())
+        .post('/auth/customer/login')
+        .set('x-api-key', 'invalid-api-key')
+        .send(customerMock);
+      const { body, statusCode } = data;
+      expect(statusCode).toBe(401);
+      expect(body).toHaveProperty('message', 'Invalid API key');
     });
   });
 

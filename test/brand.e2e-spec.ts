@@ -12,8 +12,11 @@ import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
 /* Modules */
 import { AppModule } from '../src/app.module';
 import { BrandModule } from '@brand/brand.module';
+import { CustomerModule } from '@customer/customer.module';
 import { UserModule } from '@user/user.module';
 
+/* Interfaces */
+import { Customer } from '@customer/entities/customer.entity';
 import { User } from '@user/entities/user.entity';
 
 /* Interceptors */
@@ -38,6 +41,7 @@ import {
   seedNewSellerUser,
   sellerPassword,
 } from './utils/user.seed';
+import { seedNewCustomer, customerPasword } from './utils/customer.seed';
 
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
@@ -45,11 +49,14 @@ const API_KEY = process.env.API_KEY || 'api-e2e-key';
 describe('BrandController (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let repoCustomer: any = undefined;
   let repoUser: any = undefined;
   let adminUser: User | null = null;
   let sellerUser: User | null = null;
+  let customer: Customer | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
+  let customerAccessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -66,6 +73,7 @@ describe('BrandController (e2e)', () => {
         }),
         AppModule,
         BrandModule,
+        CustomerModule,
         UserModule,
       ],
       providers: [
@@ -80,6 +88,7 @@ describe('BrandController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     repo = app.get('BrandRepository');
+    repoCustomer = app.get('CustomerRepository');
     repoUser = app.get('UserRepository');
   });
 
@@ -87,6 +96,9 @@ describe('BrandController (e2e)', () => {
     await upSeed();
     adminUser = await repoUser.save(await seedNewAdminUser());
     sellerUser = await repoUser.save(await seedNewSellerUser());
+    customer = await repoCustomer.save(await seedNewCustomer());
+
+    /* Login Admin User */
     const loginAdmin = await request(app.getHttpServer())
       .post('/auth/user/login')
       .set('x-api-key', API_KEY)
@@ -95,6 +107,9 @@ describe('BrandController (e2e)', () => {
         password: adminPassword,
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
+    adminAccessToken = tempAdminAccessToken;
+
+    /* Login Seller User */
     const loginSeller = await request(app.getHttpServer())
       .post('/auth/user/login')
       .set('x-api-key', API_KEY)
@@ -103,8 +118,18 @@ describe('BrandController (e2e)', () => {
         password: sellerPassword,
       });
     const { access_token: tempSellerAccessToken } = loginSeller.body;
-    adminAccessToken = tempAdminAccessToken;
     sellerAccessToken = tempSellerAccessToken;
+
+    /* Login Customer User */
+    const loginCustomer = await request(app.getHttpServer())
+      .post('/auth/customer/login')
+      .set('x-api-key', API_KEY)
+      .send({
+        email: customer?.email,
+        password: customerPasword,
+      });
+    const { access_token: tempCustomererAccessToken } = loginCustomer.body;
+    customerAccessToken = tempCustomererAccessToken;
   });
 
   describe('GET Brand - Count', () => {
@@ -138,6 +163,19 @@ describe('BrandController (e2e)', () => {
       expect(body).toHaveProperty('message', 'Invalid API key');
     });
 
+    it('/count-all should return 401 with customer access token', async () => {
+      const brands = generateNewBrands(10);
+      await repo.save(brands);
+      const res = await request(app.getHttpServer())
+        .get('/brand/count-all')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
+
     it('/count', async () => {
       const brands = generateNewBrands(10);
       await repo.save(brands);
@@ -165,15 +203,68 @@ describe('BrandController (e2e)', () => {
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
     });
+
+    it('/count should return 401 with customer access token', async () => {
+      const brands = generateNewBrands(10);
+      await repo.save(brands);
+      const res = await request(app.getHttpServer())
+        .get('/brand/count')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
   });
 
   describe('GET Brand - Find', () => {
-    it('/ should return all brands', async () => {
+    it('/ should return all brands without login user or customer', async () => {
       const brands = generateNewBrands(10);
       await repo.save(brands);
       const res = await request(app.getHttpServer())
         .get('/brand')
         .set('x-api-key', API_KEY);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(200);
+      expect(data.length).toEqual(brands.length);
+      data.forEach((user) => {
+        const brand = brands.find((su) => su.name === user.name);
+        expect(user).toEqual(
+          expect.objectContaining({
+            name: brand?.name,
+          }),
+        );
+      });
+    });
+
+    it('/ should return all brands with admin login', async () => {
+      const brands = generateNewBrands(10);
+      await repo.save(brands);
+      const res = await request(app.getHttpServer())
+        .get('/brand')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', adminAccessToken);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(200);
+      expect(data.length).toEqual(brands.length);
+      data.forEach((user) => {
+        const brand = brands.find((su) => su.name === user.name);
+        expect(user).toEqual(
+          expect.objectContaining({
+            name: brand?.name,
+          }),
+        );
+      });
+    });
+
+    it('/ should return all brands with seller login', async () => {
+      const brands = generateNewBrands(10);
+      await repo.save(brands);
+      const res = await request(app.getHttpServer())
+        .get('/brand')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', sellerAccessToken);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
       expect(data.length).toEqual(brands.length);
@@ -216,6 +307,19 @@ describe('BrandController (e2e)', () => {
       expect(data.name).toEqual(dataNewBrand.name);
     });
 
+    it('/:id should return 401 by id with customer access token', async () => {
+      const brand = createBrand();
+      const dataNewBrand = await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/${dataNewBrand.id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
+
     it('/name/:name should return an brand by name', async () => {
       const brand = createBrand();
       const dataNewBrand = await repo.save(brand);
@@ -229,20 +333,17 @@ describe('BrandController (e2e)', () => {
       expect(data.name).toEqual(dataNewBrand.name);
     });
 
-    it('should return 401 if api key is missing', async () => {
-      const data: any = await request(app.getHttpServer()).get('/brand/count');
-      const { body, statusCode } = data;
+    it('/name/:name should return 401 with customer access token', async () => {
+      const brand = createBrand();
+      await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/name/${brand.name}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
       expect(statusCode).toBe(401);
-      expect(body).toHaveProperty('message', 'Invalid API key');
-    });
-
-    it('should return 401 if api key is invalid', async () => {
-      const data: any = await request(app.getHttpServer())
-        .get('/brand/count')
-        .set('x-api-key', 'invalid-api-key');
-      const { body, statusCode } = data;
-      expect(statusCode).toBe(401);
-      expect(body).toHaveProperty('message', 'Invalid API key');
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
 
     it('should return 404 if brand does not exist', async () => {
@@ -312,6 +413,19 @@ describe('BrandController (e2e)', () => {
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(401);
       expect(message).toBe('Invalid API key');
+    });
+
+    it('/ should create a brand, return 401 if user is a customer', async () => {
+      const newBrand = createBrand();
+      const res = await request(app.getHttpServer())
+        .post('/brand')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`)
+        .send(newBrand);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 
@@ -418,6 +532,24 @@ describe('BrandController (e2e)', () => {
       expect(statusCode).toBe(401);
       expect(message).toBe('Invalid API key');
     });
+
+    it('/:id should return 401 if the user is not admin', async () => {
+      const newBrands = generateNewBrands(10);
+      const dataNewBrands = await repo.save(newBrands);
+      const id = dataNewBrands[0].id;
+      const updatedData: UpdateBrandDto = {
+        name: 'Updated name',
+      };
+      const res = await request(app.getHttpServer())
+        .patch(`/brand/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`)
+        .send(updatedData);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
   });
 
   describe('DELETE Brand', () => {
@@ -484,6 +616,20 @@ describe('BrandController (e2e)', () => {
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(404);
       expect(message).toBe(`The Brand with id: ${id} not found`);
+    });
+
+    it('/:id should return 401 if user is a customer', async () => {
+      const newBrands = generateNewBrands(10);
+      const dataNewBrands = await repo.save(newBrands);
+      const id = dataNewBrands[0].id;
+      const res = await request(app.getHttpServer())
+        .delete(`/brand/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 

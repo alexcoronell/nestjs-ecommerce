@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 
 /* Modules */
 import { AppModule } from '../src/app.module';
+import { CustomerModule } from '@customer/customer.module';
 import { UserModule } from '@user/user.module';
 
 /* Interceptors */
@@ -29,7 +30,7 @@ import { dataSource } from './utils/seed';
 /* Faker */
 import { createUser } from '@faker/user.faker';
 
-/* Seed */
+/* User Seed */
 import {
   seedNewUser,
   seedUser,
@@ -39,6 +40,9 @@ import {
   seedNewSellerUser,
   sellerPassword,
 } from './utils/user.seed';
+
+/* Customer Seed */
+import { seedNewCustomer, customerPasword } from './utils/customer.seed';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
 
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
@@ -46,10 +50,13 @@ const API_KEY = process.env.API_KEY || 'api-e2e-key';
 describe('UserControler (e2e)', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let repoCustomer: any = undefined;
   let adminUser: User | null = null;
   let sellerUser: User | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
+  let customer: any = undefined;
+  let customerAccessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -65,6 +72,7 @@ describe('UserControler (e2e)', () => {
           }),
         }),
         AppModule,
+        CustomerModule,
         UserModule,
       ],
       providers: [
@@ -79,12 +87,16 @@ describe('UserControler (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     repo = app.get('UserRepository');
+    repoCustomer = app.get('CustomerRepository');
   });
 
   beforeEach(async () => {
     await upSeed();
     adminUser = await repo.save(await seedNewAdminUser());
     sellerUser = await repo.save(await seedNewSellerUser());
+    customer = await repoCustomer.save(await seedNewCustomer());
+
+    /* Login Admin User */
     const loginAdmin = await request(app.getHttpServer())
       .post('/auth/user/login')
       .set('x-api-key', API_KEY)
@@ -93,6 +105,9 @@ describe('UserControler (e2e)', () => {
         password: adminPassword,
       });
     const { access_token: tempAdminAccessToken } = loginAdmin.body;
+    adminAccessToken = tempAdminAccessToken;
+
+    /* Login Seller User */
     const loginSeller = await request(app.getHttpServer())
       .post('/auth/user/login')
       .set('x-api-key', API_KEY)
@@ -101,8 +116,18 @@ describe('UserControler (e2e)', () => {
         password: sellerPassword,
       });
     const { access_token: tempSellerAccessToken } = loginSeller.body;
-    adminAccessToken = tempAdminAccessToken;
     sellerAccessToken = tempSellerAccessToken;
+
+    /* Login Customer User */
+    const loginCustomer = await request(app.getHttpServer())
+      .post('/auth/customer/login')
+      .set('x-api-key', API_KEY)
+      .send({
+        email: customer?.email,
+        password: customerPasword,
+      });
+    const { access_token: tempCustomerAccessToken } = loginCustomer.body;
+    customerAccessToken = tempCustomerAccessToken;
   });
 
   describe('GET User - Count', () => {
@@ -146,6 +171,18 @@ describe('UserControler (e2e)', () => {
       expect(error).toBe('Unauthorized');
     });
 
+    it('count-all should return 401 if the user is a customer', async () => {
+      await repo.save(seedUsers);
+      const data: any = await request(app.getHttpServer())
+        .get('/user/count-all')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
+
     it('/count should return 200 and the total user count not deleted', async () => {
       await repo.save(seedUsers);
       const data = await request(app.getHttpServer())
@@ -182,6 +219,18 @@ describe('UserControler (e2e)', () => {
       const { statusCode, error } = data.body;
       expect(statusCode).toBe(401);
       expect(error).toBe('Unauthorized');
+    });
+
+    it('count should return 401 if the user is a customer', async () => {
+      await repo.save(seedUsers);
+      const data: any = await request(app.getHttpServer())
+        .get('/user/count')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 
@@ -236,6 +285,18 @@ describe('UserControler (e2e)', () => {
       expect(error).toBe('Unauthorized');
     });
 
+    it('/ should return 401 if the user is a customer', async () => {
+      await repo.save(seedUsers);
+      const data: any = await request(app.getHttpServer())
+        .get('/user')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
+
     it('/actives should return 200 and all active users', async () => {
       await repo.save(seedUsers);
       const res = await request(app.getHttpServer())
@@ -273,6 +334,18 @@ describe('UserControler (e2e)', () => {
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
+    });
+
+    it('/actives should return 401 if the user is a customer', async () => {
+      await repo.save(seedUsers);
+      const data: any = await request(app.getHttpServer())
+        .get('/user/actives')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
 
     it('/:id should return 200 and the user details with admin user', async () => {
@@ -333,6 +406,18 @@ describe('UserControler (e2e)', () => {
       expect(data.role).toEqual(sellerUser?.role);
     });
 
+    it('/:id should return 401 if the user is a customer', async () => {
+      await repo.save(seedUsers);
+      const data: any = await request(app.getHttpServer())
+        .get('/user/1')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
+
     it('/email/:email should return 200 and the user details with admin user', async () => {
       await repo.save(seedUser);
       const res = await request(app.getHttpServer())
@@ -377,6 +462,18 @@ describe('UserControler (e2e)', () => {
       const { statusCode, error } = res.body;
       expect(statusCode).toBe(401);
       expect(error).toBe('Unauthorized');
+    });
+
+    it('/:id should return 401 if the user is a customer', async () => {
+      await repo.save(seedUser);
+      const data: any = await request(app.getHttpServer())
+        .get(`/user/${seedUser.email}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = data.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 
@@ -444,6 +541,23 @@ describe('UserControler (e2e)', () => {
       const { statusCode, error } = res.body;
       expect(statusCode).toBe(401);
       expect(error).toBe('Unauthorized');
+    });
+
+    it('/ should return 401 with customer user', async () => {
+      const newUser = createUser();
+      const seedNewUser = {
+        ...newUser,
+        password: await bcrypt.hash(newUser.password, 10),
+      };
+      const res = await request(app.getHttpServer())
+        .post('/user')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`)
+        .send(seedNewUser);
+      const { statusCode, message, error } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 
@@ -580,6 +694,24 @@ describe('UserControler (e2e)', () => {
       expect(statusCode).toBe(200);
       expect(message).toBe('Password updated successfully');
     });
+
+    it('/:id should 401 and error message with customer user', async () => {
+      await repo.save(seedUsers);
+      const id = seedUsers[0].id;
+      const updatedData: UpdateUserDto = {
+        firstname: 'Updated name',
+        lastname: 'Updated lastname',
+      };
+      const res = await request(app.getHttpServer())
+        .patch(`/user/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`)
+        .send(updatedData);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
+    });
   });
 
   describe('DELETE User', () => {
@@ -637,6 +769,19 @@ describe('UserControler (e2e)', () => {
       const { statusCode, error } = res.body;
       expect(statusCode).toBe(401);
       expect(error).toBe(`Unauthorized`);
+    });
+
+    it('/:id should return 401 and error message when is a customer user', async () => {
+      await repo.save(seedUsers);
+      const id = seedUsers[0].id;
+      const res = await request(app.getHttpServer())
+        .delete(`/user/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer user');
     });
   });
 

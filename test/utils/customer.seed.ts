@@ -21,7 +21,7 @@ export const customerPasword = 'customer123';
 export const seedNewCustomer = async (): Promise<CreateCustomerDto> => ({
   firstname: 'Alice',
   lastname: 'Smith',
-  email: 'alice.smith@example.com',
+  email: 'alice.smith@emailcustomer.com',
   password: await bcrypt.hash(customerPasword, 10),
   phoneNumber: '123-456-7890',
   department: 'Sales',

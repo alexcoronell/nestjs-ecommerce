@@ -301,6 +301,51 @@ export class UserService
   }
 
   /**
+   * Registers a new user publicly (without authentication).
+   *
+   * This method is intended for self-registration via a public signup form.
+   * The new user is assigned the 'customer' role by default, and the system
+   * automatically sets `createdBy` and `updatedBy` to the new user's own ID,
+   * ensuring accurate audit trails for self-created accounts.
+   *
+   * The password is hashed before persistence, and excluded from the response
+   * by setting it to `undefined` to prevent accidental exposure.
+   *
+   * @param dto - The registration data (email, password, and optionally role).
+   * @returns {Promise<Result<User>>} A standardized response containing:
+   * - `statusCode`: 201 Created — indicates successful registration.
+   * - `data`: the newly created user object (with sensitive fields like `password` omitted).
+   * - `message`: a success confirmation message.
+   *
+   * @throws {ConflictException} if a user with the provided email already exists.
+   *
+   * ⚠️ Security note: This endpoint must be rate-limited and protected against
+   * automated abuse (e.g., bot registrations). Consider adding CAPTCHA or email verification
+   * in production environments.
+   */
+  async register(dto: CreateUserDto): Promise<Result<User>> {
+    const email = dto.email.toLowerCase();
+    const existUserEmail = await this.userRepo.findOneBy({ email });
+    if (existUserEmail) {
+      throw new ConflictException(`The Email ${email} is already in use`);
+    }
+    const newUser = this.userRepo.create(dto);
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
+    const savedUser = await this.userRepo.save(newUser);
+    savedUser.createdBy = savedUser.id;
+    savedUser.updatedBy = savedUser.id;
+
+    const user = await this.userRepo.save(savedUser);
+    user.password = undefined;
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: user,
+      message: 'The user was created',
+    };
+  }
+
+  /**
    * Updates an existing user by ID with the provided partial data.
    *
    * If an email is included in the changes, it is normalized to lowercase

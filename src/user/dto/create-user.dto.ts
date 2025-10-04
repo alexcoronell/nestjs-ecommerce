@@ -1,15 +1,46 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsNumber,
+  IsPhoneNumber,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-import { CreatePersonDto } from '@commons/dtos/CreatePerson.dto';
 
 import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
-export class CreateUserDto extends CreatePersonDto {
+export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly firstname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly lastname: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly password: string;
+
+  @IsPhoneNumber()
+  @ApiProperty()
+  readonly phoneNumber: string;
+
   @IsEnum(UserRoleEnum, {
     message: `Role must be a valid enum value: ${Object.values(UserRoleEnum).join(', ')}`,
   })
-  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty()
   readonly role: UserRoleEnum;
 
   @IsNumber()

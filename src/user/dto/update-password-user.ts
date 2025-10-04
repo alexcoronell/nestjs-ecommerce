@@ -1,3 +1,9 @@
-import { UpdatePersonPasswordDto } from '@commons/dtos/UpdatePersonPassword.dto';
+import { IsString, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdatePasswordDto extends UpdatePersonPasswordDto {}
+export class UpdatePasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly password: string;
+}

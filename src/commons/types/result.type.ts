@@ -1,5 +1,7 @@
+import { HttpStatus } from '@nestjs/common';
+
 export type Result<T> = {
-  statusCode: number;
+  statusCode: HttpStatus;
   data?: T | T[];
   total?: number;
   message?: string;

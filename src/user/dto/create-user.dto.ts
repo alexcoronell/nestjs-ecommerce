@@ -2,7 +2,6 @@ import {
   IsNotEmpty,
   IsString,
   IsEmail,
-  IsNumber,
   IsPhoneNumber,
   IsOptional,
   IsEnum,
@@ -43,18 +42,23 @@ export class CreateUserDto {
   @ApiProperty()
   readonly role: UserRoleEnum;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly createdBy: number | null;
+  readonly department: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly updatedBy: number | null;
+  readonly city: string;
 
-  @IsNumber()
-  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty()
-  readonly deletedBy: number | null;
+  readonly address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly neighborhood: string;
 }

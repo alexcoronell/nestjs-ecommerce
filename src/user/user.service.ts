@@ -67,6 +67,29 @@ export class UserService
   }
 
   /**
+   * Counts the total number of active customers in the system.
+   *
+   * Only users with role 'customer' and `isDeleted: false` are included.
+   * This metric is useful for dashboards, analytics, or business reporting.
+   *
+   * @returns {Promise<Result<number>>} A standardized response where:
+   * - `statusCode`: 200 OK — indicates successful retrieval.
+   * - `total`: the count of active customer users (role = 'customer').
+   *
+   * Note: The count reflects only non-deleted customers to align with
+   * user listing endpoints (e.g., `findAllCustomers`).
+   */
+  async countCustomers(): Promise<Result<number>> {
+    const total = await this.userRepo.count({
+      where: {
+        isDeleted: false,
+        role: UserRoleEnum.CUSTOMER,
+      },
+    });
+    return { statusCode: HttpStatus.OK, total };
+  }
+
+  /**
    * Retrieves a list of all active (non-deleted) users, sorted by email.
    *
    * @returns {Promise<Result<User[]>>} A standardized paginated-like response containing:
@@ -104,7 +127,7 @@ export class UserService
    * @returns {Promise<Result<User[]>>} A standardized paginated-like response containing:
    * - `statusCode`: 200 OK — indicates successful retrieval.
    * - `data`: an array of user objects (with sensitive fields like `password` omitted).
-   * - `total`: the total number of active users in the system (useful for pagination).
+   * - `total`: the total number of users in the system (useful for pagination).
    *
    * Note: Although this endpoint returns all users at once (no pagination),
    * the response includes `total` to maintain consistency with paginated endpoints.
@@ -113,7 +136,6 @@ export class UserService
     const [users, total] = await this.userRepo.findAndCount({
       where: {
         isDeleted: false,
-        isActive: true,
         role: UserRoleEnum.SELLER,
       },
       order: { email: 'ASC' },
@@ -144,7 +166,6 @@ export class UserService
     const [users, total] = await this.userRepo.findAndCount({
       where: {
         isDeleted: false,
-        isActive: true,
         role: UserRoleEnum.CUSTOMER,
       },
       order: { email: 'ASC' },

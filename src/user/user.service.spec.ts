@@ -24,6 +24,7 @@ import { UpdatePasswordDto } from '@user/dto/update-password-user';
 
 /* Faker */
 import { generateUser, generateManyUsers, createUser } from '@faker/user.faker';
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 describe('UserService', () => {
   let service: UserService;
@@ -68,6 +69,20 @@ describe('UserService', () => {
       expect(statusCode).toBe(200);
       expect(total).toEqual(100);
     });
+
+    it('should return total customers not removed', async () => {
+      jest.spyOn(repository, 'count').mockResolvedValue(200);
+      const { statusCode, total } = await service.countCustomers();
+      expect(repository.count).toHaveBeenCalledTimes(1);
+      expect(repository.count).toHaveBeenCalledWith({
+        where: {
+          isDeleted: false,
+          role: UserRoleEnum.CUSTOMER,
+        },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(200);
+    });
   });
 
   describe('find users services', () => {
@@ -87,31 +102,60 @@ describe('UserService', () => {
         where: { isDeleted: false },
         order: { email: 'ASC' },
       });
+      const usersData = data as User[];
+
       expect(statusCode).toBe(200);
-      expect(data).toEqual(usersPasswordsUndefined);
+      expect(usersData).toEqual(usersPasswordsUndefined);
       expect(total).toEqual(users.length);
-      expect(data[0].password).toBe(undefined);
+      expect(usersData[0].password).toBe(undefined);
     });
 
-    it('findAllActives should return all active users', async () => {
-      const mockUsers = generateManyUsers(10);
+    it('findAllSellers should return all seller users', async () => {
+      const users = generateManyUsers(50);
+      const usersPasswordsUndefined = users.map((user) => {
+        user.password = undefined;
+        return user;
+      });
       jest
         .spyOn(repository, 'findAndCount')
-        .mockResolvedValue([mockUsers, mockUsers.length]);
+        .mockResolvedValue([users, users.length]);
 
-      const { statusCode, data, total } = await service.findAllActives();
-      const users: User[] = data as User[];
-      const user = users[0];
-
+      const { statusCode, data, total } = await service.findAllSellers();
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { isDeleted: false, isActive: true },
+        where: { isDeleted: false, role: UserRoleEnum.SELLER },
         order: { email: 'ASC' },
       });
+      const usersData = data as User[];
 
       expect(statusCode).toBe(200);
+      expect(usersData).toEqual(usersPasswordsUndefined);
       expect(total).toEqual(users.length);
-      expect(user.password).toBe(undefined);
+      expect(usersData[0].password).toBe(undefined);
+    });
+
+    it('findAllCustomers should return all customer users', async () => {
+      const users = generateManyUsers(50);
+      const usersPasswordsUndefined = users.map((user) => {
+        user.password = undefined;
+        return user;
+      });
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([users, users.length]);
+
+      const { statusCode, data, total } = await service.findAllCustomers();
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { isDeleted: false, role: UserRoleEnum.CUSTOMER },
+        order: { email: 'ASC' },
+      });
+      const usersData = data as User[];
+
+      expect(statusCode).toBe(200);
+      expect(usersData).toEqual(usersPasswordsUndefined);
+      expect(total).toEqual(users.length);
+      expect(usersData[0].password).toBe(undefined);
     });
 
     it('findOne should return a user', async () => {
@@ -149,6 +193,44 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
+        new NotFoundException(`The User with id: ${id} not found`),
+      );
+    });
+
+    it('findOneWithoutRelations should return a user', async () => {
+      const user = generateUser();
+      const id = user.id;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
+
+      const { statusCode, data } = await service.findOneWithoutRelations(id);
+      const dataUser: User = data as User;
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id, isDeleted: false },
+      });
+      expect(statusCode).toBe(200);
+      expect(dataUser).toEqual(user);
+      expect(dataUser.password).toBe(undefined);
+    });
+
+    it('findOneWithoutRelations should throw NotFoundException if user does not exist', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.findOneWithoutRelations(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe(`The User with id: ${id} not found`);
+      }
+    });
+
+    it('findOneWithoutRelations should throw NotFoundException if user does not exist with Rejects', async () => {
+      const id = 1;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.findOneWithoutRelations(id)).rejects.toThrowError(
         new NotFoundException(`The User with id: ${id} not found`),
       );
     });
@@ -232,6 +314,20 @@ describe('UserService', () => {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`The Email ${user.email} is already in use`);
       }
+    });
+
+    it('register should return a user', async () => {
+      const user = generateUser();
+      const newUser: CreateUserDto = { ...createUser(), password: 'password' };
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(repository, 'create').mockReturnValue(user);
+      jest.spyOn(repository, 'save').mockResolvedValueOnce(user);
+      jest.spyOn(repository, 'save').mockResolvedValueOnce(user);
+
+      const { statusCode, data } = await service.register(newUser);
+      expect(statusCode).toBe(201);
+      expect(data).toEqual(user);
     });
   });
 
@@ -328,7 +424,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const { statusCode, message } = await service.remove(id, deletedBy);
-      expect(statusCode).toBe(204);
+      expect(statusCode).toBe(200);
       expect(message).toEqual(`The User with id: ${id} has been deleted`);
     });
 

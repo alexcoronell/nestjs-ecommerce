@@ -40,7 +40,7 @@ export class CreateUserDto {
   })
   @IsOptional()
   @ApiProperty()
-  readonly role: UserRoleEnum;
+  readonly role?: UserRoleEnum;
 
   @IsString()
   @IsNotEmpty()

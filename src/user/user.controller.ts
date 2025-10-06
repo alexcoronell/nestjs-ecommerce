@@ -64,6 +64,12 @@ export class UserController
     return this.userService.count();
   }
 
+  @UseGuards(AdminGuard)
+  @Get('count-customers')
+  countCustomers() {
+    return this.userService.countCustomers();
+  }
+
   /**
    * Retrieves all users from the system.
    * @returns An array of all users.
@@ -79,9 +85,14 @@ export class UserController
    * @returns An array of active users.
    */
   @UseGuards(AdminGuard)
-  @Get('actives')
-  findAllActives() {
-    return this.userService.findAllActives();
+  @Get('sellers')
+  findAllSellers() {
+    return this.userService.findAllSellers();
+  }
+
+  @Get('customers')
+  findAllCustomers() {
+    return this.userService.findAllCustomers();
   }
 
   /**
@@ -93,6 +104,11 @@ export class UserController
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: User['id']) {
     return this.userService.findOne(+id);
+  }
+
+  @Get('no-relations/:id')
+  findOneWithoutRelations(@Param('id', ParseIntPipe) id: User['id']) {
+    return this.userService.findOneWithoutRelations(id);
   }
 
   /**
@@ -115,6 +131,11 @@ export class UserController
   @Post()
   create(@Body() payload: CreateUserDto) {
     return this.userService.create(payload);
+  }
+
+  @Post('register')
+  register(@Body() payload: CreateUserDto) {
+    return this.userService.register(payload);
   }
 
   /**

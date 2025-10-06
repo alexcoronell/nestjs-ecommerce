@@ -23,7 +23,12 @@ import { UpdateUserDto } from '@user/dto/update-user.dto';
 import { UpdatePasswordDto } from '@user/dto/update-password-user';
 
 /* Faker */
-import { generateUser, generateManyUsers, createUser } from '@faker/user.faker';
+import {
+  generateUser,
+  generateManyUsers,
+  generateManyCustomers,
+  createUser,
+} from '@faker/user.faker';
 import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 describe('UserService', () => {
@@ -135,7 +140,7 @@ describe('UserService', () => {
     });
 
     it('findAllCustomers should return all customer users', async () => {
-      const users = generateManyUsers(50);
+      const users = generateManyCustomers(50);
       const usersPasswordsUndefined = users.map((user) => {
         user.password = undefined;
         return user;

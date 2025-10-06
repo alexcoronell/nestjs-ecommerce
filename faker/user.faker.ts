@@ -38,6 +38,21 @@ export const generateUser = (
   deletedBy: null,
 });
 
+export const generateCustomer = (
+  id: User['id'] = 1,
+  isDeleted = false,
+  auditUser = 1,
+): User => ({
+  ...generateBaseEntity(id, isDeleted),
+  ...createUser(),
+  isActive: true,
+  id,
+  role: UserRoleEnum.CUSTOMER,
+  createdBy: auditUser,
+  updatedBy: auditUser,
+  deletedBy: null,
+});
+
 export const generateManyUsers = (size: number): User[] => {
   const limit = size ?? 10;
   const users: User[] = [];
@@ -46,6 +61,16 @@ export const generateManyUsers = (size: number): User[] => {
   }
   return users;
 };
+
+export const generateManyCustomers = (size: number): User[] => {
+  const limit = size ?? 10;
+  const users: User[] = [];
+  for (let i = 0; i < limit; i++) {
+    users.push(generateCustomer(i + 1));
+  }
+  return users;
+};
+
 export const generateManyDeletedUsers = (size: number): User[] => {
   const users: User[] = [];
   for (let i = 0; i < size; i++) {

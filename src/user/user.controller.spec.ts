@@ -15,7 +15,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user';
 
 /* Faker */
-import { createUser, generateUser, generateManyUsers } from '@faker/user.faker';
+import {
+  createUser,
+  generateUser,
+  generateManyUsers,
+  generateManyCustomers,
+} from '@faker/user.faker';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -26,15 +31,24 @@ describe('UserController', () => {
     user.password = undefined;
     return user;
   });
+  const mockCustomers = generateManyCustomers(10).map((user) => {
+    user.password = undefined;
+    return user;
+  });
+
   const mockNewUser: CreateUserDto = createUser();
   const mockUserService = {
     countAll: jest.fn().mockResolvedValue(mockUsers.length),
     count: jest.fn().mockResolvedValue(mockUsers.length),
+    countCustomers: jest.fn().mockResolvedValue(mockCustomers.length),
     findAll: jest.fn().mockResolvedValue(mockUsers),
-    findAllActives: jest.fn().mockResolvedValue(mockUsers),
+    findAllSellers: jest.fn().mockResolvedValue(mockUsers),
+    findAllCustomers: jest.fn().mockResolvedValue(mockUsers),
     findOne: jest.fn().mockResolvedValue(mockUser),
+    findOneWithoutRelations: jest.fn().mockResolvedValue(mockUser),
     findOneByEmail: jest.fn().mockResolvedValue(mockUser),
     create: jest.fn().mockResolvedValue(mockNewUser),
+    register: jest.fn().mockResolvedValue(mockNewUser),
     update: jest.fn().mockResolvedValue(1),
     updatePassword: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -69,6 +83,11 @@ describe('UserController', () => {
       expect(await controller.count()).toBe(mockUsers.length);
       expect(service.count).toHaveBeenCalledTimes(1);
     });
+
+    it('should call count customer in user service', async () => {
+      expect(await controller.countCustomers()).toBe(mockCustomers.length);
+      expect(service.countCustomers).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Find users controllers', () => {
@@ -77,9 +96,14 @@ describe('UserController', () => {
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call finfAllActive users service', async () => {
-      expect(await controller.findAllActives()).toBe(mockUsers);
-      expect(service.findAllActives).toHaveBeenCalledTimes(1);
+    it('should call findAllSellers users service', async () => {
+      expect(await controller.findAllSellers()).toBe(mockUsers);
+      expect(service.findAllSellers).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call findAllCustomers users service', async () => {
+      expect(await controller.findAllCustomers()).toBe(mockUsers);
+      expect(service.findAllCustomers).toHaveBeenCalledTimes(1);
     });
 
     it('should call findOne user service', async () => {
@@ -98,6 +122,11 @@ describe('UserController', () => {
       await controller.create(mockNewUser);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
+
+    it('should call register customer service', async () => {
+      await controller.register(mockNewUser);
+      expect(service.register).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('update user controller', () => {
@@ -112,17 +141,17 @@ describe('UserController', () => {
       await controller.updatePassword(1, newPassword);
       expect(service.updatePassword).toHaveBeenCalledTimes(1);
     });
+  });
 
-    describe('remove user controller', () => {
-      it('shoudl call remove user service', async () => {
-        const mockRequest = {
-          user: {
-            user: 123,
-          },
-        } as any;
-        await controller.remove(1, mockRequest);
-        expect(service.remove).toHaveBeenCalledTimes(1);
-      });
+  describe('remove user controller', () => {
+    it('shoudl call remove user service', async () => {
+      const mockRequest = {
+        user: {
+          user: 123,
+        },
+      } as any;
+      await controller.remove(1, mockRequest);
+      expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });
 });

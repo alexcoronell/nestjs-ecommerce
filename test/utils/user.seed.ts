@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as bcrypt from 'bcrypt';
+import { faker } from '@faker-js/faker/.';
 
 /* Entity */
 import { User } from '@user/entities/user.entity';
@@ -24,9 +25,10 @@ export const seedNewAdminUser = async (): Promise<CreateUserDto> => ({
   password: await bcrypt.hash(adminPassword, 10),
   phoneNumber: '555-55-55',
   role: UserRoleEnum.ADMIN,
-  createdBy: 1,
-  updatedBy: null,
-  deletedBy: null,
+  department: faker.location.state(),
+  city: faker.location.city(),
+  address: faker.location.streetAddress(),
+  neighborhood: faker.location.county(),
 });
 
 export const sellerPassword = 'jane123';
@@ -38,9 +40,10 @@ export const seedNewSellerUser = async (): Promise<CreateUserDto> => ({
   password: await bcrypt.hash(sellerPassword, 10),
   phoneNumber: '555-55-55',
   role: UserRoleEnum.SELLER,
-  createdBy: 1,
-  updatedBy: null,
-  deletedBy: null,
+  department: faker.location.state(),
+  city: faker.location.city(),
+  address: faker.location.streetAddress(),
+  neighborhood: faker.location.county(),
 });
 
 export const seedNewUser = createUser();

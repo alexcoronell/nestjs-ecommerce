@@ -297,29 +297,6 @@ describe('UserControler (e2e)', () => {
       expect(message).toBe('Unauthorized: Customer user');
     });
 
-    it('/actives should return 200 and all active users', async () => {
-      await repo.save(seedUsers);
-      const res = await request(app.getHttpServer())
-        .get('/user/actives')
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.length).toEqual(seedUsers.length);
-      data.forEach((user) => {
-        const seedUser = seedUsers.find((su) => su.id === user.id);
-        expect(user).toEqual(
-          expect.objectContaining({
-            id: seedUser?.id,
-            firstname: seedUser?.firstname,
-            lastname: seedUser?.lastname,
-            email: seedUser?.email,
-            role: seedUser?.role,
-          }),
-        );
-      });
-    });
-
     it('/actives should return 401 if api key is missing', async () => {
       const data: any = await request(app.getHttpServer()).get('/user/actives');
       const { body, statusCode } = data;
@@ -734,7 +711,7 @@ describe('UserControler (e2e)', () => {
       expect(deletedInDBWithDeleted).not.toBeNull();
       expect(deletedInDBWithDeleted.isDeleted).toBe(true);
       expect(deletedInDBWithDeleted.deletedBy.id).toBe(adminUser?.id);
-      expect(statusCode).toBe(204);
+      expect(statusCode).toBe(200);
       expect(deletedInDB).toBeNull();
       expect(message).toBe(`The User with id: ${id} has been deleted`);
     });

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/await-thenable */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +7,8 @@ import { Repository } from 'typeorm';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
+import { Product } from '@product/entities/product.entity';
+import { Purchase } from '@purchase/entities/purchase.entity';
 import { PurchaseDetail } from './entities/purchase-detail.entity';
 
 /* DTO's */
@@ -18,7 +17,6 @@ import { UpdatePurchaseDetailDto } from './dto/update-purchase-detail.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
-import { Purchase } from '@purchase/entities/purchase.entity';
 
 @Injectable()
 export class PurchaseDetailService
@@ -80,7 +78,7 @@ export class PurchaseDetailService
 
   async findByPurchaseId(id: Purchase['id']) {
     const purchaseDetails = await this.repo.find({
-      where: { purchase: id, isDeleted: false },
+      where: { purchase: { id }, isDeleted: false },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -91,7 +89,12 @@ export class PurchaseDetailService
   async create(
     dtos: CreatePurchaseDetailDto[],
   ): Promise<Result<PurchaseDetail[]>> {
-    const purchaseDetails = await this.repo.create(dtos);
+    const createPurchaseDetails = dtos.map((item) => ({
+      ...item,
+      product: { id: item.product } as Product,
+      purchase: { id: item.purchase } as Purchase,
+    }));
+    const purchaseDetails = await this.repo.create(createPurchaseDetails);
     await this.repo.save(purchaseDetails);
     return {
       statusCode: HttpStatus.CREATED,
@@ -101,7 +104,13 @@ export class PurchaseDetailService
 
   async update(id: PurchaseDetail['id'], changes: UpdatePurchaseDetailDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data, changes);
+    const productId = changes.product;
+    const purchaseId = changes.purchase;
+    this.repo.merge(data, {
+      ...changes,
+      product: { id: productId } as Product,
+      purchase: { id: purchaseId } as Purchase,
+    });
     const rta = await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,

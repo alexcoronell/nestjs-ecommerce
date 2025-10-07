@@ -1,11 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPhoneNumber,
-  IsEmail,
-} from 'class-validator';
+import { IsString, IsOptional, IsPhoneNumber, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateStoreDetailDto {
@@ -53,14 +46,4 @@ export class CreateStoreDetailDto {
   @IsOptional()
   @ApiProperty()
   readonly legalInformation: string | null;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  createdBy: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly updatedBy: number;
 }

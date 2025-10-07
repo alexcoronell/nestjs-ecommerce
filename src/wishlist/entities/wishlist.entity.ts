@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,8 +6,9 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { Customer } from '@customer/entities/customer.entity';
+
 import { Product } from '@product/entities/product.entity';
+import { User } from '@user/entities/user.entity';
 
 @Entity('wishlist')
 @Unique(['customer', 'product'])
@@ -16,15 +16,16 @@ export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Customer, (customer) => customer.wishlists, {
+  /**************************** Relations ****************************/
+  @ManyToOne(() => User, (user) => user.wishlists, {
     nullable: false,
   })
-  @JoinColumn({ name: 'customer_id' })
-  customer: number;
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @ManyToOne(() => Product, (product) => product.wishlists, { nullable: false })
   @JoinColumn({ name: 'product_id' })
-  product: number;
+  product: Product;
 
   @Column({
     name: 'added_date',

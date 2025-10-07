@@ -49,13 +49,14 @@ export class SaleDetail {
   })
   createdAt: Date;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => Sale, (sale) => sale.details, { nullable: false })
   @JoinColumn({ name: 'sale_id' })
-  sale: number;
+  sale: Sale;
 
   @ManyToOne(() => Product, (product) => product.saleDetails, {
     nullable: false,
   })
   @JoinColumn({ name: 'product_id' })
-  product: number;
+  product: Product;
 }

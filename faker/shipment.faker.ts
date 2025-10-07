@@ -1,14 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { faker } from '@faker-js/faker/.';
 
+/* Entity */
 import { Shipment } from '@shipment/entities/shipment.entity';
 
+/* DTO */
 import { CreateShipmentDto } from '@shipment/dto/create-shipment.dto';
 
+/* Enums */
 import { ShipmentStatusEnum } from '@commons/enums/shipment-status.enum';
 
+/* Fakers */
 import { generateBaseEntity } from './base.faker';
+import { generateSale } from './sale.faker';
+import { generateShippingCompany } from './shippingCompany.faker';
+import { generateUser } from './user.faker';
 
 export const createShipment = (): CreateShipmentDto => {
   return {
@@ -18,9 +23,6 @@ export const createShipment = (): CreateShipmentDto => {
     status: faker.helpers.arrayElement(Object.values(ShipmentStatusEnum)),
     sale: faker.number.int({ min: 1, max: 100 }),
     shippingCompany: faker.number.int({ min: 1, max: 10 }),
-    createdBy: faker.number.int({ min: 1, max: 100 }),
-    updatedBy: faker.number.int({ min: 1, max: 100 }),
-    deletedBy: null,
   };
 };
 
@@ -28,6 +30,11 @@ export const generateShipment = (id: number = 1): Shipment => ({
   ...createShipment(),
   ...generateBaseEntity(id),
   id,
+  sale: generateSale(),
+  shippingCompany: generateShippingCompany(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManyShipments = (size: number): Shipment[] => {

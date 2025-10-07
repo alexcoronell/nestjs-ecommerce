@@ -1,19 +1,20 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Supplier } from '@supplier/entities/supplier.entity';
 
+/* DTO */
 import { CreateSupplierDto } from '@supplier/dto/create-supplier.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
 
 export const createSupplier = (): CreateSupplierDto => ({
   name: faker.company.name(),
   contactName: faker.person.fullName(),
   phoneNumber: faker.phone.number(),
   email: faker.internet.email(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateSupplier = (id: number = 1): Supplier => ({
@@ -21,6 +22,9 @@ export const generateSupplier = (id: number = 1): Supplier => ({
   ...createSupplier(),
   productSuppliers: [],
   purchases: [],
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManySuppliers = (size: number): Supplier[] => {

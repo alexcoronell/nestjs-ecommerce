@@ -1,25 +1,29 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 
+/* DTO */
 import { CreateShippingCompanyDto } from '@shipping_company/dto/create-shipping-company.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
 
 export const createShippingCompany = (): CreateShippingCompanyDto => ({
   name: faker.company.name(),
   contactName: faker.person.fullName(),
   phoneNumber: faker.phone.number(),
   email: faker.internet.email(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateShippingCompany = (id: number = 1): ShippingCompany => ({
   ...generateBaseEntity(id),
   ...createShippingCompany(),
   ...generateRelations(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManyShippingCompanies = (

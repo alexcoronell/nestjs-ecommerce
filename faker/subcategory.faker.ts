@@ -1,11 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
 
+/* DTO */
 import { CreateSubcategoryDto } from '@subcategory/dto/create-subcategory.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
+import { generateCategory } from './category.faker';
 
 export const createSubcategory = (
   categoryId: number | null = null,
@@ -15,9 +19,6 @@ export const createSubcategory = (
   return {
     name: name || faker.lorem.word(),
     category,
-    createdBy: faker.number.int(),
-    updatedBy: faker.number.int(),
-    deletedBy: null,
   };
 };
 
@@ -29,6 +30,10 @@ export const generateSubcategory = (
   ...generateBaseEntity(id),
   ...createSubcategory(categoryId, name || faker.lorem.word()),
   id,
+  category: generateCategory(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
   ...generateRelations(),
 });
 

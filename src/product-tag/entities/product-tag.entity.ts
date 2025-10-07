@@ -26,17 +26,17 @@ export class ProductTag {
 
   @ManyToOne(() => User, (user) => user.createdProductsTags)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => Product, (product) => product.tags, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'product_id' })
-  products: number;
+  product: Product;
 
-  @ManyToOne(() => Tag, (tag) => tag.products, {
+  @ManyToOne(() => Tag, (tag) => tag.product, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'tag_id' })
-  tags: number;
+  tag: Tag;
 }

@@ -8,8 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Entities */
-import { Customer } from '@customer/entities/customer.entity';
 import { Product } from '@product/entities/product.entity';
+import { User } from '@user/entities/user.entity';
 import { Wishlist } from './entities/wishlist.entity';
 
 /* DTO's */
@@ -34,17 +34,14 @@ export class WishlistService {
     };
   }
 
-  async findOneByCustomerAndProduct(
-    customerId: Customer['id'],
-    productId: Product['id'],
-  ) {
+  async findOneByUserAndProduct(userId: User['id'], productId: Product['id']) {
     const [wishlist, total] = await this.repo.findAndCount({
-      where: { product: productId, customer: customerId },
+      where: { product: { id: productId }, user: { id: userId } },
     });
 
     if (total === 0) {
       throw new NotFoundException(
-        `Wishlist not found for customer: ${customerId}, product: ${productId}`,
+        `Wishlist not found for user: ${userId}, product: ${productId}`,
       );
     }
 
@@ -55,10 +52,10 @@ export class WishlistService {
     };
   }
 
-  async findAllByCustomer(customerId: Customer['id']) {
+  async findAllByUser(userId: User['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
       relations: ['product'],
-      where: { customer: customerId },
+      where: { user: { id: userId } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -70,7 +67,7 @@ export class WishlistService {
   async findAllByProduct(productId: Product['id']) {
     const [wishlists, total] = await this.repo.findAndCount({
       relations: ['user'],
-      where: { product: productId },
+      where: { product: { id: productId } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -94,15 +91,18 @@ export class WishlistService {
   }
 
   async create(dto: CreateWishlistDto) {
-    const { customer, product } = dto;
+    const { user, product } = dto;
     try {
-      await this.findOneByCustomerAndProduct(customer, product);
+      await this.findOneByUserAndProduct(user, product);
       throw new ConflictException(
-        'Wishlist item already exists for this customer and product',
+        'Wishlist item already exists for this user and product',
       );
     } catch (error) {
       if (error instanceof NotFoundException) {
-        const newItem = this.repo.create(dto);
+        const newItem = this.repo.create({
+          user: { id: dto.user } as User,
+          product: { id: dto.product } as Product,
+        });
         const data = await this.repo.save(newItem);
         return {
           statusCode: HttpStatus.CREATED,

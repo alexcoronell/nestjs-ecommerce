@@ -14,24 +14,6 @@ export class CreatePurchaseDto {
 
   @IsNumber()
   @Min(1)
-  @IsNotEmpty()
-  @ApiProperty({
-    type: Number,
-    description: 'ID of the user who created the purchase',
-  })
-  readonly createdBy: number;
-
-  @IsNumber()
-  @Min(1)
-  @IsNotEmpty()
-  @ApiProperty({
-    type: Number,
-    description: 'ID of the user who updated the purchase',
-  })
-  readonly updatedBy: number;
-
-  @IsNumber()
-  @Min(1)
   @ApiProperty({
     type: Number,
     description: 'ID of the supplier associated with the purchase',

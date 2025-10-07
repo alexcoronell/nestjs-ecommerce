@@ -1,10 +1,15 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { ProductImage } from '@product_images/entities/product-image.entity';
 
+/* DTO */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateProduct } from './product.faker';
+import { generateUser } from './user.faker';
 
 export const createProductImage = (): CreateProductImageDto => ({
   filePath: faker.system.filePath(),
@@ -18,6 +23,8 @@ export const generateProductImage = (id: number = 1): ProductImage => ({
   ...generateBaseEntity(id),
   ...createProductImage(),
   id,
+  product: generateProduct(),
+  uploadedBy: generateUser(),
 });
 
 export const generateManyProductImages = (size: number): ProductImage[] => {

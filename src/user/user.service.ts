@@ -354,8 +354,8 @@ export class UserService
     const hashPassword = await bcrypt.hash(newUser.password, 10);
     newUser.password = hashPassword;
     const savedUser = await this.userRepo.save(newUser);
-    savedUser.createdBy = savedUser.id;
-    savedUser.updatedBy = savedUser.id;
+    savedUser.createdBy = { id: savedUser.id } as User;
+    savedUser.updatedBy = { id: savedUser.id } as User;
 
     const user = await this.userRepo.save(savedUser);
     user.password = undefined;
@@ -452,7 +452,7 @@ export class UserService
     const user = data as User;
 
     const changes = {
-      deletedBy,
+      deletedBy: { id: deletedBy } as User,
       isDeleted: true,
       deletedAt: new Date(),
     };

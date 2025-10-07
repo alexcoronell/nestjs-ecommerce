@@ -1,23 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Category } from '@category/entities/category.entity';
 
+/* DTO */
 import { CreateCategoryDto } from '@category/dto/create-category.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
 
 export const createCategory = (): CreateCategoryDto => ({
   name: faker.lorem.word(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateCategory = (id: number = 1): Category => ({
   ...generateBaseEntity(id),
   ...createCategory(),
   id,
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
   ...generateRelations(),
 });
 

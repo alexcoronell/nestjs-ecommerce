@@ -23,7 +23,6 @@
       "@category/*": ["src/category/*"],
       "@commons/*": ["src/commons/*"],
       "@config/*": ["src/config/*"],
-      "@customer/*": ["src/customer/*"],
       "@discount/*": ["src/discount/*"],
       "@faker/*": ["faker/*"],
       "@payment_method/*": ["src/payment-method/*"],

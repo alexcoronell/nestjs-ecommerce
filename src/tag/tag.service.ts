@@ -86,8 +86,10 @@ export class TagService
   }
 
   async create(dto: CreateTagDto) {
-    const newItem = this.repo.create(dto);
-    const data = await this.repo.save(newItem);
+    const newTag = this.repo.create({
+      ...dto,
+    });
+    const data = await this.repo.save(newTag);
     return {
       statusCode: HttpStatus.CREATED,
       data,

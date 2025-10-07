@@ -1,22 +1,33 @@
 import { faker } from '@faker-js/faker/.';
-import { generateBaseEntity } from '@faker/base.faker';
-import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 
-export const createProductSupplier = () => ({
+/* Entity */
+import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
+/* DTO */
+import { CreateProductSupplierDto } from '@product_supplier/dto/create-product-supplier.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateProduct } from './product.faker';
+import { generateSupplier } from './supplier.faker';
+import { generateUser } from './user.faker';
+
+export const createProductSupplier = (): CreateProductSupplierDto => ({
   supplierProductCode: faker.string.alphanumeric(10),
   costPrice: parseFloat(faker.commerce.price({ min: 1, max: 1000 })),
   isPrimarySupplier: faker.datatype.boolean(),
   product: faker.number.int(),
   supplier: faker.number.int(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateProductSupplier = (id: number = 1): ProductSupplier => ({
   ...generateBaseEntity(id),
   ...createProductSupplier(),
   id,
+  product: generateProduct(),
+  supplier: generateSupplier(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManyProductSuppliers = (

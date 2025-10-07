@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   Check,
@@ -59,11 +58,12 @@ export class StoreDetail {
   })
   updatedAt: Date;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdStoreDetail, { nullable: true })
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number | null;
+  createdBy: User | null;
 
   @ManyToOne(() => User, (user) => user.updatedStoreDetail, { nullable: true })
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number | null;
+  updatedBy: User | null;
 }

@@ -7,6 +7,7 @@ import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
 import { Purchase } from './entities/purchase.entity';
+import { Supplier } from '@supplier/entities/supplier.entity';
 
 /* DTO's */
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
@@ -71,7 +72,7 @@ export class PurchaseService
 
   async findBySupplierId(supplierId: number): Promise<Result<Purchase[]>> {
     const [purchases, total] = await this.repo.findAndCount({
-      where: { supplier: supplierId, isDeleted: false },
+      where: { supplier: { id: supplierId }, isDeleted: false },
       relations: ['createdBy'],
     });
 
@@ -83,7 +84,11 @@ export class PurchaseService
   }
 
   async create(dto: CreatePurchaseDto) {
-    const newPurchase = this.repo.create(dto);
+    const suppliedId = dto.supplier;
+    const newPurchase = this.repo.create({
+      ...dto,
+      supplier: { id: suppliedId } as Supplier,
+    });
     const purchase = await this.repo.save(newPurchase);
     return {
       statusCode: HttpStatus.CREATED,
@@ -94,7 +99,8 @@ export class PurchaseService
 
   async update(id: number, changes: UpdatePurchaseDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data, changes);
+    const supplierId = changes.supplier;
+    this.repo.merge(data, { ...changes, supplier: { id: supplierId } });
     const rta = await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,

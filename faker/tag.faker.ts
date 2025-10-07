@@ -1,23 +1,28 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Tag } from '@tag/entities/tag.entity';
 
+/* DTO */
 import { CreateTagDto } from '@tag/dto/create-tag.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateManyProductTags } from './productTag.faker';
+import { generateUser } from './user.faker';
 
 export const createTag = (): CreateTagDto => ({
   name: faker.lorem.word(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateTag = (id: number = 1): Tag => ({
   ...generateBaseEntity(id),
   ...createTag(),
   id,
-  products: [],
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
+  product: generateManyProductTags(2),
 });
 
 export const generateManyTags = (size: number): Tag[] => {

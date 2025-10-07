@@ -37,26 +37,27 @@ export class Shipment extends BaseEntity {
   })
   status: ShipmentStatusEnum;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => Sale, (sale) => sale.shipments)
   @JoinColumn({ name: 'sale_id' })
-  sale: number;
+  sale: Sale;
 
   @ManyToOne(
     () => ShippingCompany,
     (shippingCompany) => shippingCompany.shipments,
   )
   @JoinColumn({ name: 'shipping_company_id' })
-  shippingCompany: number;
+  shippingCompany: ShippingCompany;
 
   @ManyToOne(() => User, (user) => user.createdShipments)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedShipments)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedShipments)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 }

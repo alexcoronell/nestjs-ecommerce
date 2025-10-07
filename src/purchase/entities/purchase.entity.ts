@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -58,23 +57,24 @@ export class Purchase {
   })
   isDeleted: boolean;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdPurchases, { nullable: false })
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedPurchases, { nullable: false })
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedPurchases, { nullable: true })
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.purchases, {
     nullable: false,
   })
   @JoinColumn({ name: 'supplier_id' })
-  supplier: number;
+  supplier: Supplier;
 
   @OneToMany(() => PurchaseDetail, (detail) => detail.purchase)
   purchaseDetails: PurchaseDetail[];

@@ -1,8 +1,14 @@
 import { faker } from '@faker-js/faker/.';
 
+/* Entity */
 import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 
+/* DTO */
 import { CreateSaleDetailDto } from '@sale_detail/dto/create-sale-detail.dto';
+
+/* Fakers */
+import { generateProduct } from './product.faker';
+import { generateSale } from './sale.faker';
 
 export const createSaleDetail = (): CreateSaleDetailDto => ({
   quantity: faker.number.int({ min: 1, max: 10 }),
@@ -16,6 +22,8 @@ export const generateSaleDetail = (id: number = 1): SaleDetail => ({
   ...createSaleDetail(),
   id,
   createdAt: faker.date.recent(),
+  product: generateProduct(),
+  sale: generateSale(),
 });
 
 export const generateManySaleDetails = (size: number): SaleDetail[] => {

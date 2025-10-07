@@ -48,10 +48,10 @@ export class SaleService {
     };
   }
 
-  async findAllByCustomerId(customerId: number): Promise<Result<Sale[]>> {
+  async findAllByUserId(userId: number): Promise<Result<Sale[]>> {
     const [sales, total] = await this.repo.findAndCount({
       where: {
-        customer: customerId,
+        user: { id: userId },
         isCancelled: false,
       },
       order: {
@@ -70,7 +70,7 @@ export class SaleService {
   ): Promise<Result<Sale[]>> {
     const [sales, total] = await this.repo.findAndCount({
       where: {
-        paymentMethod: paymentMethodId,
+        paymentMethod: { id: paymentMethodId },
         isCancelled: false,
       },
       order: {
@@ -98,8 +98,14 @@ export class SaleService {
     return { statusCode: HttpStatus.OK, data: sale };
   }
 
-  async create(createSaleDto: CreateSaleDto): Promise<Result<Sale>> {
-    const sale = this.repo.create(createSaleDto);
+  async create(dto: CreateSaleDto): Promise<Result<Sale>> {
+    const paymentMethodId = dto.paymentMethod;
+    const shippingCompanyId = dto.shippingCompany;
+    const sale = this.repo.create({
+      ...dto,
+      paymentMethod: { id: paymentMethodId },
+      shippingCompany: { id: shippingCompanyId },
+    });
     const savedSale = await this.repo.save(sale);
     return { statusCode: HttpStatus.CREATED, data: savedSale };
   }

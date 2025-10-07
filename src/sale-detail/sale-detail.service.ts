@@ -52,7 +52,7 @@ export class SaleDetailService {
 
   async findBySaleId(saleId: number): Promise<Result<SaleDetail[]>> {
     const [saleDetails, total] = await this.repo.findAndCount({
-      where: { sale: saleId },
+      where: { sale: { id: saleId } },
       order: {
         createdAt: 'DESC',
       },
@@ -65,7 +65,12 @@ export class SaleDetailService {
   }
 
   async create(dtos: CreateSaleDetailDto[]): Promise<Result<SaleDetail[]>> {
-    const saleDetails = await this.repo.create(dtos);
+    const createSaleDetails = dtos.map((item) => ({
+      ...item,
+      sale: { id: item.sale },
+      product: { id: item.product },
+    }));
+    const saleDetails = await this.repo.create(createSaleDetails);
     await this.repo.save(saleDetails);
     return {
       statusCode: HttpStatus.CREATED,

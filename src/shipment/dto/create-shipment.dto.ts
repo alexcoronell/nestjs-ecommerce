@@ -5,7 +5,6 @@ import {
   Min,
   IsEnum,
   IsDate,
-  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Trim } from '@commons/decorators/trim.decorator';
@@ -47,19 +46,4 @@ export class CreateShipmentDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly shippingCompany: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly createdBy: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly updatedBy: number;
-
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  readonly deletedBy: number | null;
 }

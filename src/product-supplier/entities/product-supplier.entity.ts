@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Product } from '@product/entities/product.entity';
@@ -20,23 +19,24 @@ export class ProductSupplier extends BaseEntity {
   @Column({ name: 'is_primary_supplier', type: 'boolean', default: false })
   isPrimarySupplier: boolean;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => Product, (product) => product.productSuppliers)
   @JoinColumn({ name: 'product_id' })
-  product: number;
+  product: Product;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.productSuppliers)
   @JoinColumn({ name: 'supplier_id' })
-  supplier: number;
+  supplier: Supplier;
 
   @ManyToOne(() => User, (user) => user.createdProductSuppliers)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedProductSuppliers)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedProductSuppliers)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 }

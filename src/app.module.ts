@@ -29,7 +29,6 @@ import { SaleDetailModule } from './sale-detail/sale-detail.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { PurchaseDetailModule } from './purchase-detail/purchase-detail.module';
 import { ShipmentModule } from './shipment/shipment.module';
-import { CustomerModule } from './customer/customer.module';
 
 /* Guards */
 import { ApiKeyGuard } from '@commons/guards/api-key.guard';
@@ -66,7 +65,6 @@ import config from './config';
     PurchaseModule,
     PurchaseDetailModule,
     ShipmentModule,
-    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ApiKeyGuard }],

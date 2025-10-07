@@ -6,7 +6,9 @@ import { Repository } from 'typeorm';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
+import { Product } from '@product/entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
@@ -71,7 +73,13 @@ export class ProductImagesService
   }
 
   async create(dto: CreateProductImageDto) {
-    const newProductImage = this.repo.create(dto);
+    const productId = dto.product;
+    const uploadById = dto.uploadedBy;
+    const newProductImage = this.repo.create({
+      ...dto,
+      product: { id: productId } as Product,
+      uploadedBy: { id: uploadById } as User,
+    });
     const productImage = await this.repo.save(newProductImage);
     return {
       statusCode: HttpStatus.CREATED,
@@ -82,7 +90,13 @@ export class ProductImagesService
 
   async update(id: number, changes: UpdateProductImageDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as ProductImage, changes);
+    const productId = changes.product;
+    const uploadById = changes.uploadedBy;
+    this.repo.merge(data as ProductImage, {
+      ...changes,
+      product: { id: productId } as Product,
+      uploadedBy: { id: uploadById } as User,
+    });
     const rta = await this.repo.save(data as ProductImage);
     return {
       statusCode: HttpStatus.OK,

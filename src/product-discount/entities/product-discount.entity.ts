@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Entity,
   PrimaryColumn,
@@ -12,12 +11,13 @@ import { User } from '@user/entities/user.entity';
 
 @Entity('product_discounts')
 export class ProductDiscount {
-  @PrimaryColumn({ name: 'product_id' })
+  @PrimaryColumn({ name: 'product_id', type: 'int' })
   productId: number;
 
-  @PrimaryColumn({ name: 'discount_id' })
+  @PrimaryColumn({ name: 'discount_id', type: 'int' })
   discountId: number;
 
+  /**************************** Relations ****************************/
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
@@ -29,17 +29,17 @@ export class ProductDiscount {
     nullable: false,
   })
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => Product, (product) => product.productDiscounts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'product_id' })
-  product: number;
+  product: Product;
 
   @ManyToOne(() => Discount, (discount) => discount.productDiscounts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'discount_id' })
-  discount: number;
+  discount: Discount;
 }

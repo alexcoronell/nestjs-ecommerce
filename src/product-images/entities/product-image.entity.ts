@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Product } from '@product/entities/product.entity';
@@ -15,11 +14,13 @@ export class ProductImage extends BaseEntity {
   @Column({ name: 'is_main', type: 'boolean', default: false })
   isMain: boolean;
 
+  /**************************** Relations ****************************/
+
   @ManyToOne(() => Product, (product) => product.images)
   @JoinColumn({ name: 'product_id' })
-  product: number;
+  product: Product;
 
   @ManyToOne(() => User, (user) => user.uploadedProductImages)
   @JoinColumn({ name: 'uploaded_by_user_id' })
-  uploadedBy: number;
+  uploadedBy: User;
 }

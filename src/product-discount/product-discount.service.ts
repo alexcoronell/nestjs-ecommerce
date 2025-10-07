@@ -57,7 +57,7 @@ export class ProductDiscountService {
   ): Promise<Result<ProductDiscount[]>> {
     const [productDiscounts, total] = await this.repo.findAndCount({
       relations: ['product', 'discount'],
-      where: { product: id },
+      where: { product: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -71,7 +71,7 @@ export class ProductDiscountService {
   ): Promise<Result<ProductDiscount[]>> {
     const [productDiscounts, total] = await this.repo.findAndCount({
       relations: ['product', 'discount'],
-      where: { discount: id },
+      where: { discount: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -81,9 +81,12 @@ export class ProductDiscountService {
   }
 
   async create(
-    createProductDiscountDto: CreateProductDiscountDto,
+    dto: CreateProductDiscountDto,
   ): Promise<Result<ProductDiscount>> {
-    const productDiscount = this.repo.create(createProductDiscountDto);
+    const productDiscount = this.repo.create({
+      product: { id: dto.product } as Product,
+      discount: { id: dto.discount } as Discount,
+    });
     await this.repo.save(productDiscount);
     return {
       statusCode: HttpStatus.CREATED,
@@ -96,7 +99,11 @@ export class ProductDiscountService {
     dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
   ): Promise<Result<ProductDiscount[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];
-    const newProductDiscounts = this.repo.create(dtosArray);
+    const createProductDiscounts = dtosArray.map((item) => ({
+      product: { id: item.product } as Product,
+      discount: { id: item.discount } as Discount,
+    }));
+    const newProductDiscounts = this.repo.create(createProductDiscounts);
     const productDiscounts = await this.repo.save(newProductDiscounts);
     return {
       statusCode: HttpStatus.CREATED,

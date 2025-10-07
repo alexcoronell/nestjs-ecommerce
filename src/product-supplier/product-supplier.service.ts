@@ -83,7 +83,7 @@ export class ProductSupplierService
   ): Promise<Result<ProductSupplier[]>> {
     const [productSuppliers, total] = await this.repo.findAndCount({
       relations: ['product', 'supplier'],
-      where: { product: id },
+      where: { product: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -97,7 +97,7 @@ export class ProductSupplierService
   ): Promise<Result<ProductSupplier[]>> {
     const [productSuppliers, total] = await this.repo.findAndCount({
       relations: ['product', 'supplier'],
-      where: { supplier: id },
+      where: { supplier: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -109,7 +109,11 @@ export class ProductSupplierService
   async create(
     dto: CreateProductSupplierDto,
   ): Promise<Result<ProductSupplier>> {
-    const newProductSupplier = this.repo.create(dto);
+    const newProductSupplier = this.repo.create({
+      ...dto,
+      product: { id: dto.product } as Product,
+      supplier: { id: dto.supplier } as Supplier,
+    });
     const productSupplier = await this.repo.save(newProductSupplier);
     return {
       statusCode: HttpStatus.CREATED,
@@ -120,7 +124,11 @@ export class ProductSupplierService
 
   async update(id: number, changes: UpdateProductSupplierDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as ProductSupplier, changes);
+    this.repo.merge(data as ProductSupplier, {
+      ...changes,
+      product: { id: changes.product } as Product,
+      supplier: { id: changes.supplier } as Supplier,
+    });
     const rta = await this.repo.save(data as ProductSupplier);
     return {
       statusCode: HttpStatus.OK,

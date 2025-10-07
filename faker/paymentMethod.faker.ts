@@ -1,16 +1,17 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 
+/* DTO */
 import { CreatePaymentMethodDto } from '@payment_method/dto/create-payment-method.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
 
 export const createPaymentMethod = (): CreatePaymentMethodDto => ({
   name: faker.lorem.word(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generatePaymentMethod = (id: number = 1): PaymentMethod => ({
@@ -18,6 +19,9 @@ export const generatePaymentMethod = (id: number = 1): PaymentMethod => ({
   ...createPaymentMethod(),
   ...generateRelations(),
   id,
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManyPaymentMethods = (size: number): PaymentMethod[] => {

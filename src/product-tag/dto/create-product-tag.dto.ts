@@ -6,17 +6,11 @@ export class CreateProductTagDto {
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  products: number;
+  product: number;
 
   @IsNumber()
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  tags: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsNotEmpty()
-  @ApiProperty()
-  createdBy: number;
+  tag: number;
 }

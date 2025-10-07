@@ -1,10 +1,17 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Product } from '@product/entities/product.entity';
 
+/* DTO */
 import { CreateProductDto } from '@product/dto/create-product.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateBrand } from './brand.faker';
+import { generateCategory } from './category.faker';
+import { generateUser } from './user.faker';
+import { generateSubcategory } from './subcategory.faker';
 
 export const createProduct = (): CreateProductDto => ({
   name: faker.commerce.productName(),
@@ -14,15 +21,18 @@ export const createProduct = (): CreateProductDto => ({
   category: faker.number.int(),
   subcategory: faker.number.int(),
   brand: faker.number.int(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateProduct = (id: number = 1): Product => ({
   ...generateBaseEntity(id),
   ...createProduct(),
   id,
+  brand: generateBrand(),
+  category: generateCategory(),
+  subcategory: generateSubcategory(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
   images: [],
   productSuppliers: [],
   tags: [],

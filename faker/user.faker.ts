@@ -23,11 +23,9 @@ export const createUser = (): CreateUserDto => ({
   neighborhood: faker.location.county(),
 });
 
-export const generateUser = (
-  id: User['id'] = 1,
-  isDeleted = false,
-  auditUser = 1,
-): User => ({
+const auditUser = { id: 1 } as User;
+
+export const generateUser = (id: User['id'] = 1, isDeleted = false): User => ({
   ...generateBaseEntity(id, isDeleted),
   ...createUser(),
   isActive: true,
@@ -41,7 +39,6 @@ export const generateUser = (
 export const generateCustomer = (
   id: User['id'] = 1,
   isDeleted = false,
-  auditUser = 1,
 ): User => ({
   ...generateBaseEntity(id, isDeleted),
   ...createUser(),

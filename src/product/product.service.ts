@@ -6,7 +6,10 @@ import { Repository } from 'typeorm';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
+import { Brand } from '@brand/entities/brand.entity';
+import { Category } from '@category/entities/category.entity';
 import { Product } from './entities/product.entity';
+import { Subcategory } from '@subcategory/entities/subcategory.entity';
 
 /* DTO's */
 import { CreateProductDto } from './dto/create-product.dto';
@@ -84,7 +87,16 @@ export class ProductService
   }
 
   async create(dto: CreateProductDto) {
-    const newProduct = this.repo.create(dto);
+    const brandId = dto.brand;
+    const categoryId = dto.category;
+    const subcategoryId = dto.subcategory;
+    const createProduct = {
+      ...dto,
+      brand: { id: brandId } as Brand,
+      category: { id: categoryId } as Category,
+      subcategory: { id: subcategoryId } as Subcategory,
+    };
+    const newProduct = this.repo.create(createProduct);
     const product = await this.repo.save(newProduct);
     return {
       statusCode: HttpStatus.CREATED,
@@ -95,7 +107,16 @@ export class ProductService
 
   async update(id: number, changes: UpdateProductDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Product, changes);
+    const brandId = changes.brand;
+    const categoryId = changes.category;
+    const subcategoryId = changes.subcategory;
+    const updateProduct = {
+      ...changes,
+      brand: { id: brandId } as Brand,
+      category: { id: categoryId } as Category,
+      subcategory: { id: subcategoryId } as Subcategory,
+    };
+    this.repo.merge(data as Product, updateProduct);
     const rta = await this.repo.save(data as Product);
     return {
       statusCode: HttpStatus.OK,

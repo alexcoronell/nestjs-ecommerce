@@ -1,27 +1,31 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { faker } from '@faker-js/faker/.';
 
+/* Entity */
 import { ProductTag } from 'src/product-tag/entities/product-tag.entity';
+
+/* DTO */
 import { CreateProductTagDto } from 'src/product-tag/dto/create-product-tag.dto';
 
+/* Fakers */
+import { generateProduct } from './product.faker';
+import { generateTag } from './tag.faker';
+import { generateUser } from './user.faker';
+
 export const createProductTag = (): CreateProductTagDto => ({
-  products: faker.number.int({ min: 1, max: 100 }),
-  tags: faker.number.int({ min: 1, max: 100 }),
-  createdBy: faker.number.int({ min: 1, max: 100 }),
+  product: faker.number.int({ min: 1, max: 100 }),
+  tag: faker.number.int({ min: 1, max: 100 }),
 });
 
 export const generateProductTag = (): ProductTag => {
-  const productGenerated = createProductTag();
-  const product = productGenerated.products;
-  const tag = productGenerated.tags;
-  const createdBy = productGenerated.createdBy;
+  const product = generateProduct();
+  const tag = generateTag();
+  const createdBy = generateUser();
 
   const productTag: ProductTag = {
-    productId: product,
-    tagId: tag,
-    products: product,
-    tags: tag,
+    productId: product.id,
+    tagId: tag.id,
+    product,
+    tag,
     createdBy,
     createdAt: faker.date.anytime(),
   };

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { ProductDiscount } from '@product_discount/entities/product-discount.entity';
@@ -53,17 +52,18 @@ export class Discount extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   active: boolean;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdDiscounts)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedDiscounts)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedDiscounts)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 
   @OneToMany(() => ProductDiscount, (items) => items.discount)
   productDiscounts: ProductDiscount[];

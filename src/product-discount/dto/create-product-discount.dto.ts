@@ -13,10 +13,4 @@ export class CreateProductDiscountDto {
   @IsNotEmpty()
   @ApiProperty()
   discount: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsNotEmpty()
-  @ApiProperty()
-  createdBy: number;
 }

@@ -33,18 +33,4 @@ export class CreateProductSupplierDto {
   @IsNotEmpty()
   @IsNumber()
   supplier: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  createdBy: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  updatedBy: number;
-
-  @ApiProperty()
-  @IsNumber()
-  deletedBy: number | null;
 }

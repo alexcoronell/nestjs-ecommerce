@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -57,7 +54,7 @@ export class ProductTagService {
   async findAllByProduct(id: Product['id']): Promise<Result<ProductTag[]>> {
     const [productTags, total] = await this.repo.findAndCount({
       relations: ['product', 'tag'],
-      where: { products: id },
+      where: { product: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -69,7 +66,7 @@ export class ProductTagService {
   async findAllByTag(id: Tag['id']): Promise<Result<ProductTag[]>> {
     const [productTags, total] = await this.repo.findAndCount({
       relations: ['product', 'tag'],
-      where: { tags: id },
+      where: { tag: { id } },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -78,10 +75,14 @@ export class ProductTagService {
     };
   }
 
-  async create(
-    createProductTagDto: CreateProductTagDto,
-  ): Promise<Result<ProductTag>> {
-    const productTag = this.repo.create(createProductTagDto);
+  async create(dto: CreateProductTagDto): Promise<Result<ProductTag>> {
+    const productId = dto.product;
+    const tagId = dto.tag;
+
+    const productTag = this.repo.create({
+      product: { id: productId } as Product,
+      tag: { id: tagId } as Tag,
+    });
     await this.repo.save(productTag);
     return {
       statusCode: HttpStatus.CREATED,
@@ -94,7 +95,11 @@ export class ProductTagService {
     dtos: CreateProductTagDto | CreateProductTagDto[],
   ): Promise<Result<ProductTag[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];
-    const newProductTags = this.repo.create(dtosArray);
+    const createProductTags = dtosArray.map((item) => ({
+      product: { id: item.product },
+      tag: { id: item.tag },
+    }));
+    const newProductTags = this.repo.create(createProductTags);
     const productTags = await this.repo.save(newProductTags);
     return {
       statusCode: HttpStatus.CREATED,

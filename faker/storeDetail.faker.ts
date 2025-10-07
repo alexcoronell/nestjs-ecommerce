@@ -1,6 +1,10 @@
 import { faker } from '@faker-js/faker/.';
 
+/* Entity */
 import { StoreDetail } from '@store_detail/entities/store-detail.entity';
+
+/* Fakers */
+import { generateUser } from './user.faker';
 
 export const generateStoreDetail = (): StoreDetail => ({
   id: 1,
@@ -15,6 +19,6 @@ export const generateStoreDetail = (): StoreDetail => ({
   legalInformation: faker.lorem.paragraphs(2),
   createdAt: faker.date.anytime(),
   updatedAt: faker.date.anytime(),
-  createdBy: 1,
-  updatedBy: 1,
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
 });

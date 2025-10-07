@@ -1,10 +1,14 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Discount } from 'src/discount/entities/discount.entity';
 
+/* DTO */
 import { CreateDiscountDto } from 'src/discount/dto/create-discount.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateUser } from './user.faker';
 
 export const createDiscount = (): CreateDiscountDto => ({
   code: faker.commerce.productName(),
@@ -21,15 +25,15 @@ export const createDiscount = (): CreateDiscountDto => ({
   usageLimit: faker.number.int(),
   usageLimitPerUser: faker.number.int(),
   active: faker.datatype.boolean(),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
-  deletedBy: null,
 });
 
 export const generateDiscount = (id: number = 1): Discount => ({
   ...generateBaseEntity(id),
   ...createDiscount(),
   id,
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
   productDiscounts: [],
 });
 

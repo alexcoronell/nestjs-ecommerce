@@ -22,12 +22,6 @@ export class CreateSaleDto {
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  customer: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsNotEmpty()
-  @ApiProperty()
   paymentMethod: number;
 
   @IsNumber()

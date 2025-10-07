@@ -1,16 +1,19 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { Purchase } from '@purchase/entities/purchase.entity';
 
+/* DTO */
 import { CreatePurchaseDto } from '@purchase/dto/create-purchase.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateSupplier } from './supplier.faker';
+import { generateUser } from './user.faker';
 
 export const createPurchase = (): CreatePurchaseDto => ({
   purchaseDate: faker.date.past(),
   totalAmount: parseFloat(faker.commerce.price()),
-  createdBy: faker.number.int(),
-  updatedBy: faker.number.int(),
   supplier: faker.number.int({ min: 1, max: 100 }),
 });
 
@@ -23,6 +26,9 @@ export const generatePurchase = (id: number = 1): Purchase => ({
   deletedAt: null,
   isDeleted: false,
   deletedBy: null,
+  supplier: generateSupplier(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
   purchaseDetails: [],
 });
 

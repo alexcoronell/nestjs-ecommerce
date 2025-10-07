@@ -1,10 +1,16 @@
 import { faker } from '@faker-js/faker/.';
 
-import { generateBaseEntity } from '@faker/base.faker';
-
+/* Entity */
 import { PurchaseDetail } from '@purchase_detail/entities/purchase-detail.entity';
 
+/* DTO */
 import { CreatePurchaseDetailDto } from '@purchase_detail/dto/create-purchase-detail.dto';
+
+/* Fakers */
+import { generateBaseEntity } from '@faker/base.faker';
+import { generateProduct } from './product.faker';
+import { generatePurchase } from './purchase.faker';
+import { generateUser } from './user.faker';
 
 export const createPurchaseDetail = (): CreatePurchaseDetailDto => {
   return {
@@ -13,9 +19,6 @@ export const createPurchaseDetail = (): CreatePurchaseDetailDto => {
     subtotal: parseFloat(faker.commerce.price()),
     product: faker.number.int(),
     purchase: faker.number.int(),
-    createdBy: faker.number.int(),
-    updatedBy: faker.number.int(),
-    deletedBy: null,
   };
 };
 
@@ -23,6 +26,11 @@ export const generatePurchaseDetail = (id: number = 1): PurchaseDetail => ({
   ...generateBaseEntity(id),
   ...createPurchaseDetail(),
   id,
+  product: generateProduct(),
+  purchase: generatePurchase(),
+  createdBy: generateUser(),
+  updatedBy: generateUser(),
+  deletedBy: null,
 });
 
 export const generateManyPurchaseDetails = (size: number): PurchaseDetail[] => {

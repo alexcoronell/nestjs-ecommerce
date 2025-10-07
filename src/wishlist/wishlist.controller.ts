@@ -24,20 +24,17 @@ export class WishlistController {
     return this.wishlistService.findAll();
   }
 
-  @Get('customer/:customerId/product/:productId')
-  findOneByCustomerAndProduct(
-    @Param('customerId', ParseIntPipe) customerId: number,
+  @Get('user/:userId/product/:productId')
+  findOneByUserAndProduct(
+    @Param('userId', ParseIntPipe) userId: number,
     @Param('productId', ParseIntPipe) productId: number,
   ) {
-    return this.wishlistService.findOneByCustomerAndProduct(
-      customerId,
-      productId,
-    );
+    return this.wishlistService.findOneByUserAndProduct(userId, productId);
   }
 
-  @Get('customer/:customerId')
-  findAllByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
-    return this.wishlistService.findAllByCustomer(customerId);
+  @Get('customer/:userId')
+  findAllByCustomer(@Param('userId', ParseIntPipe) userId: number) {
+    return this.wishlistService.findAllByUser(userId);
   }
 
   @Get('product/:productId')

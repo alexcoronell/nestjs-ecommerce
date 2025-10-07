@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '@commons/entities/baseEntity';
@@ -10,17 +9,18 @@ export class PaymentMethod extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   name: string;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdPaymentMethods)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedPaymentMethods)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedPaymentMethods)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 
   @OneToMany(() => Sale, (sales) => sales.paymentMethod)
   sales: Sale[];

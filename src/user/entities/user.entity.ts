@@ -70,15 +70,15 @@ export class User extends BaseEntity {
   /* Users */
   @ManyToOne(() => User, (user) => user.createdUsers)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy?: number | null;
+  createdBy?: User | null;
 
   @ManyToOne(() => User, (user) => user.updatedUsers)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy?: number | null;
+  updatedBy?: User | null;
 
   @ManyToOne(() => User, (user) => user.deletedUsers, { nullable: true })
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy?: number | null;
+  deletedBy?: User | null;
 
   @OneToMany(() => User, (users) => users.createdBy)
   createdUsers?: User[];
@@ -182,7 +182,7 @@ export class User extends BaseEntity {
   deletedPurchaseDetails?: PurchaseDetail[];
 
   /* Sales */
-  @OneToMany(() => Sale, (items) => items.customer)
+  @OneToMany(() => Sale, (sale) => sale.user)
   sales?: Sale[];
 
   @OneToMany(() => Sale, (sale) => sale.cancelledBy)
@@ -246,6 +246,6 @@ export class User extends BaseEntity {
   deletedTags?: Tag[];
 
   /* Wishlist */
-  @OneToMany(() => Wishlist, (items) => items.customer)
+  @OneToMany(() => Wishlist, (items) => items.user)
   wishlists?: Wishlist[];
 }

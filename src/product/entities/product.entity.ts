@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '@commons/entities/baseEntity';
 import { Brand } from '@brand/entities/brand.entity';
@@ -27,29 +26,30 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', unsigned: true, default: 0 })
   stock: number;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => Category, (item) => item.products)
   @JoinColumn({ name: 'category_id' })
-  category: number;
+  category: Category;
 
   @ManyToOne(() => Subcategory, (item) => item.products)
   @JoinColumn({ name: 'subcategory_id' })
-  subcategory: number;
+  subcategory: Subcategory;
 
   @ManyToOne(() => Brand, (item) => item.products)
   @JoinColumn({ name: 'brand_id' })
-  brand: number;
+  brand: Brand;
 
   @ManyToOne(() => User, (user) => user.createdProducts)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedProducts)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedProducts)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 
   @OneToMany(() => ProductDiscount, (items) => items.product)
   productDiscounts: ProductDiscount[];
@@ -63,7 +63,7 @@ export class Product extends BaseEntity {
   @OneToMany(() => PurchaseDetail, (items) => items.product)
   purchaseDetails: PurchaseDetail[];
 
-  @OneToMany(() => ProductTag, (items) => items.products)
+  @OneToMany(() => ProductTag, (items) => items.product)
   tags: ProductTag[];
 
   @OneToMany(() => SaleDetail, (items) => items.product)

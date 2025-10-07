@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
-import { Shipment } from './entities/shipment.entity';
 import { Sale } from '@sale/entities/sale.entity';
+import { Shipment } from './entities/shipment.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 
 /* DTO's */
@@ -63,7 +63,7 @@ export class ShipmentService
   ): Promise<Result<Shipment[]>> {
     const shipments = await this.repo.find({
       relations: ['sale', 'shippingCompany', 'createdBy', 'updatedBy'],
-      where: { shippingCompany: id, isDeleted: false },
+      where: { shippingCompany: { id }, isDeleted: false },
     });
     return {
       statusCode: HttpStatus.OK,
@@ -106,7 +106,7 @@ export class ShipmentService
   async findOneBySaleId(id: Sale['id']): Promise<Result<Shipment>> {
     const shipment = await this.repo.findOne({
       relations: ['sale', 'shippingCompany', 'createdBy', 'updatedBy'],
-      where: { sale: id, isDeleted: false },
+      where: { sale: { id }, isDeleted: false },
     });
     if (!shipment) {
       throw new NotFoundException(`The Shipment with sale ID: ${id} not found`);
@@ -118,7 +118,13 @@ export class ShipmentService
   }
 
   async create(dto: CreateShipmentDto) {
-    const newShipment = this.repo.create(dto);
+    const saleId = dto.sale;
+    const shippingCompanyId = dto.shippingCompany;
+    const newShipment = this.repo.create({
+      ...dto,
+      sale: { id: saleId } as Sale,
+      shippingCompany: { id: shippingCompanyId } as ShippingCompany,
+    });
     const shipment = await this.repo.save(newShipment);
     return {
       statusCode: HttpStatus.CREATED,
@@ -129,7 +135,13 @@ export class ShipmentService
 
   async update(id: Shipment['id'], changes: UpdateShipmentDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Shipment, changes);
+    const saleId = changes.sale;
+    const shippingCompanyId = changes.shippingCompany;
+    this.repo.merge(data as Shipment, {
+      ...changes,
+      sale: { id: saleId } as Sale,
+      shippingCompany: { id: shippingCompanyId } as ShippingCompany,
+    });
     const rta = await this.repo.save(data as Shipment);
     return {
       statusCode: HttpStatus.OK,

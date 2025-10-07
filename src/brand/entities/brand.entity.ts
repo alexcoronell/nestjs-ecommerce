@@ -9,17 +9,18 @@ export class Brand extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   name: string;
 
+  /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdBrands)
   @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: number;
+  createdBy: User;
 
   @ManyToOne(() => User, (user) => user.updatedBrands)
   @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: number;
+  updatedBy: User;
 
   @ManyToOne(() => User, (user) => user.deletedBrands)
   @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: number | null;
+  deletedBy: User | null;
 
   /* Products */
   @OneToMany(() => Product, (items) => items.brand)

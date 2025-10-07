@@ -6,7 +6,7 @@ export class CreateWishlistDto {
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
-  customer: number;
+  user: number;
 
   @IsNumber()
   @Min(0)

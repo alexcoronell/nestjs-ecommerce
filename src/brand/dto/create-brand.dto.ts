@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBrandDto {
@@ -6,19 +6,4 @@ export class CreateBrandDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly name: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly createdBy: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly updatedBy: number;
-
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  readonly deletedBy: number | null;
 }

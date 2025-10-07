@@ -11,7 +11,7 @@ import { Product } from '@product/entities/product.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('wishlist')
-@Unique(['customer', 'product'])
+@Unique(['user', 'product'])
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;

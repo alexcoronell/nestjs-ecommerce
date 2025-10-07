@@ -28,12 +28,11 @@ import { UpdatePasswordDto } from './dto/update-password-user';
 
 /* Guards */
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
-import { IsUserGuard } from '@auth/guards/is-customer/is-user.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 import { OwnerOrAdminGuard } from '@auth/guards/owner-or-admin-auth/owner-or-admin-auth.guard';
 import { Req } from '@nestjs/common';
 
-@UseGuards(JwtAuthGuard, IsUserGuard)
+@UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @Controller('user')
 /**

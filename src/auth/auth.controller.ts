@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
@@ -10,12 +8,10 @@ import { Request } from 'express';
 import { AuthService } from './auth.service';
 
 /* Entities */
-import { Customer } from '@customer/entities/customer.entity';
 import { User } from '@user/entities/user.entity';
 
 /* Guards */
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
-import { LocalCustomerAuthGuard } from './guards/local-customer-auth/local-customer-auth.guard';
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth/refresh-jwt-auth.guard';
 
 /* Decorators */
@@ -32,13 +28,6 @@ export class AuthController {
   login(@Req() req: Request) {
     const { user } = req as any;
     return this.authService.generateJWT(user as User);
-  }
-
-  @UseGuards(LocalCustomerAuthGuard)
-  @Post('customer/login')
-  loginCustomer(@Req() req: Request) {
-    const { body } = req as any;
-    return this.authService.generateCustomerJWT(body as Customer);
   }
 
   @UseGuards(RefreshJwtAuthGuard)

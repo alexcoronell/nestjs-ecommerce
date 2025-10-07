@@ -9,11 +9,9 @@ import { ConfigType } from '@nestjs/config';
 import config from '@config/index';
 
 /* Services */
-import { CustomerService } from '@customer/customer.service';
 import { UserService } from '@user/user.service';
 
 /* Entities */
-import { Customer } from '@customer/entities/customer.entity';
 import { User } from '@user/entities/user.entity';
 
 /* Interfaces */
@@ -29,7 +27,6 @@ export class AuthService {
   jwtRefreshTokenExpirationTime: number | null = null;
 
   constructor(
-    private customerService: CustomerService,
     private userService: UserService,
     private jwtService: JwtService,
     @Inject(config.KEY) configService: ConfigType<typeof config>,
@@ -55,21 +52,6 @@ export class AuthService {
   }
 
   /**
-   * @param email
-   * @param password
-   * @returns customer
-   */
-  async validateCustomer(email: string, password: string) {
-    const { data } = await this.customerService.findAndValidateEmail(email);
-    const customer = data as Customer;
-    const isMatch = await bcrypt.compare(password, customer.password);
-    if (customer && isMatch) {
-      customer.password = undefined;
-      return customer;
-    }
-  }
-
-  /**
    * @param user
    * @returns access_token and refresh_token
    */
@@ -78,23 +60,6 @@ export class AuthService {
       user: user.id,
       isAdmin: user.role === UserRoleEnum.ADMIN,
       isCustomer: false,
-    };
-    const expiresIn = 604800;
-    return {
-      access_token: this.jwtService.sign(payload, { expiresIn }),
-      refresh_token: await this.generateRefreshToken(payload),
-    };
-  }
-
-  /**
-   * @param customer
-   * @returns access_token and refresh_token
-   */
-  async generateCustomerJWT(customer: Customer) {
-    const payload: PayloadToken = {
-      user: customer.id,
-      isAdmin: false,
-      isCustomer: true,
     };
     const expiresIn = 604800;
     return {

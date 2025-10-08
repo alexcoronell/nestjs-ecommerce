@@ -425,7 +425,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       jest
         .spyOn(repository, 'merge')
-        .mockReturnValue({ ...user, isDeleted: true, deletedBy });
+        .mockReturnValue({ ...user, isDeleted: true, deletedBy: user });
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const { statusCode, message } = await service.remove(id, deletedBy);

@@ -7,19 +7,16 @@ import * as bcrypt from 'bcrypt';
 
 /* Services */
 import { AuthService } from './auth.service';
-import { CustomerService } from '@customer/customer.service';
 import { UserService } from '@user/user.service';
 
 /* Config */
 import config from '@config/index';
 
-import { generateCustomer } from '@faker/customer.faker';
 import { generateUser } from '@faker/user.faker';
 
 describe('AuthService', () => {
   let service: AuthService;
   let jwtService: JwtService;
-  let customerService: CustomerService;
   let userService: UserService;
 
   describe('AuthService', () => {
@@ -56,25 +53,6 @@ describe('AuthService', () => {
             },
           },
           {
-            provide: CustomerService,
-            useValue: {
-              findOneByEmail: jest.fn().mockResolvedValue({
-                data: {
-                  id: 1,
-                  email: 'test@test.com',
-                  password: 'hashedPassword',
-                },
-              }),
-              findAndValidateEmail: jest.fn().mockResolvedValue({
-                data: {
-                  id: 1,
-                  email: 'test@test.com',
-                  password: 'hashedPassword',
-                },
-              }),
-            },
-          },
-          {
             provide: config.KEY,
             useValue: {
               apikey: undefined,
@@ -89,7 +67,6 @@ describe('AuthService', () => {
 
       service = module.get<AuthService>(AuthService);
       jwtService = module.get<JwtService>(JwtService);
-      customerService = module.get<CustomerService>(CustomerService);
       userService = module.get<UserService>(UserService);
     });
 
@@ -97,7 +74,6 @@ describe('AuthService', () => {
       expect(service).toBeDefined();
       expect(jwtService).toBeDefined();
       expect(userService).toBeDefined();
-      expect(customerService).toBeDefined();
     });
 
     describe('validateUser', () => {
@@ -117,41 +93,10 @@ describe('AuthService', () => {
       });
     });
 
-    describe('validateCustomer', () => {
-      it('should return customer data if credentials are valid', async () => {
-        jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
-        const result = await service.validateCustomer(
-          'test@test.com',
-          'password',
-        );
-        expect(result).toEqual({ id: 1, email: 'test@test.com' });
-      });
-
-      it('should return null if credentials are invalid', async () => {
-        jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
-        const result = await service.validateCustomer(
-          'test@test.com',
-          'wrongPassword',
-        );
-        expect(result).toBeFalsy();
-      });
-    });
-
     describe('generateJWT', () => {
       it('should generate access and refresh tokens', async () => {
         const user = generateUser();
         const result = await service.generateJWT(user);
-        expect(result).toEqual({
-          access_token: 'mockedJwtToken',
-          refresh_token: 'mockedRefreshToken',
-        });
-      });
-    });
-
-    describe('generateCustomerJWT', () => {
-      it('should generate access and refresh tokens', async () => {
-        const customer = generateCustomer();
-        const result = await service.generateCustomerJWT(customer);
         expect(result).toEqual({
           access_token: 'mockedJwtToken',
           refresh_token: 'mockedRefreshToken',

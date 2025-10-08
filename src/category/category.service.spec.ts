@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -76,6 +75,25 @@ describe('CategoryService', () => {
       const { statusCode, data, total } = await service.findAll();
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { isDeleted: false },
+        order: { name: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(categories.length);
+      expect(data).toEqual(categories);
+    });
+
+    it('findAllWithRelations should return all categories', async () => {
+      const categories = generateManyCategories(50);
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([categories, categories.length]);
+
+      const { statusCode, data, total } = await service.findAllWithRelations();
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        relations: ['createdBy, updatedBy'],
         where: { isDeleted: false },
         order: { name: 'ASC' },
       });

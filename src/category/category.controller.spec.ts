@@ -32,6 +32,7 @@ describe('CategoryController', () => {
     countAll: jest.fn().mockResolvedValue(mockCategories.length),
     count: jest.fn().mockResolvedValue(mockCategories.length),
     findAll: jest.fn().mockResolvedValue(mockCategories),
+    findAllWithRelations: jest.fn().mockResolvedValue(mockCategories),
     findOne: jest.fn().mockResolvedValue(mockCategory),
     findOneByName: jest.fn().mockResolvedValue(mockCategory),
     create: jest.fn().mockResolvedValue(mockNewCategory),
@@ -74,6 +75,11 @@ describe('CategoryController', () => {
     it('should call findAll category service', async () => {
       expect(await controller.findAll()).toBe(mockCategories);
       expect(service.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call findAllWithRelations category service', async () => {
+      expect(await controller.findAllWithRelations()).toBe(mockCategories);
+      expect(service.findAllWithRelations).toHaveBeenCalledTimes(1);
     });
 
     it('should call findOne category service', async () => {

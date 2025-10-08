@@ -80,6 +80,28 @@ export class CategoryService
   }
 
   /**
+   * Retrieves all categories that are not marked as deleted.
+   * @returns An object containing the list of categories with relations, total count, and an HTTP status code.
+   */
+  async findAllWithRelations() {
+    const [categories, total] = await this.repo.findAndCount({
+      relations: ['createdBy, updatedBy'],
+      where: {
+        isDeleted: false,
+      },
+      order: {
+        name: 'ASC',
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: categories,
+      total,
+    };
+  }
+
+  /**
    * Finds a single category by its ID.
    * @param id - The ID of the category to retrieve.
    * @returns A Result object containing the category data and an HTTP status code.

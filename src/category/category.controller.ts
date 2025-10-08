@@ -65,6 +65,15 @@ export class CategoryController
   findAll() {
     return this.categoryService.findAll();
   }
+  /**
+   * Retrieves a list of all categories.
+   *
+   * @returns An array of all categories with relations.
+   */
+  @Get('relations')
+  findAllWithRelations() {
+    return this.categoryService.findAllWithRelations();
+  }
 
   /**
    * Retrieves a single category by its ID.

@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 
 /* Controller */
@@ -34,6 +32,7 @@ describe('BrandController', () => {
     countAll: jest.fn().mockResolvedValue(mockBrands.length),
     count: jest.fn().mockResolvedValue(mockBrands.length),
     findAll: jest.fn().mockResolvedValue(mockBrands),
+    findAllWithRelations: jest.fn().mockResolvedValue(mockBrands),
     findOne: jest.fn().mockResolvedValue(mockBrand),
     findOneByName: jest.fn().mockResolvedValue(mockBrand),
     create: jest.fn().mockResolvedValue(mockNewBrand),
@@ -76,6 +75,11 @@ describe('BrandController', () => {
     it('should call findAll brand service', async () => {
       expect(await controller.findAll()).toBe(mockBrands);
       expect(service.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call findAllWithRelations brand service', async () => {
+      expect(await controller.findAllWithRelations()).toBe(mockBrands);
+      expect(service.findAllWithRelations).toHaveBeenCalledTimes(1);
     });
 
     it('should call findOne brand service', async () => {

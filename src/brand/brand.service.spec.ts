@@ -81,6 +81,25 @@ describe('BrandService', () => {
       expect(data).toEqual(brands);
     });
 
+    it('findAllWithRelations should return all brands', async () => {
+      const brands = generateManyBrands(50);
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([brands, brands.length]);
+
+      const { statusCode, data, total } = await service.findAllWithRelations();
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        relations: ['createdBy', 'updatedBy'],
+        where: { isDeleted: false },
+        order: { name: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(brands.length);
+      expect(data).toEqual(brands);
+    });
+
     it('findOne should return a brand', async () => {
       const brand = generateBrand();
       const id = brand.id;
@@ -243,7 +262,7 @@ describe('BrandService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       const { statusCode, message } = await service.remove(id);
-      expect(statusCode).toBe(204);
+      expect(statusCode).toBe(200);
       expect(message).toEqual(`The Brand with id: ${id} has been deleted`);
     });
 

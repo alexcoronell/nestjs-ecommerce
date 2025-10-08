@@ -60,6 +60,24 @@ export class BrandService
     };
   }
 
+  async findAllWithRelations() {
+    const [brands, total] = await this.repo.findAndCount({
+      relations: ['createdBy', 'updatedBy'],
+      where: {
+        isDeleted: false,
+      },
+      order: {
+        name: 'ASC',
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: brands,
+      total,
+    };
+  }
+
   async findOne(id: Brand['id']): Promise<Result<Brand>> {
     const brand = await this.repo.findOne({
       relations: ['createdBy', 'updatedBy'],
@@ -135,7 +153,7 @@ export class BrandService
     this.repo.merge(data as Brand, changes);
     await this.repo.save(data as Brand);
     return {
-      statusCode: HttpStatus.NO_CONTENT,
+      statusCode: HttpStatus.OK,
       message: `The Brand with id: ${id} has been deleted`,
     };
   }

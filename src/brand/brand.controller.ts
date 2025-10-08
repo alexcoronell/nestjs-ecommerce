@@ -75,6 +75,15 @@ export class BrandController
   }
 
   /**
+   * Retrieves the list of all brands.
+   * @returns Array of Brand objects.
+   */
+  @Get('relations')
+  findAllWithRelations() {
+    return this.brandService.findAllWithRelations();
+  }
+
+  /**
    * Finds a brand by its unique identifier.
    * @param id Numeric identifier of the brand.
    * @returns Brand object corresponding to the provided ID.

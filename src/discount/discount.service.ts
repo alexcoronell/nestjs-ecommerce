@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -42,6 +40,24 @@ export class DiscountService
 
   async findAll() {
     const [discount, total] = await this.repo.findAndCount({
+      where: {
+        isDeleted: false,
+      },
+      order: {
+        code: 'ASC',
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: discount,
+      total,
+    };
+  }
+
+  async findAllWithRelations() {
+    const [discount, total] = await this.repo.findAndCount({
+      relations: ['createdBy', 'updatedBy'],
       where: {
         isDeleted: false,
       },

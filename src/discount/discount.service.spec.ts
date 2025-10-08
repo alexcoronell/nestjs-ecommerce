@@ -80,6 +80,25 @@ describe('DiscountService', () => {
       expect(data).toEqual(mocks);
     });
 
+    it('findAllWithRelations should return all discounts', async () => {
+      const mocks = generateManyDiscounts(50);
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([mocks, mocks.length]);
+
+      const { statusCode, data, total } = await service.findAllWithRelations();
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        relations: ['createdBy', 'updatedBy'],
+        where: { isDeleted: false },
+        order: { code: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(mocks.length);
+      expect(data).toEqual(mocks);
+    });
+
     it('findOne should return a discounts', async () => {
       const paymentMethod = generateDiscount();
       const id = paymentMethod.id;

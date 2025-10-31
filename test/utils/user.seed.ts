@@ -46,6 +46,21 @@ export const seedNewSellerUser = async (): Promise<CreateUserDto> => ({
   neighborhood: faker.location.county(),
 });
 
+export const customerPassword = 'jane123';
+
+export const seedNewCustomerUser = async (): Promise<CreateUserDto> => ({
+  firstname: 'Jimmy',
+  lastname: 'Doe',
+  email: 'jimmydoe@email.com',
+  password: await bcrypt.hash(customerPassword, 10),
+  phoneNumber: '555-55-55',
+  role: UserRoleEnum.CUSTOMER,
+  department: faker.location.state(),
+  city: faker.location.city(),
+  address: faker.location.streetAddress(),
+  neighborhood: faker.location.county(),
+});
+
 export const seedNewUser = createUser();
 
 export const seedUser: User = generateUser();

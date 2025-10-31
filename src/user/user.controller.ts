@@ -32,7 +32,6 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 import { OwnerOrAdminGuard } from '@auth/guards/owner-or-admin-auth/owner-or-admin-auth.guard';
 import { Req } from '@nestjs/common';
 
-@UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @Controller('user')
 /**
@@ -47,7 +46,7 @@ export class UserController
    * Counts all users in the system.
    * @returns The total number of users.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count-all')
   countAll() {
     return this.userService.countAll();
@@ -57,13 +56,13 @@ export class UserController
    * Counts specific users based on certain criteria.
    * @returns The count of users matching the criteria.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count')
   count() {
     return this.userService.count();
   }
 
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count-customers')
   countCustomers() {
     return this.userService.countCustomers();
@@ -73,7 +72,7 @@ export class UserController
    * Retrieves all users from the system.
    * @returns An array of all users.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -83,12 +82,13 @@ export class UserController
    * Retrieves all active users from the system.
    * @returns An array of active users.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('sellers')
   findAllSellers() {
     return this.userService.findAllSellers();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('customers')
   findAllCustomers() {
     return this.userService.findAllCustomers();
@@ -99,12 +99,13 @@ export class UserController
    * @param id - The ID of the user to retrieve.
    * @returns The user with the specified ID.
    */
-  @UseGuards(OwnerOrAdminGuard)
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: User['id']) {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Get('no-relations/:id')
   findOneWithoutRelations(@Param('id', ParseIntPipe) id: User['id']) {
     return this.userService.findOneWithoutRelations(id);
@@ -115,7 +116,7 @@ export class UserController
    * @param email - The email of the user to retrieve.
    * @returns The user with the specified email.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('email/:email')
   findOneByEmail(@Param('email') email: string) {
     return this.userService.findOneByEmail(email);
@@ -126,7 +127,7 @@ export class UserController
    * @param payload - The data for the new user.
    * @returns The created user.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(@Body() payload: CreateUserDto) {
     return this.userService.create(payload);
@@ -143,7 +144,7 @@ export class UserController
    * @param changes - The changes to apply to the user.
    * @returns The updated user.
    */
-  @UseGuards(OwnerOrAdminGuard)
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -158,7 +159,7 @@ export class UserController
    * @param changes - The new password data.
    * @returns The updated user with the new password.
    */
-  @UseGuards(OwnerOrAdminGuard)
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Patch('password/:id')
   updatePassword(
     @Param('id', ParseIntPipe) id: number,
@@ -172,7 +173,7 @@ export class UserController
    * @param id - The ID of the user to remove.
    * @returns A confirmation of the removal operation.
    */
-  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
     const deletedByUserId = req.user.user;

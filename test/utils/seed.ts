@@ -2,7 +2,6 @@ import { DataSource } from 'typeorm';
 
 import { Brand } from '../../src/brand/entities/brand.entity';
 import { Category } from '../../src/category/entities/category.entity';
-import { Customer } from '@customer/entities/customer.entity';
 import { Discount } from '../../src/discount/entities/discount.entity';
 import { PaymentMethod } from '../../src/payment-method/entities/payment-method.entity';
 import { Product } from '../../src/product/entities/product.entity';
@@ -33,7 +32,6 @@ export const dataSource = new DataSource({
   entities: [
     Brand,
     Category,
-    Customer,
     Discount,
     PaymentMethod,
     Product,

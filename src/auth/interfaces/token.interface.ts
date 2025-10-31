@@ -1,7 +1,8 @@
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
+
 export interface PayloadToken {
   user: number;
-  isAdmin: boolean;
-  isCustomer: boolean;
+  role: UserRoleEnum;
   iat?: Date;
   exp?: Date;
 }

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { PayloadToken } from '@auth/interfaces/token.interface';
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 @Injectable()
 export class OwnerOrAdminGuard implements CanActivate {
@@ -18,7 +19,7 @@ export class OwnerOrAdminGuard implements CanActivate {
     const user = request.user as PayloadToken;
     const { id } = request.params;
 
-    if (!user || (!user.isAdmin && user.user !== +id)) {
+    if (!user || (user.role !== UserRoleEnum.ADMIN && user.user !== +id)) {
       throw new UnauthorizedException(
         'Unauthorized: Admin or resource owner access required',
       );

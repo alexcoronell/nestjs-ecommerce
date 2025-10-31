@@ -16,7 +16,6 @@ import { User } from '@user/entities/user.entity';
 
 /* Interfaces */
 import { PayloadToken } from '@auth/interfaces/token.interface';
-import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 /* DTO's */
 import { TokenDto } from '@auth/dto/token.dto';
@@ -58,8 +57,7 @@ export class AuthService {
   async generateJWT(user: User) {
     const payload: PayloadToken = {
       user: user.id,
-      isAdmin: user.role === UserRoleEnum.ADMIN,
-      isCustomer: false,
+      role: user.role,
     };
     const expiresIn = 604800;
     return {
@@ -98,8 +96,7 @@ export class AuthService {
     const { user } = userToken as PayloadToken;
     const payload: PayloadToken = {
       user,
-      isAdmin: userToken.isAdmin,
-      isCustomer: userToken.isCustomer,
+      role: userToken.role,
     };
     return {
       access_token: await this.jwtService.signAsync(payload, { expiresIn }),

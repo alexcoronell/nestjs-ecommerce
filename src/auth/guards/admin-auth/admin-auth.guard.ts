@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { PayloadToken } from '@auth/interfaces/token.interface';
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class AdminGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user as PayloadToken;
-    if (!user || !user.isAdmin) {
+    if (!user || user.role !== UserRoleEnum.ADMIN) {
       throw new UnauthorizedException('Unauthorized: Admin access required');
     }
 

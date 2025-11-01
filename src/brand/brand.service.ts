@@ -84,7 +84,7 @@ export class BrandService
       where: { id, isDeleted: false },
     });
     if (!brand) {
-      throw new NotFoundException(`The Brand with id: ${id} not found`);
+      throw new NotFoundException(`The Brand with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -98,7 +98,7 @@ export class BrandService
       where: { name, isDeleted: false },
     });
     if (!brand) {
-      throw new NotFoundException(`The Brand with name: ${name} not found`);
+      throw new NotFoundException(`The Brand with NAME: ${name} not found`);
     }
     return {
       statusCode: HttpStatus.OK,

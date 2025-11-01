@@ -25,6 +25,7 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 
 /* Guards */
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 
 /**
@@ -49,7 +50,7 @@ export class BrandController
    * Gets the total count of all brands, including logically deleted ones if applicable.
    * @returns Total number of brands.
    */
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count-all')
   countAll() {
     return this.brandService.countAll();
@@ -59,7 +60,7 @@ export class BrandController
    * Gets the count of active brands.
    * @returns Number of active brands.
    */
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count')
   count() {
     return this.brandService.count();
@@ -88,7 +89,7 @@ export class BrandController
    * @param id Numeric identifier of the brand.
    * @returns Brand object corresponding to the provided ID.
    */
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.brandService.findOne(+id);
@@ -99,7 +100,7 @@ export class BrandController
    * @param name Name of the brand to search for.
    * @returns Brand object corresponding to the provided name.
    */
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('name/:name')
   findOneByname(@Param('name') name: string) {
     return this.brandService.findOneByName(name);

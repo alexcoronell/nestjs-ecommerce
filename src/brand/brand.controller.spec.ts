@@ -35,6 +35,7 @@ describe('BrandController', () => {
     findAllWithRelations: jest.fn().mockResolvedValue(mockBrands),
     findOne: jest.fn().mockResolvedValue(mockBrand),
     findOneByName: jest.fn().mockResolvedValue(mockBrand),
+    findOneBySlug: jest.fn().mockResolvedValue(mockBrand),
     create: jest.fn().mockResolvedValue(mockNewBrand),
     update: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -90,6 +91,11 @@ describe('BrandController', () => {
     it('should return an brand by name', async () => {
       expect(await controller.findOneByname(mockBrand.name));
       expect(service.findOneByName).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return an brand by slug', async () => {
+      expect(await controller.findOneBySlug(mockBrand.slug));
+      expect(service.findOneBySlug).toHaveBeenCalledTimes(1);
     });
   });
 

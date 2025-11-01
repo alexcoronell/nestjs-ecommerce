@@ -107,6 +107,17 @@ export class BrandController
   }
 
   /**
+   * Finds a brand by its slug.
+   * @param slug Slug of the brand to search for.
+   * @returns Brand object corresponding to the provided slug.
+   */
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
+  @Get('slug/:slug')
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.brandService.findOneBySlug(slug);
+  }
+
+  /**
    * Creates a new brand with the provided data.
    * @param payload Data required to create a new brand.
    * @returns Created Brand object.

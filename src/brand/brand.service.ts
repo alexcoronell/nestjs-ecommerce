@@ -173,7 +173,7 @@ export class BrandService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Brand with id: ${id} has been modified`,
+      message: `The Brand with ID: ${id} has been modified`,
     };
   }
 
@@ -185,7 +185,7 @@ export class BrandService
     await this.repo.save(data as Brand);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Brand with id: ${id} has been deleted`,
+      message: `The Brand with ID: ${id} has been deleted`,
     };
   }
 }

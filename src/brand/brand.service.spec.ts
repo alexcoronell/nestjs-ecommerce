@@ -125,7 +125,7 @@ describe('BrandService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Brand with id: ${id} not found`);
+        expect(error.message).toBe(`The Brand with ID: ${id} not found`);
       }
     });
 
@@ -134,7 +134,7 @@ describe('BrandService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Brand with id: ${id} not found`),
+        new NotFoundException(`The Brand with ID: ${id} not found`),
       );
     });
 
@@ -159,7 +159,32 @@ describe('BrandService', () => {
         await service.findOneByName(name);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Brand with name: ${name} not found`);
+        expect(error.message).toBe(`The Brand with NAME: ${name} not found`);
+      }
+    });
+
+    it('findOneBySlug should return a brand', async () => {
+      const brand = generateBrand();
+      const slug = brand.slug;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
+
+      const { statusCode, data } = await service.findOneBySlug(slug);
+      const dataBrand: Brand = data as Brand;
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(dataBrand).toEqual(brand);
+    });
+
+    it('findOneBySlug should throw NotFoundException if brand does not exist', async () => {
+      const slug = 'slugTest';
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.findOneBySlug(slug);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe(`The Brand with SLUG: ${slug} not found`);
       }
     });
   });
@@ -199,19 +224,20 @@ describe('BrandService', () => {
     it('update should return message: have been modified', async () => {
       const brand = generateBrand();
       const id = brand.id;
-      const changes: UpdateBrandDto = { name: 'newName' };
+      const changes: UpdateBrandDto = { name: 'new name', slug: 'new-name' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brand);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...brand, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       const { statusCode, message } = await service.update(id, changes);
-      expect(repository.findOne).toHaveBeenCalledTimes(2);
+      expect(repository.findOne).toHaveBeenCalledTimes(3);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Brand with id: ${id} has been modified`);
+      expect(message).toEqual(`The Brand with ID: ${id} has been modified`);
     });
 
     it('update should throw NotFoundException if Brand does not exist', async () => {
@@ -222,7 +248,7 @@ describe('BrandService', () => {
         await service.update(id, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Brand with id: ${id} not found`);
+        expect(error.message).toBe(`The Brand with ID: ${id} not found`);
       }
     });
 
@@ -263,7 +289,7 @@ describe('BrandService', () => {
 
       const { statusCode, message } = await service.remove(id);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Brand with id: ${id} has been deleted`);
+      expect(message).toEqual(`The Brand with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Brand does not exist with Rejects', async () => {
@@ -271,7 +297,7 @@ describe('BrandService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id)).rejects.toThrowError(
-        new NotFoundException(`The Brand with id: ${id} not found`),
+        new NotFoundException(`The Brand with ID: ${id} not found`),
       );
     });
   });

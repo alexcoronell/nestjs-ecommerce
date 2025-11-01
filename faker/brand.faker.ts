@@ -10,9 +10,16 @@ import { CreateBrandDto } from '@brand/dto/create-brand.dto';
 import { generateBaseEntity } from '@faker/base.faker';
 import { generateUser } from './user.faker';
 
-export const createBrand = (): CreateBrandDto => ({
-  name: faker.lorem.words(2),
-});
+/* Utils */
+import { createSlug } from '@commons/utils/create-slug.uti';
+
+export const createBrand = (): CreateBrandDto => {
+  const name = faker.commerce.product();
+  return {
+    name,
+    slug: createSlug(name),
+  };
+};
 
 export const generateNewBrands = (size: number = 1): CreateBrandDto[] => {
   const newBrands: CreateBrandDto[] = [];

@@ -106,13 +106,35 @@ export class BrandService
     };
   }
 
+  async findOneBySlug(slug: string): Promise<Result<Brand>> {
+    const brand = await this.repo.findOne({
+      relations: ['createdBy', 'updatedBy'],
+      where: { slug, isDeleted: false },
+    });
+    if (!brand) {
+      throw new NotFoundException(`The Brand with SLUG: ${slug} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: brand,
+    };
+  }
+
   async create(dto: CreateBrandDto) {
-    const brandExists = await this.repo.findOne({
+    const brandNameExists = await this.repo.findOne({
       where: { name: dto.name },
     });
-    if (brandExists) {
+    if (brandNameExists) {
       throw new ConflictException(
         `The Brand name: ${dto.name} is already in use`,
+      );
+    }
+    const brandSlugExists = await this.repo.findOne({
+      where: { slug: dto.slug },
+    });
+    if (brandSlugExists) {
+      throw new ConflictException(
+        `The Brand slug: ${dto.slug} is already in use`,
       );
     }
     const newBrand = this.repo.create(dto);
@@ -127,13 +149,22 @@ export class BrandService
   async update(id: number, changes: UpdateBrandDto) {
     const { data } = await this.findOne(id);
     const changesName = changes.name;
-    if (changesName) {
+    const changesSlug = changes.slug;
+    if (changesName || changesSlug) {
       const brand = await this.repo.findOne({
         where: { id: Not(id), name: changesName },
       });
       if (brand) {
         throw new ConflictException(
           `The Brand name: ${changesName} is already in use`,
+        );
+      }
+      const brandSlug = await this.repo.findOne({
+        where: { id: Not(id), slug: changesSlug },
+      });
+      if (brandSlug) {
+        throw new ConflictException(
+          `The Brand slug: ${changesSlug} is already in use`,
         );
       }
     }

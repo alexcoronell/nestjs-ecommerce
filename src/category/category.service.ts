@@ -205,7 +205,7 @@ export class CategoryService
       const category = await this.repo.findOne({
         where: { id: Not(id), name: changesName },
       });
-      if (category) {
+      if (category && changesName) {
         throw new ConflictException(
           `The Category NAME: ${changesName} is already in use`,
         );
@@ -214,7 +214,7 @@ export class CategoryService
       const categorySlug = await this.repo.findOne({
         where: { id: Not(id), slug: changesSlug },
       });
-      if (categorySlug) {
+      if (categorySlug && changesSlug) {
         throw new ConflictException(
           `The Category SLUG: ${changesSlug} is already in use`,
         );

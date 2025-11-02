@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -19,6 +20,11 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
+
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 
 @Controller('category')
 /**
@@ -40,6 +46,7 @@ export class CategoryController
    *
    * @returns The total number of categories in the system.
    */
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count-all')
   countAll() {
     return this.categoryService.countAll();
@@ -51,6 +58,7 @@ export class CategoryController
    *
    * @returns The total number of categories.
    */
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count')
   count() {
     return this.categoryService.count();
@@ -81,6 +89,7 @@ export class CategoryController
    * @param id - The ID of the category to retrieve.
    * @returns The category with the specified ID.
    */
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.findOne(+id);
@@ -92,6 +101,7 @@ export class CategoryController
    * @param name - The name of the category to retrieve.
    * @returns The category with the specified name.
    */
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('name/:name')
   findOneByName(@Param('name') name: string) {
     return this.categoryService.findOneByName(name);
@@ -100,12 +110,13 @@ export class CategoryController
   /**
    * Retrieves a single category by its slug.
    *
-   * @param slug - The name of the category to retrieve.
-   * @returns The category with the specified name.
+   * @param slug - The slug of the category to retrieve.
+   * @returns The category with the specified slug.
    */
-  @Get('name/:name')
-  findOneBySlug(@Param('name') name: string) {
-    return this.categoryService.findOneBySlug(name);
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
+  @Get('slug/:slug')
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.categoryService.findOneBySlug(slug);
   }
 
   /**
@@ -114,6 +125,7 @@ export class CategoryController
    * @param payload - The data transfer object containing the details of the category to create.
    * @returns The newly created category.
    */
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(@Body() payload: CreateCategoryDto) {
     return this.categoryService.create(payload);
@@ -126,6 +138,7 @@ export class CategoryController
    * @param updateCategoryDto - The data transfer object containing the updated details of the category.
    * @returns The updated category.
    */
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -140,6 +153,7 @@ export class CategoryController
    * @param id - The ID of the category to delete.
    * @returns A confirmation message or status indicating the deletion result.
    */
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.remove(+id);

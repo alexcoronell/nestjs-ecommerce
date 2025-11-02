@@ -14,11 +14,21 @@ import { generateUser } from './user.faker';
 import { createSlug } from '../src/commons/utils/create-slug.uti';
 
 export const createCategory = (): CreateCategoryDto => {
-  const name = faker.lorem.word();
+  const name = faker.commerce.productName();
   return {
     name,
     slug: createSlug(name),
   };
+};
+
+export const generateNewCategories = (
+  size: number = 1,
+): CreateCategoryDto[] => {
+  const newCategories: CreateCategoryDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newCategories.push(createCategory());
+  }
+  return newCategories;
 };
 
 export const generateCategory = (id: number = 1): Category => ({

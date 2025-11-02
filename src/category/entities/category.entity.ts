@@ -10,6 +10,9 @@ export class Category extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   name: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
+  slug: string;
+
   /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdCategories)
   @JoinColumn({ name: 'created_by_user_id' })

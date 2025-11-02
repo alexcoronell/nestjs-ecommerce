@@ -10,9 +10,16 @@ import { CreateCategoryDto } from '@category/dto/create-category.dto';
 import { generateBaseEntity } from '@faker/base.faker';
 import { generateUser } from './user.faker';
 
-export const createCategory = (): CreateCategoryDto => ({
-  name: faker.lorem.word(),
-});
+/* Utils */
+import { createSlug } from '../src/commons/utils/create-slug.uti';
+
+export const createCategory = (): CreateCategoryDto => {
+  const name = faker.lorem.word();
+  return {
+    name,
+    slug: createSlug(name),
+  };
+};
 
 export const generateCategory = (id: number = 1): Category => ({
   ...generateBaseEntity(id),

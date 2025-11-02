@@ -35,6 +35,7 @@ describe('CategoryController', () => {
     findAllWithRelations: jest.fn().mockResolvedValue(mockCategories),
     findOne: jest.fn().mockResolvedValue(mockCategory),
     findOneByName: jest.fn().mockResolvedValue(mockCategory),
+    findOneBySlug: jest.fn().mockResolvedValue(mockCategory),
     create: jest.fn().mockResolvedValue(mockNewCategory),
     update: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -88,8 +89,13 @@ describe('CategoryController', () => {
     });
 
     it('should return an category by name', async () => {
-      expect(await controller.findOneByname(mockCategory.name));
+      expect(await controller.findOneByName(mockCategory.name));
       expect(service.findOneByName).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return an category by slug', async () => {
+      expect(await controller.findOneBySlug(mockCategory.slug));
+      expect(service.findOneBySlug).toHaveBeenCalledTimes(1);
     });
   });
 

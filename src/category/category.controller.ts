@@ -93,8 +93,19 @@ export class CategoryController
    * @returns The category with the specified name.
    */
   @Get('name/:name')
-  findOneByname(@Param('name') name: string) {
+  findOneByName(@Param('name') name: string) {
     return this.categoryService.findOneByName(name);
+  }
+
+  /**
+   * Retrieves a single category by its slug.
+   *
+   * @param slug - The name of the category to retrieve.
+   * @returns The category with the specified name.
+   */
+  @Get('name/:name')
+  findOneBySlug(@Param('name') name: string) {
+    return this.categoryService.findOneBySlug(name);
   }
 
   /**

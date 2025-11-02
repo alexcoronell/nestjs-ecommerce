@@ -113,7 +113,7 @@ export class CategoryService
       where: { id, isDeleted: false },
     });
     if (!category) {
-      throw new NotFoundException(`The Category with id: ${id} not found`);
+      throw new NotFoundException(`The Category with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -133,7 +133,27 @@ export class CategoryService
       where: { name, isDeleted: false },
     });
     if (!category) {
-      throw new NotFoundException(`The Category with name: ${name} not found`);
+      throw new NotFoundException(`The Category with NAME: ${name} not found`);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data: category,
+    };
+  }
+
+  /**
+   * Finds a single category by its slug.
+   * @param slug - The slug of the category to retrieve.
+   * @returns A Result object containing the category data and an HTTP status code.
+   * @throws NotFoundException if the category is not found.
+   */
+  async findOneBySlug(slug: string): Promise<Result<Category>> {
+    const category = await this.repo.findOne({
+      relations: ['createdBy', 'updatedBy'],
+      where: { slug, isDeleted: false },
+    });
+    if (!category) {
+      throw new NotFoundException(`The Category with SLUG: ${slug} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -152,7 +172,15 @@ export class CategoryService
     });
     if (categoryExists) {
       throw new ConflictException(
-        `The Category name: ${dto.name} is already in use`,
+        `The Category NAME: ${dto.name} is already in use`,
+      );
+    }
+    const categorySlugExists = await this.repo.findOne({
+      where: { slug: dto.slug },
+    });
+    if (categorySlugExists) {
+      throw new ConflictException(
+        `The Category SLUG: ${dto.slug} is already in use`,
       );
     }
     const newCategory = this.repo.create(dto);
@@ -172,13 +200,23 @@ export class CategoryService
    */
   async update(id: number, changes: UpdateCategoryDto) {
     const changesName = changes.name;
-    if (changesName) {
+    const changesSlug = changes.slug;
+    if (changesName || changesSlug) {
       const category = await this.repo.findOne({
         where: { id: Not(id), name: changesName },
       });
       if (category) {
         throw new ConflictException(
-          `The Category name: ${changesName} is already in use`,
+          `The Category NAME: ${changesName} is already in use`,
+        );
+      }
+
+      const categorySlug = await this.repo.findOne({
+        where: { id: Not(id), slug: changesSlug },
+      });
+      if (categorySlug) {
+        throw new ConflictException(
+          `The Category SLUG: ${changesSlug} is already in use`,
         );
       }
     }
@@ -188,7 +226,7 @@ export class CategoryService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Category with id: ${id} has been modified`,
+      message: `The Category with ID: ${id} has been modified`,
     };
   }
 
@@ -205,7 +243,7 @@ export class CategoryService
     await this.repo.save(data as Category);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Category with id: ${id} has been deleted`,
+      message: `The Category with ID: ${id} has been deleted`,
     };
   }
 }

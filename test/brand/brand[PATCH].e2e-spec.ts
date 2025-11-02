@@ -45,7 +45,7 @@ import {
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('BrandController (e2e)', () => {
+describe('BrandController (e2e) [PATCH]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;
@@ -137,6 +137,7 @@ describe('BrandController (e2e)', () => {
       const id = dataNewBrands[0].id;
       const updatedData: UpdateBrandDto = {
         name: 'Updated name',
+        slug: 'updated-name',
       };
       const res = await request(app.getHttpServer())
         .patch(`/brand/${id}`)

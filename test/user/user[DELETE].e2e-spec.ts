@@ -38,7 +38,7 @@ import {
 
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('UserControler (e2e)', () => {
+describe('UserControler (e2e) [DELETE]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let adminUser: User | null = null;

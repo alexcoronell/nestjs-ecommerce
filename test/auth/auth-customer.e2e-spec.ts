@@ -29,7 +29,7 @@ import { dataSource } from '../utils/seed';
 /* User Seed */
 import { seedNewCustomerUser, customerPassword } from '../utils/user.seed';
 
-describe('AuthController (e2e)', () => {
+describe('AuthController (e2e) CUSTOMER USER', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let userCustomer: any = undefined;

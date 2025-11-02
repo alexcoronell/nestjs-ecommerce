@@ -36,7 +36,7 @@ import {
   customerPassword,
 } from '../utils/user.seed';
 
-describe('AuthController (e2e)', () => {
+describe('AuthController (e2e) REFRESH TOKEN', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let userAdmin: any = undefined;

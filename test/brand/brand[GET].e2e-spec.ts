@@ -42,7 +42,7 @@ import {
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('BrandController (e2e)', () => {
+describe('BrandController (e2e) [GET]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;
@@ -433,6 +433,58 @@ describe('BrandController (e2e)', () => {
       expect(statusCode).toBe(404);
       expect(error).toBe('Not Found');
       expect(message).toBe('The Brand with NAME: not-existing-name not found');
+    });
+
+    it('/slug/:slug should return an brand by slug with admin user', async () => {
+      const brand = createBrand();
+      const dataNewBrand = await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/slug/${brand.slug}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(200);
+      expect(data.id).toEqual(dataNewBrand.id);
+      expect(data.name).toEqual(dataNewBrand.name);
+    });
+
+    it('/slug/:slug should return an brand by slug with seller user', async () => {
+      const brand = createBrand();
+      const dataNewBrand = await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/slug/${brand.slug}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${sellerAccessToken}`);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(200);
+      expect(data.id).toEqual(dataNewBrand.id);
+      expect(data.slug).toEqual(dataNewBrand.slug);
+    });
+
+    it('/slug/:slug should return 401 with customer user', async () => {
+      const brand = createBrand();
+      await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/slug/${brand.slug}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+      expect(message).toBe('Unauthorized: Customer access denied');
+    });
+
+    it('/slug/:slug should return 404 by slug if brand does not exist', async () => {
+      const brand = createBrand();
+      await repo.save(brand);
+      const res = await request(app.getHttpServer())
+        .get(`/brand/slug/not-existing-slug`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, error, message } = res.body;
+      expect(statusCode).toBe(404);
+      expect(error).toBe('Not Found');
+      expect(message).toBe('The Brand with SLUG: not-existing-slug not found');
     });
   });
 

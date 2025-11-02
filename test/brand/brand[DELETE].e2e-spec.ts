@@ -42,7 +42,7 @@ import {
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('BrandController (e2e)', () => {
+describe('BrandController (e2e) [DELETE]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;

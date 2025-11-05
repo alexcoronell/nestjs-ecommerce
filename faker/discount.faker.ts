@@ -22,10 +22,18 @@ export const createDiscount = (): CreateDiscountDto => ({
     max: 50,
     fractionDigits: 2,
   }),
-  usageLimit: faker.number.int(),
-  usageLimitPerUser: faker.number.int(),
+  usageLimit: faker.number.int({ min: 1, max: 5 }),
+  usageLimitPerUser: faker.number.int({ min: 1, max: 5 }),
   active: faker.datatype.boolean(),
 });
+
+export const generateNewDiscounts = (size = 1): CreateDiscountDto[] => {
+  const newDiscounts: CreateDiscountDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newDiscounts.push(createDiscount());
+  }
+  return newDiscounts;
+};
 
 export const generateDiscount = (id: number = 1): Discount => ({
   ...generateBaseEntity(id),

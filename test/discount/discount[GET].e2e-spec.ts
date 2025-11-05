@@ -11,7 +11,7 @@ import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
 
 /* Modules */
 import { AppModule } from '../../src/app.module';
-import { CategoryModule } from '@category/category.module';
+import { DiscountModule } from '@discount/discount.module';
 import { UserModule } from '@user/user.module';
 
 /* Interfaces */
@@ -27,7 +27,7 @@ import { upSeed, downSeed } from '../utils/seed';
 import { dataSource } from '../utils/seed';
 
 /* Faker */
-import { createCategory, generateNewCategories } from '@faker/category.faker';
+import { createDiscount, generateNewDiscounts } from '@faker/discount.faker';
 
 /* Users for Login */
 import {
@@ -42,7 +42,7 @@ import {
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('CategoryController (e2e) [GET]', () => {
+describe('DiscountController (e2e) [GET]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;
@@ -67,7 +67,7 @@ describe('CategoryController (e2e) [GET]', () => {
           }),
         }),
         AppModule,
-        CategoryModule,
+        DiscountModule,
         UserModule,
       ],
       providers: [
@@ -81,10 +81,10 @@ describe('CategoryController (e2e) [GET]', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    repo = app.get('CategoryRepository');
+    repo = app.get('DiscountRepository');
     repoUser = app.get('UserRepository');
-    const categories = generateNewCategories(10);
-    await repo.save(categories);
+    const discounts = generateNewDiscounts(10);
+    await repo.save(discounts);
   });
 
   beforeEach(async () => {
@@ -127,34 +127,34 @@ describe('CategoryController (e2e) [GET]', () => {
     customerAccessToken = tempCustomererAccessToken;
   });
 
-  describe('GET Category - Count-All', () => {
+  describe('GET Discount - Count-All', () => {
     it('/count-all should return 200 with admin access token', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category/count-all')
+        .get('/discount/count-all')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
-      expect(total).toEqual(categories.length);
+      expect(total).toEqual(discounts.length);
     });
 
     it('/count-all should return 200 with seller access token', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category/count-all')
+        .get('/discount/count-all')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
-      expect(total).toEqual(categories.length);
+      expect(total).toEqual(discounts.length);
     });
 
     it('/count-all should return 401 with customer access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/category/count-all')
+        .get('/discount/count-all')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -164,7 +164,7 @@ describe('CategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 401 if api key is missing', async () => {
       const data: any = await request(app.getHttpServer()).get(
-        '/category/count-all',
+        '/discount/count-all',
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -173,7 +173,7 @@ describe('CategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/category/count-all')
+        .get('/discount/count-all')
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -181,34 +181,34 @@ describe('CategoryController (e2e) [GET]', () => {
     });
   });
 
-  describe('GET Category - Count', () => {
+  describe('GET Discount - Count', () => {
     it('/count should return 200 with admin access token', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category/count')
+        .get('/discount/count')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
-      expect(total).toEqual(categories.length);
+      expect(total).toEqual(discounts.length);
     });
 
     it('/count should return 200 with seller access token', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category/count')
+        .get('/discount/count')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, total } = res.body;
       expect(statusCode).toBe(200);
-      expect(total).toEqual(categories.length);
+      expect(total).toEqual(discounts.length);
     });
 
     it('/count should return 401 with customer access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/category/count')
+        .get('/discount/count')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -218,7 +218,7 @@ describe('CategoryController (e2e) [GET]', () => {
 
     it('/count should return 401 if api key is missing', async () => {
       const data: any = await request(app.getHttpServer()).get(
-        '/category/count',
+        '/discount/count',
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -227,7 +227,7 @@ describe('CategoryController (e2e) [GET]', () => {
 
     it('/count should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/category/count')
+        .get('/discount/count')
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -235,107 +235,72 @@ describe('CategoryController (e2e) [GET]', () => {
     });
   });
 
-  describe('GET Category - / Find', () => {
-    it('/ should return all categories without logged user', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+  describe('GET Discount - / Find', () => {
+    it('/ should return all discounts with admin user', async () => {
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category')
-        .set('x-api-key', API_KEY);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.length).toEqual(categories.length);
-      data.forEach((user) => {
-        const category = categories.find((su) => su.name === user.name);
-        expect(user).toEqual(
-          expect.objectContaining({
-            name: category?.name,
-          }),
-        );
-      });
-    });
-
-    it('/ should return all categories with admin user', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
-      const res = await request(app.getHttpServer())
-        .get('/category')
+        .get('/discount')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.length).toEqual(categories.length);
-      data.forEach((user) => {
-        const category = categories.find((su) => su.name === user.name);
-        expect(user).toEqual(
+      expect(data.length).toEqual(discounts.length);
+      data.forEach((data) => {
+        const discount = discounts.find((su) => su.code === data.code);
+        expect(data).toEqual(
           expect.objectContaining({
-            name: category?.name,
+            code: discount?.code,
           }),
         );
       });
     });
 
-    it('/ should return all categories with seller user', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+    it('/ should return all discounts with seller user', async () => {
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category')
+        .get('/discount')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.length).toEqual(categories.length);
-      data.forEach((user) => {
-        const category = categories.find((su) => su.name === user.name);
-        expect(user).toEqual(
+      expect(data.length).toEqual(discounts.length);
+      data.forEach((data) => {
+        const discount = discounts.find((su) => su.code === data.code);
+        expect(data).toEqual(
           expect.objectContaining({
-            name: category?.name,
+            code: discount?.code,
           }),
         );
       });
     });
 
-    it('/ should return all categories with customer user', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+    it('/ should return 401 with customer user', async () => {
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category')
+        .get('/discount')
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.length).toEqual(categories.length);
-      data.forEach((user) => {
-        const category = categories.find((su) => su.name === user.name);
-        expect(user).toEqual(
-          expect.objectContaining({
-            name: category?.name,
-          }),
-        );
-      });
+      const { statusCode, error } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
     });
 
-    it('/ should return all categories without logged user', async () => {
-      const categories = generateNewCategories(10);
-      await repo.save(categories);
+    it('/ should return all discounts without logged user', async () => {
+      const discounts = generateNewDiscounts(10);
+      await repo.save(discounts);
       const res = await request(app.getHttpServer())
-        .get('/category')
+        .get('/discount')
         .set('x-api-key', API_KEY);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.length).toEqual(categories.length);
-      data.forEach((user) => {
-        const category = categories.find((su) => su.name === user.name);
-        expect(user).toEqual(
-          expect.objectContaining({
-            name: category?.name,
-          }),
-        );
-      });
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Unauthorized');
     });
 
     it('/ should return 401 if api key is missing', async () => {
-      const data: any = await request(app.getHttpServer()).get('/category');
+      const data: any = await request(app.getHttpServer()).get('/discount');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
@@ -343,7 +308,7 @@ describe('CategoryController (e2e) [GET]', () => {
 
     it('/ should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/category')
+        .get('/discount')
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -351,38 +316,38 @@ describe('CategoryController (e2e) [GET]', () => {
     });
   });
 
-  describe('GET Category - / FindOne', () => {
-    it('/:id should return one category by id with admin user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
+  describe('GET Discount - /:id FindOne', () => {
+    it('/:id should return one discount by id with admin user', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/${dataNewCategory.id}`)
+        .get(`/discount/${dataNewDiscount.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.name).toEqual(dataNewCategory.name);
+      expect(data.id).toEqual(dataNewDiscount.id);
+      expect(data.name).toEqual(dataNewDiscount.name);
     });
 
-    it('/:id should return one category by id with seller user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
+    it('/:id should return one discount by id with seller user', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/${dataNewCategory.id}`)
+        .get(`/discount/${dataNewDiscount.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.name).toEqual(dataNewCategory.name);
+      expect(data.id).toEqual(dataNewDiscount.id);
+      expect(data.name).toEqual(dataNewDiscount.name);
     });
 
     it('/:id should return 401 by id with customer access token', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/${dataNewCategory.id}`)
+        .get(`/discount/${dataNewDiscount.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -391,50 +356,74 @@ describe('CategoryController (e2e) [GET]', () => {
       expect(message).toBe('Unauthorized: Customer access denied');
     });
 
-    it('/name/:name should return 404 by id if category does not exist', async () => {
-      const category = createCategory();
-      await repo.save(category);
+    it('/:id should return 401 by id without access token', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/9999999`)
+        .get(`/discount/${dataNewDiscount.id}`)
+        .set('x-api-key', API_KEY);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Unauthorized');
+    });
+
+    it('/:id should return 401 by id without api key', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
+      const res = await request(app.getHttpServer())
+        .get(`/discount/${dataNewDiscount.id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Invalid API key');
+    });
+
+    it('/:id should return 404 by id if discount does not exist', async () => {
+      const discount = createDiscount();
+      await repo.save(discount);
+      const res = await request(app.getHttpServer())
+        .get(`/discount/9999999`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, error, message } = res.body;
       expect(statusCode).toBe(404);
       expect(error).toBe('Not Found');
-      expect(message).toBe('The Category with ID: 9999999 not found');
+      expect(message).toBe('The Discount with ID: 9999999 not found');
     });
+  });
 
-    it('/name/:name should return an category by name with admin user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
+  describe('GET Discount - /:code FindOne', () => {
+    it('/code/:code should return an discount by code with admin user', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/name/${category.name}`)
+        .get(`/discount/code/${discount.code}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.name).toEqual(dataNewCategory.name);
+      expect(data.id).toEqual(dataNewDiscount.id);
+      expect(data.code).toEqual(dataNewDiscount.code);
     });
 
-    it('/name/:name should return an category by name with seller user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
+    it('/code/:code should return an discount by code with seller user', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/name/${category.name}`)
+        .get(`/discount/code/${discount.code}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.name).toEqual(dataNewCategory.name);
+      expect(data.id).toEqual(dataNewDiscount.id);
+      expect(data.code).toEqual(dataNewDiscount.code);
     });
 
-    it('/name/:name should return 401 with customer user', async () => {
-      const category = createCategory();
-      await repo.save(category);
+    it('/code/:code should return 401 with customer user', async () => {
+      const discount = createDiscount();
+      await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/name/${category.name}`)
+        .get(`/discount/code/${discount.code}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -443,72 +432,40 @@ describe('CategoryController (e2e) [GET]', () => {
       expect(message).toBe('Unauthorized: Customer access denied');
     });
 
-    it('/name/:name should return 404 by name if category does not exist', async () => {
-      const category = createCategory();
-      await repo.save(category);
+    it('/:code should return 401 by code without access token', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
       const res = await request(app.getHttpServer())
-        .get(`/category/name/not-existing-name`)
+        .get(`/discount/${dataNewDiscount.code}`)
+        .set('x-api-key', API_KEY);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Unauthorized');
+    });
+
+    it('/:code should return 401 by code without api key', async () => {
+      const discount = createDiscount();
+      const dataNewDiscount = await repo.save(discount);
+      const res = await request(app.getHttpServer())
+        .get(`/discount/${dataNewDiscount.code}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Invalid API key');
+    });
+
+    it('/code/:code should return 404 by code if discount does not exist', async () => {
+      const discount = createDiscount();
+      await repo.save(discount);
+      const res = await request(app.getHttpServer())
+        .get(`/discount/code/un-existing-code`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, error, message } = res.body;
       expect(statusCode).toBe(404);
       expect(error).toBe('Not Found');
       expect(message).toBe(
-        'The Category with NAME: not-existing-name not found',
-      );
-    });
-
-    it('/slug/:slug should return an category by slug with admin user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
-      const res = await request(app.getHttpServer())
-        .get(`/category/slug/${category.slug}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.name).toEqual(dataNewCategory.name);
-    });
-
-    it('/slug/:slug should return an category by slug with seller user', async () => {
-      const category = createCategory();
-      const dataNewCategory = await repo.save(category);
-      const res = await request(app.getHttpServer())
-        .get(`/category/slug/${category.slug}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${sellerAccessToken}`);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
-      expect(data.id).toEqual(dataNewCategory.id);
-      expect(data.slug).toEqual(dataNewCategory.slug);
-    });
-
-    it('/slug/:slug should return 401 with customer user', async () => {
-      const category = createCategory();
-      await repo.save(category);
-      const res = await request(app.getHttpServer())
-        .get(`/category/slug/${category.slug}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${customerAccessToken}`);
-      const { statusCode, error, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(error).toBe('Unauthorized');
-      expect(message).toBe('Unauthorized: Customer access denied');
-    });
-
-    it('/slug/:slug should return 404 by slug if category does not exist', async () => {
-      const category = createCategory();
-      await repo.save(category);
-      const res = await request(app.getHttpServer())
-        .get(`/category/slug/not-existing-slug`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`);
-      const { statusCode, error, message } = res.body;
-      expect(statusCode).toBe(404);
-      expect(error).toBe('Not Found');
-      expect(message).toBe(
-        'The Category with SLUG: not-existing-slug not found',
+        'The Discount with CODE: un-existing-code not found',
       );
     });
   });

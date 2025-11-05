@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -22,6 +23,12 @@ import { Discount } from '@discount/entities/discount.entity';
 import { CreateDiscountDto } from '@discount/dto/create-discount.dto';
 import { UpdateDiscountDto } from '@discount/dto/update-discount.dto';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+
+@UseGuards(JwtAuthGuard, IsNotCustomerGuard)
 @Controller('discount')
 export class DiscountController
   implements IBaseController<Discount, CreateDiscountDto, UpdateDiscountDto>
@@ -53,11 +60,13 @@ export class DiscountController
     return this.discountService.findOneByCode(code);
   }
 
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() payload: CreateDiscountDto) {
     return this.discountService.create(payload);
   }
 
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -66,6 +75,7 @@ export class DiscountController
     return this.discountService.update(+id, updateCategoryDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.discountService.remove(+id);

@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpStatus,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -79,7 +84,7 @@ export class DiscountService
       where: { id, isDeleted: false },
     });
     if (!discount) {
-      throw new NotFoundException(`The Discount with id: ${id} not found`);
+      throw new NotFoundException(`The Discount with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -93,7 +98,7 @@ export class DiscountService
       where: { code, isDeleted: false },
     });
     if (!discount) {
-      throw new NotFoundException(`The Discount with code: ${code} not found`);
+      throw new NotFoundException(`The Discount with CODE: ${code} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -102,6 +107,14 @@ export class DiscountService
   }
 
   async create(dto: CreateDiscountDto) {
+    const discountExists = await this.repo.findOne({
+      where: { code: dto.code },
+    });
+    if (discountExists) {
+      throw new ConflictException(
+        `The Discount CODE: ${dto.code} is already in use`,
+      );
+    }
     const newDiscount = this.repo.create(dto);
     const discount = await this.repo.save(newDiscount);
     return {
@@ -112,13 +125,24 @@ export class DiscountService
   }
 
   async update(id: number, changes: UpdateDiscountDto) {
+    const changesCode = changes.code;
+    if (changesCode) {
+      const discountExists = await this.repo.findOne({
+        where: { id: Not(id), code: changesCode },
+      });
+      if (discountExists) {
+        throw new ConflictException(
+          `The Discount CODE: ${changesCode} is already in use`,
+        );
+      }
+    }
     const { data } = await this.findOne(id);
     this.repo.merge(data as Discount, changes);
     const rta = await this.repo.save(data as Discount);
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Discount with id: ${id} has been modified`,
+      message: `The Discount with ID: ${id} has been modified`,
     };
   }
 
@@ -130,7 +154,7 @@ export class DiscountService
     await this.repo.save(data as Discount);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Discount with id: ${id} has been deleted`,
+      message: `The Discount with ID: ${id} has been deleted`,
     };
   }
 }

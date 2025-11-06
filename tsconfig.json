@@ -17,6 +17,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "composite": true,
     "paths": {
       "@auth/*": ["src/auth/*"],
       "@brand/*": ["src/brand/*"],

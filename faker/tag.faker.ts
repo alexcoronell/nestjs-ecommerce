@@ -8,12 +8,19 @@ import { CreateTagDto } from '@tag/dto/create-tag.dto';
 
 /* Fakers */
 import { generateBaseEntity } from '@faker/base.faker';
-import { generateManyProductTags } from './productTag.faker';
 import { generateUser } from './user.faker';
 
 export const createTag = (): CreateTagDto => ({
-  name: faker.lorem.word(),
+  name: faker.commerce.productName(),
 });
+
+export const generateNewTags = (size: number = 1): CreateTagDto[] => {
+  const newTags: CreateTagDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newTags.push(createTag());
+  }
+  return newTags;
+};
 
 export const generateTag = (id: number = 1): Tag => ({
   ...generateBaseEntity(id),
@@ -22,7 +29,6 @@ export const generateTag = (id: number = 1): Tag => ({
   createdBy: generateUser(),
   updatedBy: generateUser(),
   deletedBy: null,
-  product: generateManyProductTags(2),
 });
 
 export const generateManyTags = (size: number): Tag[] => {

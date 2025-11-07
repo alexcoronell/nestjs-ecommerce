@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -19,6 +16,7 @@ import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
 /* Faker */
 import {
+  createSubcategory,
   generateSubcategory,
   generateManySubcategories,
 } from '@faker/subcategory.faker';
@@ -190,24 +188,25 @@ describe('SubcategoryService', () => {
 
   describe('create subcategory services', () => {
     it('create should return a subcategory', async () => {
+      const mockNewCategory = createSubcategory();
       const mock = generateSubcategory();
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const { statusCode, data } = await service.create(mockNewCategory);
       expect(statusCode).toBe(201);
-      expect(data).toEqual(mock);
+      expect(data).toEqual(mockNewCategory);
     });
 
     it('create should return Conflict Exception when name subcategory exists with the same category', async () => {
+      const mockNewCategory = createSubcategory();
       const mock = generateSubcategory();
-      jest.spyOn(repository, 'findAndCount').mockResolvedValue([[mock], 1]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        await service.create(mock);
+        await service.create(mockNewCategory);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(

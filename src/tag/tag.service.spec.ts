@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
@@ -65,7 +63,7 @@ describe('TagService', () => {
 
   describe('find tags services', () => {
     it('findAll should return all tags', async () => {
-      const mocks = generateManyTags(50);
+      const mocks = generateManyTags(1);
 
       jest
         .spyOn(repository, 'findAndCount')

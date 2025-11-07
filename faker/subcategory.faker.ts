@@ -12,7 +12,7 @@ import { generateUser } from './user.faker';
 import { generateCategory } from './category.faker';
 
 export const createSubcategory = (
-  categoryId: number | null = null,
+  categoryId: number = 1,
   name: string | null = null,
 ): CreateSubcategoryDto => {
   const category = categoryId || faker.number.int({ min: 1, max: 50 });
@@ -24,7 +24,7 @@ export const createSubcategory = (
 
 export const generateSubcategory = (
   id: number = 1,
-  categoryId: number | null = null,
+  categoryId: number = 1,
   name: string | null = null,
 ): Subcategory => ({
   ...generateBaseEntity(id),
@@ -39,7 +39,7 @@ export const generateSubcategory = (
 
 export const generateManySubcategories = (
   size: number,
-  categoryId: number | null = null,
+  categoryId: number = 1,
   name: string | null = null,
 ): Subcategory[] => {
   const categories: Subcategory[] = [];

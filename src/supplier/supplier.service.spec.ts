@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -83,7 +81,7 @@ describe('SupplierService', () => {
     });
 
     it('findOne should return a supplier', async () => {
-      const supplier: Supplier = generateSupplier() as Supplier;
+      const supplier: Supplier = generateSupplier();
       const id = supplier.id;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(supplier);

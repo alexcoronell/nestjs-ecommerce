@@ -23,5 +23,5 @@ export class Tag extends BaseEntity {
   deletedBy: User | null;
 
   @OneToMany(() => ProductTag, (items) => items.tag)
-  product: ProductTag[];
+  product?: ProductTag[];
 }

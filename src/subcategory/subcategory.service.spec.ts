@@ -16,10 +16,10 @@ import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
 /* Faker */
 import {
-  createSubcategory,
   generateSubcategory,
   generateManySubcategories,
 } from '@faker/subcategory.faker';
+import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 
 describe('SubcategoryService', () => {
   let service: SubcategoryService;
@@ -95,7 +95,7 @@ describe('SubcategoryService', () => {
         await service.findAllByCategory(categoryId);
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { category: categoryId, isDeleted: false },
+        where: { category: { id: categoryId }, isDeleted: false },
         order: { name: 'ASC' },
       });
       expect(statusCode).toBe(200);
@@ -115,7 +115,7 @@ describe('SubcategoryService', () => {
 
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { category: categoryId, name: tagNameTest },
+        where: { category: { id: categoryId }, name: tagNameTest },
       });
       expect(statusCode).toBe(200);
       expect(total).toEqual(mock.length);
@@ -188,25 +188,33 @@ describe('SubcategoryService', () => {
 
   describe('create subcategory services', () => {
     it('create should return a subcategory', async () => {
-      const mockNewCategory = createSubcategory();
       const mock = generateSubcategory();
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mockNewCategory);
+      const mockNewSubcategory: CreateSubcategoryDto = {
+        ...mock,
+        category: mock.category.id,
+      };
+
+      const { statusCode, data } = await service.create(mockNewSubcategory);
       expect(statusCode).toBe(201);
-      expect(data).toEqual(mockNewCategory);
+      expect(data).toEqual(mock);
     });
 
     it('create should return Conflict Exception when name subcategory exists with the same category', async () => {
-      const mockNewCategory = createSubcategory();
       const mock = generateSubcategory();
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
+      const mockNewSubcategory: CreateSubcategoryDto = {
+        ...mock,
+        category: mock.category.id,
+      };
+
       try {
-        await service.create(mockNewCategory);
+        await service.create(mockNewSubcategory);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
@@ -220,10 +228,13 @@ describe('SubcategoryService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateSubcategory();
       const id = mock.id;
-      const changes: UpdateSubcategoryDto = { name: 'newName' };
+      const changes: UpdateSubcategoryDto = {
+        name: 'newName',
+        category: mock.category.id,
+      };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       const { statusCode, message } = await service.update(id, changes);
@@ -242,10 +253,7 @@ describe('SubcategoryService', () => {
       const changes: UpdateSubcategoryDto = { name: 'newName' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest
-        .spyOn(repository, 'findAndCount')
-        .mockResolvedValue([[{ ...mock, ...changes }], 1]);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {

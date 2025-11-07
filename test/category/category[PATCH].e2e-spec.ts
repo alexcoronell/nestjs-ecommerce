@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { ConflictException, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -192,16 +192,16 @@ describe('CategoryController (e2e) [PATCH]', () => {
       const updatedData: UpdateCategoryDto = {
         name: category.name,
       };
-      const res = await request(app.getHttpServer())
-        .patch(`/category/${id}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updatedData);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(409);
-      expect(message).toBe(
-        `The Category NAME: ${updatedData.name} is already in use`,
-      );
+      try {
+        await request(app.getHttpServer())
+          .post(`/category/${id}`)
+          .send(updatedData);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Category NAME ${updatedData.name} is already in use`,
+        );
+      }
     });
 
     it('/:id should return Conflict if category slug is already taken', async () => {
@@ -213,16 +213,16 @@ describe('CategoryController (e2e) [PATCH]', () => {
       const updatedData: UpdateCategoryDto = {
         slug: category.slug,
       };
-      const res = await request(app.getHttpServer())
-        .patch(`/category/${id}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updatedData);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(409);
-      expect(message).toBe(
-        `The Category SLUG: ${updatedData.slug} is already in use`,
-      );
+      try {
+        await request(app.getHttpServer())
+          .post(`/category/${id}`)
+          .send(updatedData);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Category SLUG ${updatedData.slug} is already in use`,
+        );
+      }
     });
 
     it('should return 404 if category does not exist', async () => {

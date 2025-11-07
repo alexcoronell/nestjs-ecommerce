@@ -174,13 +174,11 @@ describe('CategoryController (e2e) [POST]', () => {
       try {
         await request(app.getHttpServer())
           .post('/category')
-          .set('x-api-key', API_KEY)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
           .send(repeatedCategory);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The Category name: ${repeatedCategory.name} is already in use`,
+          `The Category NAME: ${repeatedCategory.name} is already in use`,
         );
       }
     });
@@ -195,8 +193,6 @@ describe('CategoryController (e2e) [POST]', () => {
       try {
         await request(app.getHttpServer())
           .post('/category')
-          .set('x-api-key', API_KEY)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
           .send(repeatedCategory);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);

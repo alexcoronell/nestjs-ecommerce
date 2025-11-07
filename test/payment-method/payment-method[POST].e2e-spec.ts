@@ -170,18 +170,18 @@ describe('CategoryController (e2e) [POST]', () => {
     it('/ should return a  conflict exception with existing category name', async () => {
       const newPaymentMethod = createPaymentMethod();
       await repo.save(newPaymentMethod);
-      const repeatedCategory = {
+      const repeatedPaymentMethod = {
         ...createPaymentMethod(),
         name: newPaymentMethod.name,
       };
       try {
         await request(app.getHttpServer())
           .post('/payment-method')
-          .send(repeatedCategory);
+          .send(repeatedPaymentMethod);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The Payment Method NAME ${repeatedCategory.name} is already in use`,
+          `The Payment Method NAME ${repeatedPaymentMethod.name} is already in use`,
         );
       }
     });

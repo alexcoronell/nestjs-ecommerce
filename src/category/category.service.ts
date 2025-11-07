@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpStatus,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -167,22 +162,6 @@ export class CategoryService
    * @returns An object containing the created category, an HTTP status code, and a success message.
    */
   async create(dto: CreateCategoryDto) {
-    const categoryExists = await this.repo.findOne({
-      where: { name: dto.name },
-    });
-    if (categoryExists) {
-      throw new ConflictException(
-        `The Category NAME: ${dto.name} is already in use`,
-      );
-    }
-    const categorySlugExists = await this.repo.findOne({
-      where: { slug: dto.slug },
-    });
-    if (categorySlugExists) {
-      throw new ConflictException(
-        `The Category SLUG: ${dto.slug} is already in use`,
-      );
-    }
     const newCategory = this.repo.create(dto);
     const category = await this.repo.save(newCategory);
     return {
@@ -199,27 +178,6 @@ export class CategoryService
    * @returns An object containing the updated category, an HTTP status code, and a success message.
    */
   async update(id: number, changes: UpdateCategoryDto) {
-    const changesName = changes.name;
-    const changesSlug = changes.slug;
-    if (changesName || changesSlug) {
-      const category = await this.repo.findOne({
-        where: { id: Not(id), name: changesName },
-      });
-      if (category && changesName) {
-        throw new ConflictException(
-          `The Category NAME: ${changesName} is already in use`,
-        );
-      }
-
-      const categorySlug = await this.repo.findOne({
-        where: { id: Not(id), slug: changesSlug },
-      });
-      if (categorySlug && changesSlug) {
-        throw new ConflictException(
-          `The Category SLUG: ${changesSlug} is already in use`,
-        );
-      }
-    }
     const { data } = await this.findOne(id);
     this.repo.merge(data as Category, changes);
     const rta = await this.repo.save(data as Category);

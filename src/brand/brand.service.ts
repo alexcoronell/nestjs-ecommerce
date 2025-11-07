@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpStatus,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -121,22 +116,6 @@ export class BrandService
   }
 
   async create(dto: CreateBrandDto) {
-    const brandNameExists = await this.repo.findOne({
-      where: { name: dto.name },
-    });
-    if (brandNameExists) {
-      throw new ConflictException(
-        `The Brand name: ${dto.name} is already in use`,
-      );
-    }
-    const brandSlugExists = await this.repo.findOne({
-      where: { slug: dto.slug },
-    });
-    if (brandSlugExists) {
-      throw new ConflictException(
-        `The Brand slug: ${dto.slug} is already in use`,
-      );
-    }
     const newBrand = this.repo.create(dto);
     const brand = await this.repo.save(newBrand);
     return {
@@ -148,26 +127,6 @@ export class BrandService
 
   async update(id: number, changes: UpdateBrandDto) {
     const { data } = await this.findOne(id);
-    const changesName = changes.name;
-    const changesSlug = changes.slug;
-    if (changesName || changesSlug) {
-      const brand = await this.repo.findOne({
-        where: { id: Not(id), name: changesName },
-      });
-      if (brand) {
-        throw new ConflictException(
-          `The Brand name: ${changesName} is already in use`,
-        );
-      }
-      const brandSlug = await this.repo.findOne({
-        where: { id: Not(id), slug: changesSlug },
-      });
-      if (brandSlug) {
-        throw new ConflictException(
-          `The Brand slug: ${changesSlug} is already in use`,
-        );
-      }
-    }
     this.repo.merge(data as Brand, changes);
     const rta = await this.repo.save(data as Brand);
     return {

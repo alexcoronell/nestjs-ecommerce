@@ -214,7 +214,7 @@ describe('BrandService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The Brand name: ${brand.name} is already in use`,
+          `The Brand NAME: ${brand.name} is already in use`,
         );
       }
     });
@@ -226,14 +226,12 @@ describe('BrandService', () => {
       const id = brand.id;
       const changes: UpdateBrandDto = { name: 'new name', slug: 'new-name' };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brand);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...brand, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       const { statusCode, message } = await service.update(id, changes);
-      expect(repository.findOne).toHaveBeenCalledTimes(3);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);

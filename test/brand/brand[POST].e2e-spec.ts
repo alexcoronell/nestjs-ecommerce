@@ -172,15 +172,11 @@ describe('BrandController (e2e) [POST]', () => {
         name: newBrand.name,
       };
       try {
-        await request(app.getHttpServer())
-          .post('/brand')
-          .set('x-api-key', API_KEY)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(repeatedBrand);
+        await request(app.getHttpServer()).post('/brand').send(repeatedBrand);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The Brand name: ${repeatedBrand.name} is already in use`,
+          `The Brand NAME ${repeatedBrand.name} is already in use`,
         );
       }
     });

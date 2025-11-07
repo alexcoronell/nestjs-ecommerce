@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -102,31 +100,7 @@ export class PaymentMethodService
     });
     if (!paymentMethod) {
       throw new NotFoundException(
-        `The Payment Method with id: ${id} not found`,
-      );
-    }
-    return {
-      statusCode: HttpStatus.OK,
-      data: paymentMethod,
-    };
-  }
-
-  /**
-   * Finds a PaymentMethod by its name, including related createdBy and updatedBy entities.
-   * Throws NotFoundException if not found or marked as deleted.
-   *
-   * @param name - The name of the PaymentMethod to retrieve.
-   * @returns A result object containing the PaymentMethod and HTTP status code.
-   * @throws NotFoundException if the PaymentMethod is not found.
-   */
-  async findOneByName(name: string): Promise<Result<PaymentMethod>> {
-    const paymentMethod = await this.repo.findOne({
-      relations: ['createdBy', 'updatedBy'],
-      where: { name, isDeleted: false },
-    });
-    if (!paymentMethod) {
-      throw new NotFoundException(
-        `The Payment Method with name: ${name} not found`,
+        `The Payment Method with ID: ${id} not found`,
       );
     }
     return {
@@ -165,7 +139,7 @@ export class PaymentMethodService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Payment Method with id: ${id} has been modified`,
+      message: `The Payment Method with ID: ${id} has been modified`,
     };
   }
 
@@ -183,7 +157,7 @@ export class PaymentMethodService
     await this.repo.save(data as PaymentMethod);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Payment Method with id: ${id} has been deleted`,
+      message: `The Payment Method with ID: ${id} has been deleted`,
     };
   }
 }

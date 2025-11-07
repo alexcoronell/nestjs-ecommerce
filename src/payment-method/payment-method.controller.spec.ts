@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 
 /* Controller */
@@ -37,7 +33,6 @@ describe('PaymentMethodController', () => {
     count: jest.fn().mockResolvedValue(mockPaymentMethods.length),
     findAll: jest.fn().mockResolvedValue(mockPaymentMethods),
     findOne: jest.fn().mockResolvedValue(mockPaymentMethod),
-    findOneByName: jest.fn().mockResolvedValue(mockPaymentMethod),
     create: jest.fn().mockResolvedValue(mockNewPaymentMethod),
     update: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -83,11 +78,6 @@ describe('PaymentMethodController', () => {
     it('should call findOne payment method service', async () => {
       expect(await controller.findOne(1)).toBe(mockPaymentMethod);
       expect(service.findOne).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return an payment method by name', async () => {
-      expect(await controller.findOneByname(mockPaymentMethod.name));
-      expect(service.findOneByName).toHaveBeenCalledTimes(1);
     });
   });
 

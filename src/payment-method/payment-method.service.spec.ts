@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -125,32 +122,6 @@ describe('PaymentMethodService', () => {
       await expect(service.findOne(id)).rejects.toThrowError(
         new NotFoundException(`The Payment Method with id: ${id} not found`),
       );
-    });
-
-    it('findOneByName should return a payment methods', async () => {
-      const paymentMethod = generatePaymentMethod();
-      const name = paymentMethod.name;
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(paymentMethod);
-
-      const { statusCode, data } = await service.findOneByName(name);
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
-      expect(statusCode).toBe(200);
-      expect(data).toEqual(paymentMethod);
-    });
-
-    it('findOneByName should throw NotFoundException if Payment Method does not exist', async () => {
-      const name = 'nameTest';
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-
-      try {
-        await service.findOneByName(name);
-      } catch (error) {
-        expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(
-          `The Payment Method with name: ${name} not found`,
-        );
-      }
     });
   });
 

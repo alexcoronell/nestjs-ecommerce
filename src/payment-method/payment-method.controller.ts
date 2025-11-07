@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Get,
@@ -10,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,6 +23,12 @@ import { PaymentMethod } from './entities/payment-method.entity';
 import { CreatePaymentMethodDto } from '@payment_method/dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from '@payment_method/dto/update-payment-method.dto';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+
+@UseGuards(JwtAuthGuard)
 @Controller('payment-method')
 /**
  * Controller for managing payment methods.
@@ -50,6 +54,7 @@ export class PaymentMethodController
    * Gets the total count of all payment methods, including inactive ones.
    * @returns The total number of payment methods.
    */
+  @UseGuards(IsNotCustomerGuard)
   @Get('count-all')
   countAll() {
     return this.paymentMethodService.countAll();
@@ -59,6 +64,7 @@ export class PaymentMethodController
    * Gets the count of active payment methods.
    * @returns The number of active payment methods.
    */
+  @UseGuards(IsNotCustomerGuard)
   @Get('count')
   count() {
     return this.paymentMethodService.count();
@@ -78,19 +84,10 @@ export class PaymentMethodController
    * @param id The ID of the payment method.
    * @returns The payment method with the specified ID.
    */
+  @UseGuards(IsNotCustomerGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.paymentMethodService.findOne(+id);
-  }
-
-  /**
-   * Retrieves a payment method by its name.
-   * @param name The name of the payment method.
-   * @returns The payment method with the specified name.
-   */
-  @Get('name/:name')
-  findOneByname(@Param('name') name: string) {
-    return this.paymentMethodService.findOneByName(name);
   }
 
   /**
@@ -98,6 +95,7 @@ export class PaymentMethodController
    * @param payload The data for the new payment method.
    * @returns The created payment method.
    */
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() payload: CreatePaymentMethodDto) {
     return this.paymentMethodService.create(payload);
@@ -109,6 +107,7 @@ export class PaymentMethodController
    * @param updateCategoryDto The updated data for the payment method.
    * @returns The updated payment method.
    */
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -122,6 +121,7 @@ export class PaymentMethodController
    * @param id The ID of the payment method to remove.
    * @returns The result of the removal operation.
    */
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.paymentMethodService.remove(+id);

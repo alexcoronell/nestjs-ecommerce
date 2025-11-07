@@ -11,8 +11,18 @@ import { generateBaseEntity } from '@faker/base.faker';
 import { generateUser } from './user.faker';
 
 export const createPaymentMethod = (): CreatePaymentMethodDto => ({
-  name: faker.lorem.word(),
+  name: faker.word.words(2),
 });
+
+export const generateNewPaymentMethods = (
+  size = 1,
+): CreatePaymentMethodDto[] => {
+  const newPaymentMethods: CreatePaymentMethodDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newPaymentMethods.push(createPaymentMethod());
+  }
+  return newPaymentMethods;
+};
 
 export const generatePaymentMethod = (id: number = 1): PaymentMethod => ({
   ...generateBaseEntity(id),

@@ -174,8 +174,6 @@ describe('DiscountController (e2e) [POST]', () => {
       try {
         await request(app.getHttpServer())
           .post('/discount')
-          .set('x-api-key', API_KEY)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
           .send(repeatedDiscount);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);

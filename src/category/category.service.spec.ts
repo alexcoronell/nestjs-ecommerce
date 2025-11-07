@@ -64,7 +64,7 @@ describe('CategoryService', () => {
     });
   });
 
-  xdescribe('find categories services', () => {
+  describe('find categories services', () => {
     it('findAll should return all categories', async () => {
       const categories = generateManyCategories(50);
 
@@ -191,7 +191,7 @@ describe('CategoryService', () => {
     });
   });
 
-  xdescribe('create category services', () => {
+  describe('create category services', () => {
     it('create should return a category', async () => {
       const category = generateCategory();
 
@@ -206,8 +206,6 @@ describe('CategoryService', () => {
 
     it('create should return Conflict Exception when name category exists', async () => {
       const category = generateCategory();
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(category);
       jest.spyOn(repository, 'create').mockReturnValue(category);
       jest.spyOn(repository, 'save').mockResolvedValue(category);
 
@@ -241,17 +239,20 @@ describe('CategoryService', () => {
     });
 
     it('update should return Conflict Exception when name category exists', async () => {
-      const category = generateCategory();
-
-      jest.spyOn(repository, 'create').mockReturnValue(category);
-      jest.spyOn(repository, 'save').mockResolvedValue(category);
+      const category = generateManyCategories(2);
+      const name = category[0].name;
+      const id = category[1].id;
+      const changes: UpdateCategoryDto = { name };
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(category[0]);
+      jest.spyOn(repository, 'merge').mockReturnValue(category[1]);
+      jest.spyOn(repository, 'save').mockResolvedValue(category[1]);
 
       try {
-        await service.create(category);
+        await service.update(id, changes);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `Payment Method ${category.name} already exists`,
+          `The Category NAME: ${name} is already in use`,
         );
       }
     });
@@ -269,7 +270,7 @@ describe('CategoryService', () => {
     });
   });
 
-  xdescribe('remove category services', () => {
+  describe('remove category services', () => {
     it('remove should return status and message', async () => {
       const category = generateCategory();
       const id = category.id;

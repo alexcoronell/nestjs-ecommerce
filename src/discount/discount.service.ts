@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpStatus,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
@@ -107,14 +102,6 @@ export class DiscountService
   }
 
   async create(dto: CreateDiscountDto) {
-    const discountExists = await this.repo.findOne({
-      where: { code: dto.code },
-    });
-    if (discountExists) {
-      throw new ConflictException(
-        `The Discount CODE: ${dto.code} is already in use`,
-      );
-    }
     const newDiscount = this.repo.create(dto);
     const discount = await this.repo.save(newDiscount);
     return {
@@ -125,17 +112,6 @@ export class DiscountService
   }
 
   async update(id: number, changes: UpdateDiscountDto) {
-    const changesCode = changes.code;
-    if (changesCode) {
-      const discountExists = await this.repo.findOne({
-        where: { id: Not(id), code: changesCode },
-      });
-      if (discountExists) {
-        throw new ConflictException(
-          `The Discount CODE: ${changesCode} is already in use`,
-        );
-      }
-    }
     const { data } = await this.findOne(id);
     this.repo.merge(data as Discount, changes);
     const rta = await this.repo.save(data as Discount);

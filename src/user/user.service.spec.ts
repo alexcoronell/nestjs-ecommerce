@@ -349,7 +349,7 @@ describe('UserService', () => {
 
       const { statusCode, message } = await service.update(id, changes);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The User with id: ${id} has been modified`);
+      expect(message).toEqual(`The User with ID: ${id} has been modified`);
     });
 
     it('updatePassword should return an user', async () => {
@@ -378,9 +378,7 @@ describe('UserService', () => {
       const id = users[1].id;
       const changes: UpdateUserDto = { email };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(users[1]);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(users[1]);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(users[0]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(users[0]);
       jest.spyOn(repository, 'merge').mockReturnValue(users[1]);
       jest.spyOn(repository, 'save').mockResolvedValue(users[1]);
 

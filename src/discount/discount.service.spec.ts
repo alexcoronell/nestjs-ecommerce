@@ -176,7 +176,6 @@ describe('DiscountService', () => {
 
     it('create should return Conflict Exception when code Discount exists', async () => {
       const mock = generateDiscount();
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
@@ -184,9 +183,7 @@ describe('DiscountService', () => {
         await service.create(mock);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(
-          `The Discount CODE: ${mock.code} is already in use`,
-        );
+        expect(error.message).toBe(`Discount ${mock.code} already exists`);
       }
     });
   });
@@ -197,13 +194,12 @@ describe('DiscountService', () => {
       const id = mock.id;
       const changes: UpdateDiscountDto = { code: 'newCode' };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(mock);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       const { statusCode, message } = await service.update(id, changes);
-      expect(repository.findOne).toHaveBeenCalledTimes(2);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
@@ -217,11 +213,12 @@ describe('DiscountService', () => {
       const changes: UpdateDiscountDto = { code };
 
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(discounts[0]);
-      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(discounts[1]);
+      jest.spyOn(repository, 'merge').mockReturnValue(discounts[1]);
+      jest.spyOn(repository, 'save').mockResolvedValue(discounts[1]);
+
       try {
         await service.update(id, changes);
       } catch (error) {
-        expect(repository.findOne).toHaveBeenCalledTimes(1);
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
           `The Discount CODE: ${code} is already in use`,

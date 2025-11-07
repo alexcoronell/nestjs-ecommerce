@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { ConflictException, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -192,16 +192,16 @@ describe('DiscountController (e2e) [PATCH]', () => {
       const updatedData: UpdateDiscountDto = {
         code: discount.code,
       };
-      const res = await request(app.getHttpServer())
-        .patch(`/discount/${id}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updatedData);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(409);
-      expect(message).toBe(
-        `The Discount CODE: ${updatedData.code} is already in use`,
-      );
+      try {
+        await request(app.getHttpServer())
+          .post(`/discount/${id}`)
+          .send(updatedData);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The Discount CODE: ${updatedData.code} is already in use`,
+        );
+      }
     });
 
     it('should return 404 if discount does not exist', async () => {

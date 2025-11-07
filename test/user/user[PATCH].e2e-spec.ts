@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { ConflictException, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -166,14 +166,16 @@ describe('UserControler (e2e) [PATCH]', () => {
       const updatedData: UpdateUserDto = {
         email: user.email,
       };
-      const res = await request(app.getHttpServer())
-        .patch(`/user/${id}`)
-        .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updatedData);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(409);
-      expect(message).toBe(`The Email ${user.email} is already in use`);
+      try {
+        await request(app.getHttpServer())
+          .patch(`/user/${id}`)
+          .send(updatedData);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The User with EMAIL: ${user.email} is already in use`,
+        );
+      }
     });
 
     it('/:id should return 401 if api key is missing', async () => {

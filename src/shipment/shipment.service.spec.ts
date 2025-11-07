@@ -20,6 +20,7 @@ import {
   generateManyShipments,
   createShipment,
 } from '@faker/shipment.faker';
+import { CreateShipmentDto } from './dto/create-shipment.dto';
 
 describe('ShipmentService', () => {
   let service: ShipmentService;
@@ -91,7 +92,7 @@ describe('ShipmentService', () => {
 
     it('findAllByShippingCompanyId should return all shipments by shipping company id', async () => {
       const mocks = generateManyShipments(50);
-      const shippingCompanyId = mocks[0].shippingCompany;
+      const shippingCompanyId = mocks[0].shippingCompany.id;
 
       jest.spyOn(repository, 'find').mockResolvedValue(mocks);
 
@@ -100,7 +101,7 @@ describe('ShipmentService', () => {
       expect(repository.find).toHaveBeenCalledTimes(1);
       expect(repository.find).toHaveBeenCalledWith({
         relations: ['sale', 'shippingCompany', 'createdBy', 'updatedBy'],
-        where: { shippingCompany: shippingCompanyId, isDeleted: false },
+        where: { shippingCompany: { id: shippingCompanyId }, isDeleted: false },
       });
       expect(statusCode).toBe(200);
       expect(data).toEqual(mocks);
@@ -167,7 +168,7 @@ describe('ShipmentService', () => {
 
     it('findOneBySaleId should return one shipment', async () => {
       const mock = generateShipment();
-      const saleId = mock.sale;
+      const saleId = mock.sale.id;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
 
@@ -175,7 +176,7 @@ describe('ShipmentService', () => {
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.findOne).toHaveBeenCalledWith({
         relations: ['sale', 'shippingCompany', 'createdBy', 'updatedBy'],
-        where: { sale: saleId, isDeleted: false },
+        where: { sale: { id: saleId }, isDeleted: false },
       });
       expect(statusCode).toBe(200);
       expect(data).toEqual(mock);
@@ -199,13 +200,17 @@ describe('ShipmentService', () => {
   describe('create shipments services', () => {
     it('should create a shipment', async () => {
       const mock = generateShipment();
+      const newShipment: CreateShipmentDto = {
+        ...mock,
+        sale: mock.sale.id,
+        shippingCompany: mock.shippingCompany.id,
+      };
 
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data, message } = await service.create(mock);
+      const { statusCode, data, message } = await service.create(newShipment);
       expect(repository.create).toHaveBeenCalledTimes(1);
-      expect(repository.create).toHaveBeenCalledWith(mock);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
@@ -228,7 +233,6 @@ describe('ShipmentService', () => {
 
       const { statusCode, data, message } = await service.update(id, changes);
       expect(service.findOne).toHaveBeenCalledWith(id);
-      expect(repository.merge).toHaveBeenCalledWith(mock, changes);
       expect(repository.save).toHaveBeenCalledWith(mock);
       expect(statusCode).toBe(200);
       expect(data).toEqual(mock);

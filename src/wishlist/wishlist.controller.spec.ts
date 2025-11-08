@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -31,8 +30,8 @@ describe('WishlistController', () => {
 
   const mockService = {
     findAll: jest.fn().mockResolvedValue(mockWishlists),
-    findOneByCustomerAndProduct: jest.fn().mockResolvedValue(mockWishlist),
-    findAllByCustomer: jest.fn().mockResolvedValue(mockWishlists),
+    findOneByUserAndProduct: jest.fn().mockResolvedValue(mockWishlist),
+    findAllByUser: jest.fn().mockResolvedValue(mockWishlists),
     findAllByProduct: jest.fn().mockResolvedValue(mockWishlists),
     findOne: jest.fn().mockResolvedValue(mockWishlist),
     create: jest.fn().mockResolvedValue(mockNewWishlist),
@@ -64,34 +63,32 @@ describe('WishlistController', () => {
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it('should call findOneByCustomerAndProduct wishlist service', async () => {
+    it('should call findOneByUserAndProduct wishlist service', async () => {
       expect(
-        await controller.findOneByCustomerAndProduct(
-          mockWishlist.customer,
-          mockWishlist.product,
+        await controller.findOneByUserAndProduct(
+          mockWishlist.user.id,
+          mockWishlist.product.id,
         ),
       ).toEqual(mockWishlist);
-      expect(service.findOneByCustomerAndProduct).toHaveBeenCalledWith(
-        mockWishlist.customer,
-        mockWishlist.product,
+      expect(service.findOneByUserAndProduct).toHaveBeenCalledWith(
+        mockWishlist.user.id,
+        mockWishlist.product.id,
       );
     });
 
-    it('should call findAllByCustomer wishlist service', async () => {
-      expect(await controller.findAllByCustomer(mockWishlist.customer)).toEqual(
+    it('should call findAllByUser wishlist service', async () => {
+      expect(await controller.findAllByUser(mockWishlist.user.id)).toEqual(
         mockWishlists,
       );
-      expect(service.findAllByCustomer).toHaveBeenCalledWith(
-        mockWishlist.customer,
-      );
+      expect(service.findAllByUser).toHaveBeenCalledWith(mockWishlist.user.id);
     });
 
     it('should call findAllByProduct wishlist service', async () => {
-      expect(await controller.findAllByProduct(mockWishlist.product)).toEqual(
-        mockWishlists,
-      );
+      expect(
+        await controller.findAllByProduct(mockWishlist.product.id),
+      ).toEqual(mockWishlists);
       expect(service.findAllByProduct).toHaveBeenCalledWith(
-        mockWishlist.product,
+        mockWishlist.product.id,
       );
     });
 

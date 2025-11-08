@@ -32,8 +32,8 @@ export class WishlistController {
     return this.wishlistService.findOneByUserAndProduct(userId, productId);
   }
 
-  @Get('customer/:userId')
-  findAllByCustomer(@Param('userId', ParseIntPipe) userId: number) {
+  @Get('user/:userId')
+  findAllByUser(@Param('userId', ParseIntPipe) userId: number) {
     return this.wishlistService.findAllByUser(userId);
   }
 

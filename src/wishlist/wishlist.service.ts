@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpStatus,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -92,26 +87,16 @@ export class WishlistService {
 
   async create(dto: CreateWishlistDto) {
     const { user, product } = dto;
-    try {
-      await this.findOneByUserAndProduct(user, product);
-      throw new ConflictException(
-        'Wishlist item already exists for this user and product',
-      );
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        const newItem = this.repo.create({
-          user: { id: dto.user } as User,
-          product: { id: dto.product } as Product,
-        });
-        const data = await this.repo.save(newItem);
-        return {
-          statusCode: HttpStatus.CREATED,
-          data,
-          message: 'Wishlist item created',
-        };
-      }
-      throw error;
-    }
+    const newItem = this.repo.create({
+      user: { id: user } as User,
+      product: { id: product } as Product,
+    });
+    const data = await this.repo.save(newItem);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data,
+      message: 'Wishlist item created',
+    };
   }
 
   async remove(id: number) {
@@ -119,7 +104,7 @@ export class WishlistService {
     await this.repo.remove(data);
     return {
       statusCode: HttpStatus.OK,
-      message: `Wishlist with id: ${id} deleted`,
+      message: `Wishlist with ID: ${id} deleted`,
     };
   }
 }

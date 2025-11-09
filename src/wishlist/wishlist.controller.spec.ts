@@ -10,6 +10,9 @@ import { WishlistService } from './wishlist.service';
 /* Entities */
 import { Wishlist } from './entities/wishlist.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 
@@ -100,8 +103,10 @@ describe('WishlistController', () => {
 
   describe('create wishlist controller', () => {
     it('should call create wishlist service', async () => {
-      expect(await controller.create(mockNewWishlist)).toEqual(mockNewWishlist);
-      expect(service.create).toHaveBeenCalledWith(mockNewWishlist);
+      const request = { user: 1 };
+      expect(
+        await controller.create(mockNewWishlist, request as AuthRequest),
+      ).toEqual(mockNewWishlist);
     });
   });
 

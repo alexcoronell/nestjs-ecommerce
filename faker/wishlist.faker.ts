@@ -7,7 +7,6 @@ import { generateUser } from './user.faker';
 
 // Faker para CreateWishlistDto
 export const createWishlist = (): CreateWishlistDto => ({
-  user: faker.number.int({ min: 1, max: 1000 }),
   product: faker.number.int({ min: 1, max: 1000 }),
 });
 

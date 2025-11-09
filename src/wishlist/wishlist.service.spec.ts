@@ -13,6 +13,7 @@ import { Wishlist } from './entities/wishlist.entity';
 
 /* Faker */
 import { generateWishlist, generateManyWishlists } from '@faker/wishlist.faker';
+import { User } from '@user/entities/user.entity';
 
 describe('WishlistService', () => {
   let service: WishlistService;
@@ -125,37 +126,35 @@ describe('WishlistService', () => {
   describe('create wishlist services', () => {
     it('create should return a wishlist item', async () => {
       const mock = generateWishlist();
-      const user = mock.user.id;
+      const userId: User['id'] = 1;
       const product = mock.product.id;
 
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
       const newMock = {
-        user,
         product,
       };
 
-      const { statusCode, data } = await service.create(newMock);
+      const { statusCode, data } = await service.create(newMock, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
 
     it('should throw ConflictException if wishlist item with same user and product exists', async () => {
       const mock = generateWishlist(1);
-      const user = mock.user.id;
+      const userId: User['id'] = 1;
       const product = mock.product.id;
       const newMock = {
-        user,
         product,
       };
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
       try {
-        await service.create(newMock);
+        await service.create(newMock, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The wishlist item for user ${user} and product ${product} is already in use`,
+          `The wishlist item for user ${userId} and product ${product} is already in use`,
         );
       }
     });

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -8,6 +6,9 @@ import { UserController } from './user.controller';
 
 /* Services */
 import { UserService } from './user.service';
+
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { CreateUserDto } from './dto/create-user.dto';
@@ -119,7 +120,8 @@ describe('UserController', () => {
 
   describe('create user controller', () => {
     it('should call create user service', async () => {
-      await controller.create(mockNewUser);
+      const request = { user: 1 };
+      await controller.create(mockNewUser, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
 
@@ -131,8 +133,9 @@ describe('UserController', () => {
 
   describe('update user controller', () => {
     it('should call update user service', async () => {
+      const request = { user: 1 };
       const changes: UpdateUserDto = { firstname: 'newFirstname' };
-      await controller.update(1, changes);
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
 
@@ -145,12 +148,8 @@ describe('UserController', () => {
 
   describe('remove user controller', () => {
     it('shoudl call remove user service', async () => {
-      const mockRequest = {
-        user: {
-          user: 123,
-        },
-      } as any;
-      await controller.remove(1, mockRequest);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

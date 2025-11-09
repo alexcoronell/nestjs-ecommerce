@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RequestWithUser } from '@commons/interfaces/request-with-user.interface';
 
 /* Interfaces */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { UserService } from './user.service';
@@ -129,8 +129,9 @@ export class UserController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() payload: CreateUserDto) {
-    return this.userService.create(payload);
+  create(@Body() payload: CreateUserDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.userService.create(payload, userId);
   }
 
   @Post('register')
@@ -148,9 +149,11 @@ export class UserController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() changes: UpdateUserDto,
   ) {
-    return this.userService.update(id, changes);
+    const userId = req.user;
+    return this.userService.update(id, userId, changes);
   }
 
   /**
@@ -175,8 +178,8 @@ export class UserController
    */
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
-    const deletedByUserId = req.user.user;
-    return this.userService.remove(id, deletedByUserId);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.userService.remove(id, userId);
   }
 }

@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { User } from '@user/entities/user.entity';
@@ -303,13 +304,21 @@ export class UserService
    * the response, for maximum safety and maintainability, consider returning a
    * dedicated `UserResponseDto` instead of the raw entity.
    */
-  async create(dto: CreateUserDto): Promise<Result<User>> {
+  async create(
+    dto: CreateUserDto,
+    userId: AuthRequest['user'],
+  ): Promise<Result<User>> {
     const email = dto.email.toLowerCase();
+
     const existUserEmail = await this.userRepo.findOneBy({ email });
     if (existUserEmail) {
       throw new ConflictException(`The Email ${email} is already in use`);
     }
-    const newUser = this.userRepo.create(dto);
+    const newUser = this.userRepo.create({
+      ...dto,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+    });
     const hashPassword = await bcrypt.hash(newUser.password, 10);
     newUser.password = hashPassword;
     const user = await this.userRepo.save(newUser);
@@ -388,9 +397,16 @@ export class UserService
    * maintainability and stronger contract guarantees, consider returning a
    * `UserResponseDto` instead of the raw entity.
    */
-  async update(id: number, changes: UpdateUserDto): Promise<Result<User>> {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateUserDto,
+  ): Promise<Result<User>> {
     const { data } = await this.findOne(id);
-    this.userRepo.merge(data as User, changes);
+    this.userRepo.merge(data as User, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.userRepo.save(data as User);
     rta.password = undefined;
     return {
@@ -436,12 +452,12 @@ export class UserService
   }
 
   /* Remove */
-  async remove(id: User['id'], deletedBy: User['id']) {
+  async remove(id: User['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOneWithoutRelations(id);
     const user = data as User;
 
     const changes = {
-      deletedBy: { id: deletedBy } as User,
+      deletedBy: { id: userId } as User,
       isDeleted: true,
       deletedAt: new Date(),
     };

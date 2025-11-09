@@ -10,6 +10,9 @@ import { CategoryService } from './category.service';
 /* Entities */
 import { Category } from './entities/category.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateCategoryDto } from './dto/create-category.dto';
 
@@ -101,22 +104,25 @@ describe('CategoryController', () => {
 
   describe('create category controller', () => {
     it('should call create category service', async () => {
-      await controller.create(mockNewCategory);
+      const request = { user: 1 };
+      await controller.create(mockNewCategory, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update category controller', () => {
     it('should call update category service', async () => {
+      const request = { user: 1 };
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove category controller', () => {
     it('shoudl call remove category service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

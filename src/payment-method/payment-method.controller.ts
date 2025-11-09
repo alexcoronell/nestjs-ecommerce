@@ -8,10 +8,12 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { PaymentMethodService } from '@payment_method/payment-method.service';
@@ -97,8 +99,9 @@ export class PaymentMethodController
    */
   @UseGuards(AdminGuard)
   @Post()
-  create(@Body() payload: CreatePaymentMethodDto) {
-    return this.paymentMethodService.create(payload);
+  create(@Body() payload: CreatePaymentMethodDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.paymentMethodService.create(payload, userId);
   }
 
   /**
@@ -111,9 +114,11 @@ export class PaymentMethodController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() updateCategoryDto: UpdatePaymentMethodDto,
   ) {
-    return this.paymentMethodService.update(+id, updateCategoryDto);
+    const userId = req.user;
+    return this.paymentMethodService.update(+id, userId, updateCategoryDto);
   }
 
   /**
@@ -123,7 +128,8 @@ export class PaymentMethodController
    */
   @UseGuards(AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.paymentMethodService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.paymentMethodService.remove(+id, userId);
   }
 }

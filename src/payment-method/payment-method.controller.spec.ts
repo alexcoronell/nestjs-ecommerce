@@ -10,6 +10,9 @@ import { PaymentMethodService } from '@payment_method/payment-method.service';
 /* Entities */
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreatePaymentMethodDto } from '@payment_method/dto/create-payment-method.dto';
 
@@ -83,7 +86,8 @@ describe('PaymentMethodController', () => {
 
   describe('create payment methods controller', () => {
     it('should call create payment method service', async () => {
-      await controller.create(mockNewPaymentMethod);
+      const request = { user: 1 };
+      await controller.create(mockNewPaymentMethod, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -91,14 +95,16 @@ describe('PaymentMethodController', () => {
   describe('update payment methods controller', () => {
     it('should call update payment methods service', async () => {
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      const request = { user: 1 };
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove payment methods controller', () => {
     it('shoudl call remove payment methods service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

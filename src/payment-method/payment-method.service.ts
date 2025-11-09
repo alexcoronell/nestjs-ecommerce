@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
@@ -115,8 +116,11 @@ export class PaymentMethodService
    * @param dto - The data transfer object containing creation data.
    * @returns An object containing the created PaymentMethod, HTTP status code, and a message.
    */
-  async create(dto: CreatePaymentMethodDto) {
-    const newPaymentMethod = this.repo.create(dto);
+  async create(dto: CreatePaymentMethodDto, userId: AuthRequest['user']) {
+    const newPaymentMethod = this.repo.create({
+      ...dto,
+      createdBy: { id: userId },
+    });
     const paymentMethod = await this.repo.save(newPaymentMethod);
     return {
       statusCode: HttpStatus.CREATED,
@@ -132,9 +136,16 @@ export class PaymentMethodService
    * @param changes - The data transfer object containing update data.
    * @returns An object containing the updated PaymentMethod, HTTP status code, and a message.
    */
-  async update(id: number, changes: UpdatePaymentMethodDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdatePaymentMethodDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as PaymentMethod, changes);
+    this.repo.merge(data as PaymentMethod, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data as PaymentMethod);
     return {
       statusCode: HttpStatus.OK,
@@ -149,11 +160,14 @@ export class PaymentMethodService
    * @param id - The ID of the PaymentMethod to delete.
    * @returns An object containing HTTP status code and a message.
    */
-  async remove(id: PaymentMethod['id']) {
+  async remove(id: PaymentMethod['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
     const changes = { isDeleted: true };
-    this.repo.merge(data as PaymentMethod, changes);
+    this.repo.merge(data as PaymentMethod, {
+      ...changes,
+      deletedBy: { id: userId },
+    });
     await this.repo.save(data as PaymentMethod);
     return {
       statusCode: HttpStatus.OK,

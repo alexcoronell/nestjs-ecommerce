@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -10,6 +9,9 @@ import { TagService } from './tag.service';
 
 /* Entities */
 import { Tag } from './entities/tag.entity';
+
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { CreateTagDto } from './dto/create-tag.dto';
@@ -86,22 +88,25 @@ describe('TagController', () => {
 
   describe('create tags controller', () => {
     it('should call create tag service', async () => {
-      await controller.create(mockNewTag);
+      const request = { user: 1 };
+      await controller.create(mockNewTag, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update tags controller', () => {
     it('should call update tags service', async () => {
+      const request = { user: 1 };
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove tags controller', () => {
     it('shoudl call remove tags service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

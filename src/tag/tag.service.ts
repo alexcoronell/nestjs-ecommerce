@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Tag } from '@tag/entities/tag.entity';
@@ -83,9 +84,11 @@ export class TagService
     };
   }
 
-  async create(dto: CreateTagDto) {
+  async create(dto: CreateTagDto, userId: AuthRequest['user']) {
     const newTag = this.repo.create({
       ...dto,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const data = await this.repo.save(newTag);
     return {
@@ -95,9 +98,9 @@ export class TagService
     };
   }
 
-  async update(id: number, changes: UpdateTagDto) {
+  async update(id: number, userId: AuthRequest['user'], changes: UpdateTagDto) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Tag, changes);
+    this.repo.merge(data as Tag, { ...changes, updatedBy: { id: userId } });
     const rta = await this.repo.save(data as Tag);
     return {
       statusCode: HttpStatus.OK,
@@ -106,10 +109,10 @@ export class TagService
     };
   }
 
-  async remove(id: Tag['id']) {
+  async remove(id: Tag['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true };
+    const changes = { isDeleted: true, deletedBy: { id: userId } };
     this.repo.merge(data as Tag, changes);
     await this.repo.save(data as Tag);
     return {

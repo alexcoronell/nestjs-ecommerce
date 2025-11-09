@@ -16,6 +16,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 
 /* Faker */
 import { generateTag, generateManyTags } from '@faker/tag.faker';
+import { User } from '@user/entities/user.entity';
 
 describe('TagService', () => {
   let service: TagService;
@@ -144,23 +145,24 @@ describe('TagService', () => {
   describe('create tags services', () => {
     it('create should return a Tag', async () => {
       const mock = generateTag();
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const { statusCode, data } = await service.create(mock, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
 
     it('create should return Conflict Exception when name Tag exists', async () => {
       const mock = generateTag();
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        await service.create(mock);
+        await service.create(mock, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Tag ${mock.name} already exists`);
@@ -173,12 +175,12 @@ describe('TagService', () => {
       const mock = generateTag();
       const id = mock.id;
       const changes: UpdateTagDto = { name: 'newName' };
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -188,10 +190,11 @@ describe('TagService', () => {
 
     it('update should throw NotFoundException if Tag does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Tag with id: ${id} not found`);
@@ -203,23 +206,25 @@ describe('TagService', () => {
     it('remove should return status and message', async () => {
       const mock = generateTag();
       const id = mock.id;
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest
-        .spyOn(repository, 'merge')
-        .mockReturnValue({ ...mock, isDeleted: true });
+      jest.spyOn(repository, 'merge').mockReturnValue({
+        ...mock,
+        isDeleted: true,
+      });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Tag with id: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Tag does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Tag with id: ${id} not found`),
       );
     });

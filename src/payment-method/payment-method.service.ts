@@ -120,6 +120,7 @@ export class PaymentMethodService
     const newPaymentMethod = this.repo.create({
       ...dto,
       createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const paymentMethod = await this.repo.save(newPaymentMethod);
     return {

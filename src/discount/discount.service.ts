@@ -103,7 +103,11 @@ export class DiscountService
   }
 
   async create(dto: CreateDiscountDto, userId: AuthRequest['user']) {
-    const newDiscount = this.repo.create({ ...dto, createdBy: { id: userId } });
+    const newDiscount = this.repo.create({
+      ...dto,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+    });
     const discount = await this.repo.save(newDiscount);
     return {
       statusCode: HttpStatus.CREATED,

@@ -166,6 +166,7 @@ export class CategoryService
     const newCategory = this.repo.create({
       ...dto,
       createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const category = await this.repo.save(newCategory);
     return {

@@ -120,6 +120,7 @@ export class BrandService
     const newBrand = this.repo.create({
       ...dto,
       createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const brand = await this.repo.save(newBrand);
     return {

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Brand } from '@brand/entities/brand.entity';
@@ -115,8 +116,11 @@ export class BrandService
     };
   }
 
-  async create(dto: CreateBrandDto) {
-    const newBrand = this.repo.create(dto);
+  async create(dto: CreateBrandDto, userId: AuthRequest['user']) {
+    const newBrand = this.repo.create({
+      ...dto,
+      createdBy: { id: userId },
+    });
     const brand = await this.repo.save(newBrand);
     return {
       statusCode: HttpStatus.CREATED,
@@ -125,9 +129,13 @@ export class BrandService
     };
   }
 
-  async update(id: number, changes: UpdateBrandDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateBrandDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Brand, changes);
+    this.repo.merge(data as Brand, { ...changes, updatedBy: { id: userId } });
     const rta = await this.repo.save(data as Brand);
     return {
       statusCode: HttpStatus.OK,
@@ -136,10 +144,10 @@ export class BrandService
     };
   }
 
-  async remove(id: Brand['id']) {
+  async remove(id: Brand['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true };
+    const changes = { isDeleted: true, deletedBy: { id: userId } };
     this.repo.merge(data as Brand, changes);
     await this.repo.save(data as Brand);
     return {

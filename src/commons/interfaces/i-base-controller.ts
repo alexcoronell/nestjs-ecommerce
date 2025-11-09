@@ -1,5 +1,5 @@
 import { Result } from '@commons/types/result.type';
-import { RequestWithUser } from './request-with-user.interface';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 export interface IBaseController<T, CreateDto, UpdateDto> {
   countAll(): Promise<Result<number>>;
@@ -8,7 +8,12 @@ export interface IBaseController<T, CreateDto, UpdateDto> {
   findOne(id: number): Promise<Result<T>>;
   create(
     payload: CreateDto | CreateDto[],
+    req: AuthRequest,
   ): Promise<Result<T>> | Promise<Result<T[]>>;
-  update(id: number | string, payload: UpdateDto): Promise<Result<T>>;
-  remove(id: number | string, req: RequestWithUser): Promise<Result<T>>;
+  update(
+    id: number | string,
+    req: AuthRequest,
+    payload: UpdateDto,
+  ): Promise<Result<T>>;
+  remove(id: number | string, req: AuthRequest): Promise<Result<T>>;
 }

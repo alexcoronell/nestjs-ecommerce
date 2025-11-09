@@ -10,6 +10,9 @@ import { BrandService } from '@brand/brand.service';
 /* Entities */
 import { Brand } from '@brand/entities/brand.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateBrandDto } from './dto/create-brand.dto';
 
@@ -101,22 +104,25 @@ describe('BrandController', () => {
 
   describe('create brand controller', () => {
     it('should call create brand service', async () => {
-      await controller.create(mockNewBrand);
+      const request = { user: 1 };
+      await controller.create(mockNewBrand, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update brand controller', () => {
     it('should call update brand service', async () => {
+      const request = { user: 1 };
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove brand controller', () => {
     it('shoudl call remove brand service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

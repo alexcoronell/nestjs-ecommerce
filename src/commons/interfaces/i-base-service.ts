@@ -10,10 +10,11 @@ export interface IBaseService<T, CreateDto, UpdateDto> {
   findOne(id: number): Promise<Result<T>>;
   create(
     data: CreateDto | CreateDto[],
+    userId: User['id'],
   ): Promise<Result<T>> | Promise<Result<T[]>>;
-  update(id: number, data: UpdateDto): Promise<Result<T>>;
+  update(id: number, userId: User['id'], data: UpdateDto): Promise<Result<T>>;
   remove(
     id: number,
-    deletedBy: User['id'],
+    userId: User['id'],
   ): Promise<{ statusCode: number; message: string }>;
 }

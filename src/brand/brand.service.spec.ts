@@ -8,8 +8,9 @@ import { Repository } from 'typeorm';
 /* Services */
 import { BrandService } from '@brand/brand.service';
 
-/* Entity */
+/* Entities */
 import { Brand } from '@brand/entities/brand.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
@@ -192,25 +193,25 @@ describe('BrandService', () => {
   describe('create brand services', () => {
     it('create should return a brand', async () => {
       const brand = generateBrand();
+      const userBy: User['id'] = 1;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(brand);
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
-      const { statusCode, data } = await service.create(brand);
+      const { statusCode, data } = await service.create(brand, userBy);
       expect(statusCode).toBe(201);
       expect(data).toEqual(brand);
     });
 
     it('create should return Conflict Exception when name brand exists', async () => {
       const brand = generateBrand();
-
+      const userBy: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
       jest.spyOn(repository, 'create').mockReturnValue(brand);
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
       try {
-        await service.create(brand);
+        await service.create(brand, userBy);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
@@ -224,13 +225,14 @@ describe('BrandService', () => {
     it('update should return message: have been modified', async () => {
       const brand = generateBrand();
       const id = brand.id;
+      const userBy: User['id'] = 1;
       const changes: UpdateBrandDto = { name: 'new name', slug: 'new-name' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...brand, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userBy, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -240,10 +242,11 @@ describe('BrandService', () => {
 
     it('update should throw NotFoundException if Brand does not exist', async () => {
       const id = 1;
+      const userBy: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userBy, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Brand with ID: ${id} not found`);
@@ -254,13 +257,14 @@ describe('BrandService', () => {
       const brands = generateManyBrands(2);
       const name = brands[0].name;
       const id = brands[1].id;
+      const userBy: User['id'] = 1;
       const changes: UpdateBrandDto = { name };
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(brands[0]);
       jest.spyOn(repository, 'merge').mockReturnValue(brands[1]);
       jest.spyOn(repository, 'save').mockResolvedValue(brands[1]);
 
       try {
-        await service.update(id, changes);
+        await service.update(id, userBy, changes);
       } catch (error) {
         expect(repository.findOne).toHaveBeenCalledTimes(1);
         expect(error).toBeInstanceOf(ConflictException);
@@ -275,23 +279,24 @@ describe('BrandService', () => {
     it('remove should return status and message', async () => {
       const brand = generateBrand();
       const id = brand.id;
-
+      const userBy: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(brand);
       jest
         .spyOn(repository, 'merge')
         .mockReturnValue({ ...brand, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(brand);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userBy);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Brand with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Brand does not exist with Rejects', async () => {
       const id = 1;
+      const userBy: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userBy)).rejects.toThrowError(
         new NotFoundException(`The Brand with ID: ${id} not found`),
       );
     });

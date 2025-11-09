@@ -8,10 +8,12 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { BrandService } from '@brand/brand.service';
@@ -120,17 +122,20 @@ export class BrandController
   /**
    * Creates a new brand with the provided data.
    * @param payload Data required to create a new brand.
+   * @param req required to create a new brand
    * @returns Created Brand object.
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() payload: CreateBrandDto) {
-    return this.brandService.create(payload);
+  create(@Body() payload: CreateBrandDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.brandService.create(payload, userId);
   }
 
   /**
    * Updates an existing brand with the provided data.
    * @param id Identifier of the brand to update.
+   * @param req to update the brand.
    * @param updateCategoryDto Data to update the brand.
    * @returns Updated Brand object.
    */
@@ -138,19 +143,23 @@ export class BrandController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() updateCategoryDto: UpdateBrandDto,
   ) {
-    return this.brandService.update(+id, updateCategoryDto);
+    const userId = req.user;
+    return this.brandService.update(+id, userId, updateCategoryDto);
   }
 
   /**
    * Deletes a brand by its identifier.
    * @param id Identifier of the brand to delete.
+   * @param req
    * @returns Result of the delete operation.
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.brandService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.brandService.remove(+id, userId);
   }
 }

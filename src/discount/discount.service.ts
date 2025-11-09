@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Discount } from '@discount/entities/discount.entity';
@@ -101,8 +102,8 @@ export class DiscountService
     };
   }
 
-  async create(dto: CreateDiscountDto) {
-    const newDiscount = this.repo.create(dto);
+  async create(dto: CreateDiscountDto, userId: AuthRequest['user']) {
+    const newDiscount = this.repo.create({ ...dto, createdBy: { id: userId } });
     const discount = await this.repo.save(newDiscount);
     return {
       statusCode: HttpStatus.CREATED,
@@ -111,9 +112,16 @@ export class DiscountService
     };
   }
 
-  async update(id: number, changes: UpdateDiscountDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateDiscountDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Discount, changes);
+    this.repo.merge(data as Discount, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data as Discount);
     return {
       statusCode: HttpStatus.OK,
@@ -122,10 +130,10 @@ export class DiscountService
     };
   }
 
-  async remove(id: Discount['id']) {
+  async remove(id: Discount['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true };
+    const changes = { isDeleted: true, deletedBy: { id: userId } };
     this.repo.merge(data as Discount, changes);
     await this.repo.save(data as Discount);
     return {

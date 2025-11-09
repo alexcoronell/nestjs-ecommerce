@@ -10,6 +10,7 @@ import { DiscountService } from '@discount/discount.service';
 
 /* Entity */
 import { Discount } from '@discount/entities/discount.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateDiscountDto } from '@discount/dto/update-discount.dto';
@@ -164,23 +165,25 @@ describe('DiscountService', () => {
   describe('create discounts services', () => {
     it('create should return a Discount', async () => {
       const discount = generateDiscount();
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(discount);
       jest.spyOn(repository, 'save').mockResolvedValue(discount);
 
-      const { statusCode, data } = await service.create(discount);
+      const { statusCode, data } = await service.create(discount, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(discount);
     });
 
     it('create should return Conflict Exception when code Discount exists', async () => {
       const mock = generateDiscount();
+      const userId: User['id'] = 1;
+
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        await service.create(mock);
+        await service.create(mock, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Discount ${mock.code} already exists`);
@@ -192,13 +195,14 @@ describe('DiscountService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateDiscount();
       const id = mock.id;
+      const userId: User['id'] = 1;
       const changes: UpdateDiscountDto = { code: 'newCode' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -210,6 +214,7 @@ describe('DiscountService', () => {
       const discounts = generateManyDiscounts(2);
       const code = discounts[0].code;
       const id = discounts[1].id;
+      const userId: User['id'] = 1;
       const changes: UpdateDiscountDto = { code };
 
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(discounts[0]);
@@ -217,7 +222,7 @@ describe('DiscountService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(discounts[1]);
 
       try {
-        await service.update(id, changes);
+        await service.update(id, userId, changes);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
@@ -228,11 +233,12 @@ describe('DiscountService', () => {
 
     it('update should throw NotFoundException if Discount does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
 
       try {
-        await service.update(id, { code: 'newCode' });
+        await service.update(id, userId, { code: 'newCode' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Discount with ID: ${id} not found`);
@@ -244,23 +250,24 @@ describe('DiscountService', () => {
     it('remove should return status and message', async () => {
       const mock = generateDiscount();
       const id = mock.id;
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest
         .spyOn(repository, 'merge')
         .mockReturnValue({ ...mock, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Discount with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Discount does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Discount with ID: ${id} not found`),
       );
     });

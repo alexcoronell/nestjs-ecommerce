@@ -9,9 +9,12 @@ import {
   OneToMany,
 } from 'typeorm';
 
+/* Enums */
+import { SaleStatusEnum } from '@commons/enums/sale-status.enum';
+
+/* Entities */
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { Shipment } from '@shipment/entities/shipment.entity';
-import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
 import { SaleDetail } from '@sale_detail/entities/sale-detail.entity';
 import { User } from '@user/entities/user.entity';
 
@@ -45,12 +48,13 @@ export class Sale {
   shippingAddress: string;
 
   @Column({
-    name: 'billing_status',
-    type: 'varchar',
-    length: 100,
+    type: 'enum',
+    name: 'shipping_status',
+    enum: SaleStatusEnum,
+    default: SaleStatusEnum.PENDING_PAYMENT,
     nullable: false,
   })
-  shippingStatus: string;
+  status: SaleStatusEnum;
 
   @UpdateDateColumn({
     name: 'cancelled_at',
@@ -70,7 +74,7 @@ export class Sale {
 
   /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.sales)
-  @JoinColumn({ name: 'customer_id' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => User, (user) => user.cancelledSales)
@@ -81,13 +85,9 @@ export class Sale {
   @JoinColumn({ name: 'payment_method_id' })
   paymentMethod: PaymentMethod;
 
-  @ManyToOne(() => ShippingCompany, (shippingCompany) => shippingCompany.sales)
-  @JoinColumn({ name: 'shipping_company_id' })
-  shippingCompany: ShippingCompany;
-
   @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.sale)
-  details: SaleDetail[];
+  details?: SaleDetail[];
 
   @OneToMany(() => Shipment, (shipment) => shipment.sale)
-  shipments: Shipment[];
+  shipment?: Shipment;
 }

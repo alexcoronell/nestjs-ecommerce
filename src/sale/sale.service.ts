@@ -10,6 +10,9 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
+import { User } from '@user/entities/user.entity';
 
 @Injectable()
 export class SaleService {
@@ -48,7 +51,7 @@ export class SaleService {
     };
   }
 
-  async findAllByUserId(userId: number): Promise<Result<Sale[]>> {
+  async findAllByUser(userId: number): Promise<Result<Sale[]>> {
     const [sales, total] = await this.repo.findAndCount({
       where: {
         user: { id: userId },
@@ -65,7 +68,7 @@ export class SaleService {
     };
   }
 
-  async findAllByPaymentMethodId(
+  async findAllByPaymentMethod(
     paymentMethodId: number,
   ): Promise<Result<Sale[]>> {
     const [sales, total] = await this.repo.findAndCount({
@@ -88,7 +91,7 @@ export class SaleService {
   async findOne(id: Sale['id']): Promise<Result<Sale>> {
     const sale = await this.repo.findOne({
       where: { id, isCancelled: false },
-      relations: ['user', 'paymentMethod', 'shippingCompany'],
+      relations: ['user', 'paymentMethod'],
     });
 
     if (!sale) {
@@ -98,26 +101,29 @@ export class SaleService {
     return { statusCode: HttpStatus.OK, data: sale };
   }
 
-  async create(dto: CreateSaleDto): Promise<Result<Sale>> {
+  async create(
+    dto: CreateSaleDto,
+    userId: AuthRequest['user'],
+  ): Promise<Result<Sale>> {
     const paymentMethodId = dto.paymentMethod;
-    const shippingCompanyId = dto.shippingCompany;
-    const sale = this.repo.create({
+    const newSale = {
       ...dto,
-      paymentMethod: { id: paymentMethodId },
-      shippingCompany: { id: shippingCompanyId },
-    });
+      paymentMethod: { id: paymentMethodId } as PaymentMethod,
+      user: { id: userId } as User,
+    };
+    const sale = this.repo.create(newSale);
     const savedSale = await this.repo.save(sale);
     return { statusCode: HttpStatus.CREATED, data: savedSale };
   }
 
-  async cancel(id: number) {
+  async cancel(id: number, userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
-    const changes = { id, isCancelled: true };
+    const changes = { isCancelled: true, cancelledBy: { id: userId } };
     this.repo.merge(data as Sale, changes);
     return this.repo.save(data as Sale).then((sale) => ({
       statusCode: HttpStatus.OK,
       data: sale,
-      message: `The Sale with id: ${id} cancelled successfully`,
+      message: `The Sale with ID: ${id} cancelled successfully`,
     }));
   }
 }

@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
+
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 
@@ -23,12 +34,12 @@ export class SaleController {
 
   @Get('user/:userId')
   findAllByUser(@Param('userId') userId: number) {
-    return this.saleService.findAllByUserId(userId);
+    return this.saleService.findAllByUser(userId);
   }
 
   @Get('payment-method/:paymentMethod')
   findAllByPaymentMethod(@Param('paymentMethodId') paymentMethodId: number) {
-    return this.saleService.findAllByPaymentMethodId(paymentMethodId);
+    return this.saleService.findAllByPaymentMethod(paymentMethodId);
   }
 
   @Get(':id')
@@ -37,12 +48,14 @@ export class SaleController {
   }
 
   @Post()
-  create(@Body() dto: CreateSaleDto) {
-    return this.saleService.create(dto);
+  create(@Body() dto: CreateSaleDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.saleService.create(dto, userId);
   }
 
   @Delete(':id')
-  cancel(@Param('id') id: number) {
-    return this.saleService.cancel(+id);
+  cancel(@Param('id') id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.saleService.cancel(+id, userId);
   }
 }

@@ -1,5 +1,13 @@
-import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  Min,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { SaleStatusEnum } from '@commons/enums/sale-status.enum';
 
 export class CreateSaleDto {
   @IsNumber()
@@ -13,20 +21,16 @@ export class CreateSaleDto {
   @ApiProperty()
   shippingAddress: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsEnum(SaleStatusEnum, {
+    message: `Sale Status must be a valid enum value: ${Object.values(SaleStatusEnum).join(', ')}`,
+  })
+  @IsOptional()
   @ApiProperty()
-  shippingStatus: string;
+  readonly status?: SaleStatusEnum;
 
   @IsNumber()
   @Min(0)
   @IsNotEmpty()
   @ApiProperty()
   paymentMethod: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsNotEmpty()
-  @ApiProperty()
-  shippingCompany: number;
 }

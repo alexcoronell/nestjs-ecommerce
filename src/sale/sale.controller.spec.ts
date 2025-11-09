@@ -7,9 +7,13 @@ import { SaleController } from './sale.controller';
 /* Services */
 import { SaleService } from './sale.service';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateSaleDto } from './dto/create-sale.dto';
 
+/* Faker */
 import { createSale, generateSale, generateManySales } from '@faker/sale.faker';
 
 describe('SaleController', () => {
@@ -24,8 +28,8 @@ describe('SaleController', () => {
     countAll: jest.fn().mockResolvedValue(mockSales.length),
     count: jest.fn().mockResolvedValue(mockSales.length),
     findAll: jest.fn().mockResolvedValue(mockSales),
-    findAllByCustomerId: jest.fn().mockResolvedValue(mockSales),
-    findAllByPaymentMethodId: jest.fn().mockResolvedValue(mockSales),
+    findAllByUser: jest.fn().mockResolvedValue(mockSales),
+    findAllByPaymentMethod: jest.fn().mockResolvedValue(mockSales),
     findOne: jest.fn().mockResolvedValue(mockSale),
     create: jest.fn().mockResolvedValue(mockNewSale),
     cancel: jest.fn().mockResolvedValue(1),
@@ -70,20 +74,20 @@ describe('SaleController', () => {
 
     it('should call findAllByCustomerId sale service', async () => {
       const userId = 1;
-      expect(await controller.findAllBycustomer(userId)).toBe(mockSales);
-      expect(service.findAllByCustomerId).toHaveBeenCalledWith(userId);
-      expect(service.findAllByCustomerId).toHaveBeenCalledTimes(1);
+      expect(await controller.findAllByUser(userId)).toBe(mockSales);
+      expect(service.findAllByUser).toHaveBeenCalledWith(userId);
+      expect(service.findAllByUser).toHaveBeenCalledTimes(1);
     });
 
-    it('should call findAllByPaymentMethodId sale service', async () => {
+    it('should call findAllByPaymentMethod sale service', async () => {
       const paymentMethodId = 1;
       expect(await controller.findAllByPaymentMethod(paymentMethodId)).toBe(
         mockSales,
       );
-      expect(service.findAllByPaymentMethodId).toHaveBeenCalledWith(
+      expect(service.findAllByPaymentMethod).toHaveBeenCalledWith(
         paymentMethodId,
       );
-      expect(service.findAllByPaymentMethodId).toHaveBeenCalledTimes(1);
+      expect(service.findAllByPaymentMethod).toHaveBeenCalledTimes(1);
     });
 
     it('should call findOne sale service', async () => {
@@ -96,8 +100,9 @@ describe('SaleController', () => {
 
   describe('Create sale controller', () => {
     it('should call create sale service', async () => {
-      await controller.create(mockNewSale);
-      expect(service.create).toHaveBeenCalledWith(mockNewSale);
+      const request = { user: 1 };
+      await controller.create(mockNewSale, request as AuthRequest);
+      expect(service.create).toHaveBeenCalledWith(mockNewSale, request.user);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -105,8 +110,9 @@ describe('SaleController', () => {
   describe('Cancel sale controller', () => {
     it('should call cancel sale service', async () => {
       const id = 1;
-      await controller.cancel(id);
-      expect(service.cancel).toHaveBeenCalledWith(id);
+      const request = { user: 1 };
+      await controller.cancel(id, request as AuthRequest);
+      expect(service.cancel).toHaveBeenCalledWith(id, request.user);
       expect(service.cancel).toHaveBeenCalledTimes(1);
     });
   });

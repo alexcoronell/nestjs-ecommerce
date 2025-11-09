@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
@@ -13,6 +12,7 @@ import { Sale } from './entities/sale.entity';
 
 /* Faker */
 import { generateSale, generateManySales } from '@faker/sale.faker';
+import { User } from '@user/entities/user.entity';
 
 describe('SaleService', () => {
   let service: SaleService;
@@ -73,19 +73,18 @@ describe('SaleService', () => {
       expect(data).toEqual(mocks);
     });
 
-    it('should return all sales by customer id', async () => {
-      const customerId = 1;
+    it('should return all sales by User id', async () => {
+      const userId = 1;
       const mocks = generateManySales(10);
       jest
         .spyOn(repository, 'findAndCount')
         .mockResolvedValue([mocks, mocks.length]);
 
-      const { statusCode, data, total } =
-        await service.findAllByCustomerId(customerId);
+      const { statusCode, data, total } = await service.findAllByUser(userId);
 
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { customer: customerId, isCancelled: false },
+        where: { user: { id: userId }, isCancelled: false },
         order: { saleDate: 'DESC' },
       });
       expect(statusCode).toBe(200);
@@ -101,11 +100,11 @@ describe('SaleService', () => {
         .mockResolvedValue([mocks, mocks.length]);
 
       const { statusCode, data, total } =
-        await service.findAllByPaymentMethodId(paymentMethodId);
+        await service.findAllByPaymentMethod(paymentMethodId);
 
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { paymentMethod: paymentMethodId, isCancelled: false },
+        where: { paymentMethod: { id: paymentMethodId }, isCancelled: false },
         order: { saleDate: 'DESC' },
       });
       expect(statusCode).toBe(200);
@@ -123,7 +122,7 @@ describe('SaleService', () => {
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.findOne).toHaveBeenCalledWith({
         where: { id, isCancelled: false },
-        relations: ['user', 'paymentMethod', 'shippingCompany'],
+        relations: ['user', 'paymentMethod'],
       });
       expect(statusCode).toBe(200);
       expect(data).toEqual(mock);
@@ -142,12 +141,16 @@ describe('SaleService', () => {
   describe('create sale service', () => {
     it('should create a new sale', async () => {
       const mock = generateSale();
+      const createdBy: User['id'] = 1;
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
-      expect(repository.create).toHaveBeenCalledWith(mock);
-      expect(repository.save).toHaveBeenCalledWith(mock);
+      const mockNewSale = {
+        ...mock,
+        paymentMethod: mock.paymentMethod.id,
+      };
+
+      const { statusCode, data } = await service.create(mockNewSale, createdBy);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
@@ -157,33 +160,37 @@ describe('SaleService', () => {
     it('should cancel a sale by id', async () => {
       const mock = generateSale();
       const id = mock.id;
+      const userId: User['id'] = 1;
       jest
         .spyOn(service, 'findOne')
         .mockResolvedValue({ statusCode: 200, data: mock });
       jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data, message } = await service.cancel(id);
+      const { statusCode, data, message } = await service.cancel(id, userId);
       expect(service.findOne).toHaveBeenCalledWith(id);
       expect(repository.merge).toHaveBeenCalledWith(mock, {
-        id,
         isCancelled: true,
+        cancelledBy: { id: userId },
       });
       expect(repository.save).toHaveBeenCalledWith(mock);
       expect(statusCode).toBe(200);
       expect(data).toEqual(mock);
-      expect(message).toBe(`The Sale with id: ${id} cancelled successfully`);
+      expect(message).toBe(`The Sale with ID: ${id} cancelled successfully`);
     });
 
     it('should throw NotFoundException if sale does not exist', async () => {
       const id = 999;
+      const userId: User['id'] = 1;
       jest
         .spyOn(service, 'findOne')
         .mockRejectedValue(
           new NotFoundException(`Sale with ID ${id} not found`),
         );
 
-      await expect(service.cancel(id)).rejects.toThrow(NotFoundException);
+      await expect(service.cancel(id, userId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

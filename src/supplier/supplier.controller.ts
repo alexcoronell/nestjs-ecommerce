@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { SupplierService } from './supplier.service';
@@ -93,8 +95,9 @@ export class SupplierController
    * @returns The created supplier entity.
    */
   @Post()
-  create(@Body() payload: CreateSupplierDto) {
-    return this.supplierService.create(payload);
+  create(@Body() payload: CreateSupplierDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.supplierService.create(payload, userId);
   }
 
   /**
@@ -106,9 +109,11 @@ export class SupplierController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() updateCategoryDto: UpdateSupplierDto,
   ) {
-    return this.supplierService.update(+id, updateCategoryDto);
+    const userId = req.user;
+    return this.supplierService.update(+id, userId, updateCategoryDto);
   }
 
   /**
@@ -117,7 +122,8 @@ export class SupplierController
    * @returns The result of the remove operation.
    */
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.supplierService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.supplierService.remove(+id, userId);
   }
 }

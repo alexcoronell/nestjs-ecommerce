@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Supplier } from '@supplier/entities/supplier.entity';
@@ -129,8 +130,12 @@ export class SupplierService
    * @param dto - The data transfer object containing the Supplier data to create.
    * @returns An object containing the HTTP status code, the created Supplier, and a success message.
    */
-  async create(dto: CreateSupplierDto) {
-    const newSupplier = this.repo.create(dto);
+  async create(dto: CreateSupplierDto, userId: AuthRequest['user']) {
+    const newSupplier = this.repo.create({
+      ...dto,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+    });
     const supplier = await this.repo.save(newSupplier);
     return {
       statusCode: HttpStatus.CREATED,
@@ -146,9 +151,16 @@ export class SupplierService
    * @returns An object containing the HTTP status code, the updated Supplier, and a success message.
    * @throws NotFoundException if the Supplier is not found.
    */
-  async update(id: number, changes: UpdateSupplierDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateSupplierDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as Supplier, changes);
+    this.repo.merge(data as Supplier, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data as Supplier);
     return {
       statusCode: HttpStatus.OK,
@@ -164,11 +176,14 @@ export class SupplierService
    * @returns An object containing the HTTP status code and a success message.
    * @throws NotFoundException if the Supplier is not found.
    */
-  async remove(id: Supplier['id']) {
+  async remove(id: Supplier['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
     const changes = { isDeleted: true };
-    this.repo.merge(data as Supplier, changes);
+    this.repo.merge(data as Supplier, {
+      ...changes,
+      deletedBy: { id: userId },
+    });
     await this.repo.save(data as Supplier);
     return {
       statusCode: HttpStatus.OK,

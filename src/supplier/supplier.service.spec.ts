@@ -10,6 +10,7 @@ import { SupplierService } from './supplier.service';
 
 /* Entity */
 import { Supplier } from './entities/supplier.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
@@ -147,23 +148,25 @@ describe('SupplierService', () => {
   describe('create supplier services', () => {
     it('create should return a supplier', async () => {
       const supplier = generateSupplier();
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'create').mockReturnValue(supplier);
       jest.spyOn(repository, 'save').mockResolvedValue(supplier);
 
-      const { statusCode, data } = await service.create(supplier);
+      const { statusCode, data } = await service.create(supplier, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(supplier);
     });
 
     it('create should return Conflict Exception when name supplier exists', async () => {
       const supplier = generateSupplier();
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'create').mockReturnValue(supplier);
       jest.spyOn(repository, 'save').mockResolvedValue(supplier);
 
       try {
-        await service.create(supplier);
+        await service.create(supplier, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Supplier ${supplier.name} already exists`);
@@ -175,6 +178,8 @@ describe('SupplierService', () => {
     it('update should return message: have been modified', async () => {
       const supplier = generateSupplier();
       const id = supplier.id;
+      const userId: User['id'] = 1;
+
       const changes: UpdateSupplierDto = { name: 'newName' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(supplier);
@@ -183,7 +188,7 @@ describe('SupplierService', () => {
         .mockReturnValue({ ...supplier, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(supplier);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -193,10 +198,11 @@ describe('SupplierService', () => {
 
     it('update should throw NotFoundException if Supplier does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Supplier with id: ${id} not found`);
@@ -208,6 +214,7 @@ describe('SupplierService', () => {
     it('remove should return status and message', async () => {
       const supplier = generateSupplier();
       const id = supplier.id;
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(supplier);
       jest
@@ -215,16 +222,17 @@ describe('SupplierService', () => {
         .mockReturnValue({ ...supplier, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(supplier);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Supplier with id: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if supplier does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Supplier with id: ${id} not found`),
       );
     });

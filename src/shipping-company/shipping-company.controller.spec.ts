@@ -10,6 +10,9 @@ import { ShippingCompanyService } from './shipping-company.service';
 /* Entities */
 import { ShippingCompany } from './entities/shipping-company.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateShippingCompanyDto } from './dto/create-shipping-company.dto';
 
@@ -93,7 +96,8 @@ describe('ShippingCompanyController', () => {
 
   describe('create shipping companies controller', () => {
     it('should call create shipping company service', async () => {
-      await controller.create(mockNewShippingCompany);
+      const request = { user: 1 };
+      await controller.create(mockNewShippingCompany, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -101,14 +105,16 @@ describe('ShippingCompanyController', () => {
   describe('update shipping companies controller', () => {
     it('should call update shipping companies service', async () => {
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      const request = { user: 1 };
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove shipping companies controller', () => {
     it('shoudl call remove shipping companies service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

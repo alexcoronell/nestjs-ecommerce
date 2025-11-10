@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { ShippingCompany } from './entities/shipping-company.entity';
@@ -92,8 +93,12 @@ export class ShippingCompanyService
     };
   }
 
-  async create(dto: CreateShippingCompanyDto) {
-    const newItem = this.repo.create(dto);
+  async create(dto: CreateShippingCompanyDto, userId: AuthRequest['user']) {
+    const newItem = this.repo.create({
+      ...dto,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+    });
     const data = await this.repo.save(newItem);
     return {
       statusCode: HttpStatus.CREATED,
@@ -102,9 +107,16 @@ export class ShippingCompanyService
     };
   }
 
-  async update(id: number, changes: UpdateShippingCompanyDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateShippingCompanyDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as ShippingCompany, changes);
+    this.repo.merge(data as ShippingCompany, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data as ShippingCompany);
     return {
       statusCode: HttpStatus.OK,
@@ -113,11 +125,15 @@ export class ShippingCompanyService
     };
   }
 
-  async remove(id: ShippingCompany['id']) {
+  async remove(id: ShippingCompany['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
     const changes = { isDeleted: true };
-    this.repo.merge(data as ShippingCompany, changes);
+    this.repo.merge(data as ShippingCompany, {
+      ...changes,
+      deletedBy: { id: userId },
+      deletedAt: new Date(),
+    });
     await this.repo.save(data as ShippingCompany);
     return {
       statusCode: HttpStatus.OK,

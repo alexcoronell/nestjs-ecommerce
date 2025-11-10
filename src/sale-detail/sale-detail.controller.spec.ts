@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -16,6 +15,7 @@ import { CreateSaleDetailDto } from './dto/create-sale-detail.dto';
 
 /* Faker */
 import {
+  generateNewSaleDetails,
   generateSaleDetail,
   generateManySaleDetails,
 } from '@faker/saleDetail.faker';
@@ -26,7 +26,7 @@ describe('SaleDetailController', () => {
 
   const mockSaleDetail: SaleDetail = generateSaleDetail();
   const mockSaleDetails: SaleDetail[] = generateManySaleDetails(10);
-  const mockNewSaleDetails: CreateSaleDetailDto[] = generateManySaleDetails(5);
+  const mockNewSaleDetails: CreateSaleDetailDto[] = generateNewSaleDetails();
 
   const mockService = {
     count: jest.fn().mockResolvedValue(mockSaleDetails.length),
@@ -74,7 +74,7 @@ describe('SaleDetailController', () => {
     });
 
     it('should call findBySaleId sale details service', async () => {
-      expect(await controller.findBySaleId(mockSaleDetail.sale)).toBe(
+      expect(await controller.findBySaleId(mockSaleDetail.sale.id)).toBe(
         mockSaleDetail,
       );
       expect(service.findBySaleId).toHaveBeenCalledTimes(1);

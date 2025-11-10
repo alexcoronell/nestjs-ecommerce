@@ -18,6 +18,14 @@ export const createSaleDetail = (): CreateSaleDetailDto => ({
   product: faker.number.int({ min: 1, max: 100 }),
 });
 
+export const generateNewSaleDetails = (size = 1) => {
+  const newSaleDetails: CreateSaleDetailDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newSaleDetails.push(createSaleDetail());
+  }
+  return newSaleDetails;
+};
+
 export const generateSaleDetail = (id: number = 1): SaleDetail => ({
   ...createSaleDetail(),
   id,

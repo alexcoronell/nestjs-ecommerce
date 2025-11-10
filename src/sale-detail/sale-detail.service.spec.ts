@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -106,7 +104,7 @@ describe('SaleDetailService', () => {
 
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { sale: saleId },
+        where: { sale: { id: saleId } },
         order: {
           createdAt: 'DESC',
         },
@@ -120,10 +118,16 @@ describe('SaleDetailService', () => {
     it('create should return a Product', async () => {
       const mocks = generateManySaleDetails(5);
 
+      const mockNewSaleDetails = mocks.map((mock) => ({
+        ...mock,
+        sale: mock.sale.id,
+        product: mock.product.id,
+      }));
+
       jest.spyOn(repository, 'create').mockReturnValue(mocks as any);
       jest.spyOn(repository, 'save').mockResolvedValue(mocks as any);
 
-      const { statusCode, data } = await service.create(mocks);
+      const { statusCode, data } = await service.create(mockNewSaleDetails);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mocks);
     });

@@ -192,7 +192,6 @@ describe('SubcategoryService', () => {
       const mock = generateSubcategory();
       const userId: User['id'] = 1;
 
-      jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 

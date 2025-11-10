@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Sale } from '@sale/entities/sale.entity';
@@ -117,28 +118,38 @@ export class ShipmentService
     };
   }
 
-  async create(dto: CreateShipmentDto) {
+  async create(dto: CreateShipmentDto, userId: AuthRequest['user']) {
     const saleId = dto.sale;
     const shippingCompanyId = dto.shippingCompany;
-    const newShipment = this.repo.create({
+
+    const shipment = this.repo.create({
       ...dto,
-      sale: { id: saleId } as Sale,
-      shippingCompany: { id: shippingCompanyId } as ShippingCompany,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+      sale: { id: saleId },
+      shippingCompany: { id: shippingCompanyId },
     });
-    const shipment = await this.repo.save(newShipment);
+
+    const data = await this.repo.save(shipment);
+
     return {
       statusCode: HttpStatus.CREATED,
-      data: shipment,
+      data,
       message: 'The Shipment was created',
     };
   }
 
-  async update(id: Shipment['id'], changes: UpdateShipmentDto) {
+  async update(
+    id: Shipment['id'],
+    userId: AuthRequest['user'],
+    changes: UpdateShipmentDto,
+  ) {
     const { data } = await this.findOne(id);
     const saleId = changes.sale;
     const shippingCompanyId = changes.shippingCompany;
     this.repo.merge(data as Shipment, {
       ...changes,
+      updatedBy: { id: userId },
       sale: { id: saleId } as Sale,
       shippingCompany: { id: shippingCompanyId } as ShippingCompany,
     });
@@ -150,10 +161,14 @@ export class ShipmentService
     };
   }
 
-  async remove(id: Shipment['id']) {
+  async remove(id: Shipment['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true };
+    const changes = {
+      isDeleted: true,
+      deletedBY: { id: userId },
+      deletedAt: new Date(),
+    };
     this.repo.merge(data as Shipment, changes);
     await this.repo.save(data as Shipment);
     return {

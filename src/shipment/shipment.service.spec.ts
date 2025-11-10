@@ -10,6 +10,7 @@ import { ShipmentService } from './shipment.service';
 
 /* Entity */
 import { Shipment } from './entities/shipment.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateShipmentDto } from './dto/update-shipment.dto';
@@ -200,6 +201,7 @@ describe('ShipmentService', () => {
   describe('create shipments services', () => {
     it('should create a shipment', async () => {
       const mock = generateShipment();
+      const userId: User['id'] = 1;
       const newShipment: CreateShipmentDto = {
         ...mock,
         sale: mock.sale.id,
@@ -209,7 +211,10 @@ describe('ShipmentService', () => {
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data, message } = await service.create(newShipment);
+      const { statusCode, data, message } = await service.create(
+        newShipment,
+        userId,
+      );
       expect(repository.create).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(201);
@@ -222,6 +227,7 @@ describe('ShipmentService', () => {
     it('update should return a Shipment', async () => {
       const mock = generateShipment();
       const id = mock.id;
+      const userId: User['id'] = 1;
       const changes: UpdateShipmentDto = createShipment();
 
       jest.spyOn(service, 'findOne').mockResolvedValue({
@@ -231,7 +237,11 @@ describe('ShipmentService', () => {
       jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data, message } = await service.update(id, changes);
+      const { statusCode, data, message } = await service.update(
+        id,
+        userId,
+        changes,
+      );
       expect(service.findOne).toHaveBeenCalledWith(id);
       expect(repository.save).toHaveBeenCalledWith(mock);
       expect(statusCode).toBe(200);
@@ -241,10 +251,11 @@ describe('ShipmentService', () => {
 
     it('update should throw NotFoundException if Shipment does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { shippingCompany: 5 });
+        await service.update(id, userId, { shippingCompany: 5 });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Shipment with ID: ${id} not found`);
@@ -256,6 +267,7 @@ describe('ShipmentService', () => {
     it('remove should return status and message', async () => {
       const mock = generateShipment();
       const id = mock.id;
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest
@@ -263,16 +275,17 @@ describe('ShipmentService', () => {
         .mockReturnValue({ ...mock, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Shipment with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Shipment does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Shipment with ID: ${id} not found`),
       );
     });

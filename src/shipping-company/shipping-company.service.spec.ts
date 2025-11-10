@@ -87,10 +87,10 @@ describe('ShippingCompanyService', () => {
     });
 
     it('findOne should return a shipping companies', async () => {
-      const paymentMethod = generateShippingCompany();
-      const id = paymentMethod.id;
+      const shippingCompany = generateShippingCompany();
+      const id = shippingCompany.id;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(paymentMethod);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(shippingCompany);
 
       const { statusCode, data } = await service.findOne(id);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
@@ -99,7 +99,7 @@ describe('ShippingCompanyService', () => {
         where: { id, isDeleted: false },
       });
       expect(statusCode).toBe(200);
-      expect(data).toEqual(paymentMethod);
+      expect(data).toEqual(shippingCompany);
     });
 
     it('findOne should throw NotFoundException if shipping companies does not exist', async () => {
@@ -126,15 +126,15 @@ describe('ShippingCompanyService', () => {
     });
 
     it('findOneByName should return a shipping companies', async () => {
-      const paymentMethod = generateShippingCompany();
-      const name = paymentMethod.name;
+      const shippingCompany = generateShippingCompany();
+      const name = shippingCompany.name;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(paymentMethod);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(shippingCompany);
 
       const { statusCode, data } = await service.findOneByName(name);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(data).toEqual(paymentMethod);
+      expect(data).toEqual(shippingCompany);
     });
 
     it('findOneByName should throw NotFoundException if Shipping Company does not exist', async () => {
@@ -154,14 +154,17 @@ describe('ShippingCompanyService', () => {
 
   describe('create shipping companies services', () => {
     it('create should return a Shipping Company', async () => {
-      const paymentMethod = generateShippingCompany();
+      const shippingCompany = generateShippingCompany();
       const userId: User['id'] = 1;
-      jest.spyOn(repository, 'create').mockReturnValue(paymentMethod);
-      jest.spyOn(repository, 'save').mockResolvedValue(paymentMethod);
+      jest.spyOn(repository, 'create').mockReturnValue(shippingCompany);
+      jest.spyOn(repository, 'save').mockResolvedValue(shippingCompany);
 
-      const { statusCode, data } = await service.create(paymentMethod, userId);
+      const { statusCode, data } = await service.create(
+        shippingCompany,
+        userId,
+      );
       expect(statusCode).toBe(201);
-      expect(data).toEqual(paymentMethod);
+      expect(data).toEqual(shippingCompany);
     });
 
     it('create should return Conflict Exception when name Shipping Company exists', async () => {

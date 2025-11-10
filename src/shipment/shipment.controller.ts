@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { ShipmentService } from './shipment.service';
@@ -64,20 +66,24 @@ export class ShipmentController
   }
 
   @Post()
-  create(@Body() payload: CreateShipmentDto) {
-    return this.shipmentService.create(payload);
+  create(@Body() payload: CreateShipmentDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.shipmentService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() changes: UpdateShipmentDto,
   ) {
-    return this.shipmentService.update(+id, changes);
+    const userId = req.user;
+    return this.shipmentService.update(+id, userId, changes);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.shipmentService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.shipmentService.remove(+id, userId);
   }
 }

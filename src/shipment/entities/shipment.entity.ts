@@ -9,7 +9,7 @@ import { User } from '@user/entities/user.entity';
 import { ShipmentStatusEnum } from '@commons/enums/shipment-status.enum';
 
 @Entity('shipments')
-@Unique(['sale', 'shippingCompany'])
+@Unique(['trackingNumber', 'shippingCompany'])
 export class Shipment extends BaseEntity {
   @Column({
     name: 'tracking_number',

@@ -10,6 +10,9 @@ import { SubcategoryService } from './subcategory.service';
 /* Entities */
 import { Subcategory } from './entities/subcategory.entity';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* DTO's */
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 
@@ -96,7 +99,8 @@ describe('SubcategoryController', () => {
 
   describe('create subcategory controller', () => {
     it('should call create subcategory service', async () => {
-      await controller.create(mockNewSubcategory);
+      const request = { user: 1 };
+      await controller.create(mockNewSubcategory, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -104,14 +108,16 @@ describe('SubcategoryController', () => {
   describe('update subcategory controller', () => {
     it('should call update subcategory service', async () => {
       const changes = { name: 'newName' };
-      await controller.update(1, changes);
+      const request = { user: 1 };
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove subcategory controller', () => {
     it('shoudl call remove subcategory service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

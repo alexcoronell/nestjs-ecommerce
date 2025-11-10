@@ -4,9 +4,9 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
-import { Category } from '@category/entities/category.entity';
 import { Subcategory } from './entities/subcategory.entity';
 
 /* DTO's */
@@ -89,7 +89,7 @@ export class SubcategoryService
       where: { id, isDeleted: false },
     });
     if (!data) {
-      throw new NotFoundException(`The Subcategory with id: ${id} not found`);
+      throw new NotFoundException(`The Subcategory with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -113,13 +113,15 @@ export class SubcategoryService
     };
   }
 
-  async create(dto: CreateSubcategoryDto) {
+  async create(dto: CreateSubcategoryDto, userId: AuthRequest['user']) {
     const categoryId = dto.category;
-    const newProduct = {
+
+    const newSubcategory = this.repo.create({
       ...dto,
-      category: { id: categoryId } as Category,
-    };
-    const newSubcategory = this.repo.create(newProduct);
+      category: { id: categoryId },
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
+    });
     const data = await this.repo.save(newSubcategory);
     return {
       statusCode: HttpStatus.CREATED,
@@ -128,27 +130,38 @@ export class SubcategoryService
     };
   }
 
-  async update(id: number, changes: UpdateSubcategoryDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateSubcategoryDto,
+  ) {
     const { data } = await this.findOne(id);
     const categoryId = changes.category;
-    this.repo.merge(data, { ...changes, category: { id: categoryId } });
+    this.repo.merge(data, {
+      ...changes,
+      category: { id: categoryId },
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Subcategory with id: ${id} has been modified`,
+      message: `The Subcategory with ID: ${id} has been modified`,
     };
   }
 
-  async remove(id: Subcategory['id']) {
+  async remove(id: Subcategory['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
-
-    const changes = { isDeleted: true };
+    const changes = {
+      isDeleted: true,
+      deletedBy: { id: userId },
+      deletedAt: new Date(),
+    };
     this.repo.merge(data, changes);
     await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Subcategory with id: ${id} has been deleted`,
+      message: `The Subcategory with ID: ${id} has been deleted`,
     };
   }
 }

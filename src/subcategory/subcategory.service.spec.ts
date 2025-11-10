@@ -10,6 +10,7 @@ import { SubcategoryService } from './subcategory.service';
 
 /* Entity */
 import { Subcategory } from './entities/subcategory.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
@@ -146,7 +147,7 @@ describe('SubcategoryService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Subcategory with id: ${id} not found`);
+        expect(error.message).toBe(`The Subcategory with ID: ${id} not found`);
       }
     });
 
@@ -155,7 +156,7 @@ describe('SubcategoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Subcategory with id: ${id} not found`),
+        new NotFoundException(`The Subcategory with ID: ${id} not found`),
       );
     });
 
@@ -189,6 +190,8 @@ describe('SubcategoryService', () => {
   describe('create subcategory services', () => {
     it('create should return a subcategory', async () => {
       const mock = generateSubcategory();
+      const userId: User['id'] = 1;
+
       jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
@@ -198,13 +201,18 @@ describe('SubcategoryService', () => {
         category: mock.category.id,
       };
 
-      const { statusCode, data } = await service.create(mockNewSubcategory);
+      const { statusCode, data } = await service.create(
+        mockNewSubcategory,
+        userId,
+      );
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
 
     it('create should return Conflict Exception when name subcategory exists with the same category', async () => {
       const mock = generateSubcategory();
+      const userId: User['id'] = 1;
+
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
@@ -214,7 +222,7 @@ describe('SubcategoryService', () => {
       };
 
       try {
-        await service.create(mockNewSubcategory);
+        await service.create(mockNewSubcategory, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
@@ -228,6 +236,8 @@ describe('SubcategoryService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateSubcategory();
       const id = mock.id;
+      const userId: User['id'] = 1;
+
       const changes: UpdateSubcategoryDto = {
         name: 'newName',
         category: mock.category.id,
@@ -237,19 +247,21 @@ describe('SubcategoryService', () => {
       jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
-        `The Subcategory with id: ${id} has been modified`,
+        `The Subcategory with ID: ${id} has been modified`,
       );
     });
 
     it('update should return Conflict Exception when name subcategory exists with the same category', async () => {
       const mock = generateSubcategory();
       const id = mock.id;
+      const userId: User['id'] = 1;
+
       const changes: UpdateSubcategoryDto = { name: 'newName' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
@@ -257,7 +269,7 @@ describe('SubcategoryService', () => {
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        await service.update(id, changes);
+        await service.update(id, userId, changes);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
@@ -268,13 +280,15 @@ describe('SubcategoryService', () => {
 
     it('update should throw NotFoundException if Subcategory does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
+
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Subcategory with id: ${id} not found`);
+        expect(error.message).toBe(`The Subcategory with ID: ${id} not found`);
       }
     });
   });
@@ -283,6 +297,7 @@ describe('SubcategoryService', () => {
     it('remove should return status and message', async () => {
       const data = generateSubcategory();
       const id = data.id;
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(data);
       jest
@@ -290,19 +305,21 @@ describe('SubcategoryService', () => {
         .mockReturnValue({ ...data, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(data);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
-        `The Subcategory with id: ${id} has been deleted`,
+        `The Subcategory with ID: ${id} has been deleted`,
       );
     });
 
     it('remove should throw NotFoundException if subcategory does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
+
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
-        new NotFoundException(`The Subcategory with id: ${id} not found`),
+      await expect(service.remove(id, userId)).rejects.toThrowError(
+        new NotFoundException(`The Subcategory with ID: ${id} not found`),
       );
     });
   });

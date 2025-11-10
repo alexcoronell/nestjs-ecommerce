@@ -118,7 +118,11 @@ export class SaleService {
 
   async cancel(id: number, userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
-    const changes = { isCancelled: true, cancelledBy: { id: userId } };
+    const changes = {
+      isCancelled: true,
+      cancelledAt: new Date(),
+      cancelledBy: { id: userId },
+    };
     this.repo.merge(data as Sale, changes);
     return this.repo.save(data as Sale).then((sale) => ({
       statusCode: HttpStatus.OK,

@@ -171,6 +171,7 @@ describe('SaleService', () => {
       expect(service.findOne).toHaveBeenCalledWith(id);
       expect(repository.merge).toHaveBeenCalledWith(mock, {
         isCancelled: true,
+        cancelledAt: new Date(),
         cancelledBy: { id: userId },
       });
       expect(repository.save).toHaveBeenCalledWith(mock);

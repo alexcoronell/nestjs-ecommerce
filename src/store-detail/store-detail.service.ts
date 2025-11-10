@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Entities */
 import { StoreDetail } from './entities/store-detail.entity';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
@@ -33,9 +33,16 @@ export class StoreDetailService {
     };
   }
 
-  async update(id: number, changes: UpdateStoreDetailDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateStoreDetailDto,
+  ) {
     const { data } = await this.findOne(id);
-    this.repo.merge(data as StoreDetail, changes);
+    this.repo.merge(data as StoreDetail, {
+      ...changes,
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data as StoreDetail);
     return {
       statusCode: HttpStatus.OK,

@@ -5,6 +5,7 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 
 /* Services */
@@ -12,6 +13,7 @@ import { StoreDetailService } from './store-detail.service';
 
 /* Entities */
 import { StoreDetail } from './entities/store-detail.entity';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
@@ -30,8 +32,10 @@ export class StoreDetailController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() payload: UpdateStoreDetailDto,
   ): Promise<Result<StoreDetail>> {
-    return this.storeDetailService.update(+id, payload);
+    const userId = req.user;
+    return this.storeDetailService.update(+id, userId, payload);
   }
 }

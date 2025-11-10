@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -12,6 +10,7 @@ import { StoreDetailService } from './store-detail.service';
 
 /* Entity */
 import { StoreDetail } from './entities/store-detail.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
@@ -86,13 +85,14 @@ describe('StoreDetailService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateStoreDetail();
       const id = mock.id;
+      const userId: User['id'] = 1;
       const changes: UpdateStoreDetailDto = { name: 'newName' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -102,10 +102,11 @@ describe('StoreDetailService', () => {
 
     it('update should throw NotFoundException if Store Details does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`Store Details not found`);

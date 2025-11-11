@@ -10,7 +10,6 @@ import { CreatePurchaseDetailDto } from '@purchase_detail/dto/create-purchase-de
 import { generateBaseEntity } from '@faker/base.faker';
 import { generateProduct } from './product.faker';
 import { generatePurchase } from './purchase.faker';
-import { generateUser } from './user.faker';
 
 export const createPurchaseDetail = (): CreatePurchaseDetailDto => {
   return {
@@ -22,15 +21,20 @@ export const createPurchaseDetail = (): CreatePurchaseDetailDto => {
   };
 };
 
+export const generateNewPurchaseDetails = (size = 1) => {
+  const newPurchaseDetails: CreatePurchaseDetailDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newPurchaseDetails.push(createPurchaseDetail());
+  }
+  return newPurchaseDetails;
+};
+
 export const generatePurchaseDetail = (id: number = 1): PurchaseDetail => ({
   ...generateBaseEntity(id),
   ...createPurchaseDetail(),
   id,
   product: generateProduct(),
   purchase: generatePurchase(),
-  createdBy: generateUser(),
-  updatedBy: generateUser(),
-  deletedBy: null,
 });
 
 export const generateManyPurchaseDetails = (size: number): PurchaseDetail[] => {

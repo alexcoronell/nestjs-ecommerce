@@ -15,7 +15,7 @@ import { CreatePurchaseDetailDto } from './dto/create-purchase-detail.dto';
 
 /* Faker */
 import {
-  createPurchaseDetail,
+  generateNewPurchaseDetails,
   generatePurchaseDetail,
   generateManyPurchaseDetails,
 } from '@faker/purchaseDetail.faker';
@@ -26,9 +26,8 @@ describe('PurchaseDetailController', () => {
 
   const mockPurchaseDetail: PurchaseDetail = generatePurchaseDetail();
   const mockPurchaseDetails: PurchaseDetail[] = generateManyPurchaseDetails(10);
-  const mockNewPurchaseDetail: CreatePurchaseDetailDto[] = [
-    createPurchaseDetail(),
-  ];
+  const mockNewPurchaseDetail: CreatePurchaseDetailDto[] =
+    generateNewPurchaseDetails(3);
 
   const mockService = {
     countAll: jest.fn().mockResolvedValue(mockPurchaseDetails.length),
@@ -84,7 +83,7 @@ describe('PurchaseDetailController', () => {
     });
 
     it('should return purchase details by purchase id', async () => {
-      expect(await controller.findByPurchaseId(mockPurchaseDetail.purchase));
+      expect(await controller.findByPurchaseId(mockPurchaseDetail.purchase.id));
       expect(service.findByPurchaseId).toHaveBeenCalledTimes(1);
     });
   });

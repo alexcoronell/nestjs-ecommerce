@@ -16,7 +16,6 @@ import { ProductImage } from '@product_images/entities/product-image.entity';
 import { ProductSupplier } from '@product_supplier/entities/product-supplier.entity';
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Purchase } from '@purchase/entities/purchase.entity';
-import { PurchaseDetail } from '@purchase_detail/entities/purchase-detail.entity';
 import { Sale } from '@sale/entities/sale.entity';
 import { Shipment } from '@shipment/entities/shipment.entity';
 import { ShippingCompany } from '@shipping_company/entities/shipping-company.entity';
@@ -170,16 +169,6 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Purchase, (items) => items.deletedBy)
   deletedPurchases?: Purchase[];
-
-  /* Purchase Details */
-  @OneToMany(() => PurchaseDetail, (items) => items.createdBy)
-  createdPurchaseDetails?: PurchaseDetail[];
-
-  @OneToMany(() => PurchaseDetail, (items) => items.updatedBy)
-  updatedPurchaseDetails?: PurchaseDetail[];
-
-  @OneToMany(() => PurchaseDetail, (items) => items.deletedBy)
-  deletedPurchaseDetails?: PurchaseDetail[];
 
   /* Sales */
   @OneToMany(() => Sale, (sale) => sale.user)

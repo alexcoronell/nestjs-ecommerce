@@ -6,7 +6,6 @@ import { BaseEntity } from '@commons/entities/baseEntity';
 /* Entities */
 import { Purchase } from '@purchase/entities/purchase.entity';
 import { Product } from '@product/entities/product.entity';
-import { User } from '@user/entities/user.entity';
 
 @Entity('purchase_details')
 @Unique(['purchase', 'product'])
@@ -51,25 +50,4 @@ export class PurchaseDetail extends BaseEntity {
   })
   @JoinColumn({ name: 'product_id' })
   product: Product;
-
-  @ManyToOne(() => User, (user) => user.createdPurchaseDetails, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'created_by_user_id' })
-  createdBy: User;
-
-  @ManyToOne(() => User, (user) => user.updatedPurchaseDetails, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'updated_by_user_id' })
-  updatedBy: User;
-
-  @ManyToOne(() => User, (user) => user.deletedPurchaseDetails, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'deleted_by_user_id' })
-  deletedBy: User | null;
 }

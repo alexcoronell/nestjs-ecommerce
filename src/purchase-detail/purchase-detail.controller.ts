@@ -9,28 +9,15 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 
-/* Interface */
-import { IBaseController } from '@commons/interfaces/i-base-controller';
-
 /* Services */
 import { PurchaseDetailService } from './purchase-detail.service';
-
-/* Entities */
-import { PurchaseDetail } from './entities/purchase-detail.entity';
 
 /* DTO's */
 import { CreatePurchaseDetailDto } from './dto/create-purchase-detail.dto';
 import { UpdatePurchaseDetailDto } from './dto/update-purchase-detail.dto';
 
 @Controller('purchase-detail')
-export class PurchaseDetailController
-  implements
-    IBaseController<
-      PurchaseDetail,
-      CreatePurchaseDetailDto,
-      UpdatePurchaseDetailDto
-    >
-{
+export class PurchaseDetailController {
   constructor(private readonly purchaseDetailService: PurchaseDetailService) {}
 
   @Get('count-all')

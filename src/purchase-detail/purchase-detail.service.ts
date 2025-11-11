@@ -3,9 +3,6 @@ import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-/* Interfaces */
-import { IBaseService } from '@commons/interfaces/i-base-service';
-
 /* Entities */
 import { Product } from '@product/entities/product.entity';
 import { Purchase } from '@purchase/entities/purchase.entity';
@@ -19,14 +16,7 @@ import { UpdatePurchaseDetailDto } from './dto/update-purchase-detail.dto';
 import { Result } from '@commons/types/result.type';
 
 @Injectable()
-export class PurchaseDetailService
-  implements
-    IBaseService<
-      PurchaseDetail,
-      CreatePurchaseDetailDto,
-      UpdatePurchaseDetailDto
-    >
-{
+export class PurchaseDetailService {
   constructor(
     @InjectRepository(PurchaseDetail)
     private readonly repo: Repository<PurchaseDetail>,
@@ -91,8 +81,8 @@ export class PurchaseDetailService
   ): Promise<Result<PurchaseDetail[]>> {
     const createPurchaseDetails = dtos.map((item) => ({
       ...item,
-      product: { id: item.product } as Product,
-      purchase: { id: item.purchase } as Purchase,
+      product: { id: item.product },
+      purchase: { id: item.purchase },
     }));
     const purchaseDetails = await this.repo.create(createPurchaseDetails);
     await this.repo.save(purchaseDetails);

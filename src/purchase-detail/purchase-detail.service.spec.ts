@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -112,10 +110,16 @@ describe('PurchaseDetailService', () => {
     it('create should return a purchase details array', async () => {
       const mocks = generateManyPurchaseDetails(5);
 
+      const mockNewPurchaseDetails = mocks.map((mock) => ({
+        ...mock,
+        purchase: mock.purchase.id,
+        product: mock.product.id,
+      }));
+
       jest.spyOn(repository, 'create').mockReturnValue(mocks as any);
       jest.spyOn(repository, 'save').mockResolvedValue(mocks as any);
 
-      const { statusCode, data } = await service.create(mocks);
+      const { statusCode, data } = await service.create(mockNewPurchaseDetails);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mocks);
     });

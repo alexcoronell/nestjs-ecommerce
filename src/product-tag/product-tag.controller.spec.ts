@@ -7,6 +7,9 @@ import { ProductTagController } from './product-tag.controller';
 /* Services */
 import { ProductTagService } from './product-tag.service';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* Entities */
 import { ProductTag } from './entities/product-tag.entity';
 
@@ -90,7 +93,8 @@ describe('ProductTagController', () => {
 
   describe('create product tag controller', () => {
     it('should call create product tag service', async () => {
-      await controller.create(mockNewProductTag);
+      const request = { user: 1 };
+      await controller.create(mockNewProductTag, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });

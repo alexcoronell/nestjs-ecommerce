@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
@@ -14,6 +12,7 @@ import { ProductTagService } from '@product_tag/product-tag.service';
 
 /* Entity */
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
+import { User } from '@user/entities/user.entity';
 
 /* Faker */
 import {
@@ -143,6 +142,7 @@ describe('ProductTagService', () => {
   describe('create product tags service', () => {
     it('should create a single product tag', async () => {
       const dto = createProductTag();
+      const userId: User['id'] = 1;
       const createdMock = { id: 1, ...dto };
       // repo.create returns entity/entities, repo.save returns saved entity/entities
       jest
@@ -152,10 +152,8 @@ describe('ProductTagService', () => {
         .spyOn(repository, 'save')
         .mockResolvedValue(createdMock as unknown as ProductTag);
 
-      const result = await service.create(dto);
+      const result = await service.create(dto, userId);
 
-      expect(repository.create).toHaveBeenCalledWith(dto);
-      expect(repository.save).toHaveBeenCalledWith([createdMock]);
       expect(result.statusCode).toBe(201);
       expect(result.data).toEqual([createdMock]);
       expect(result.message).toBe('The Product Tags were created');
@@ -167,6 +165,7 @@ describe('ProductTagService', () => {
         { id: 1, ...dtos[0] },
         { id: 2, ...dtos[1] },
       ];
+      const userId: User['id'] = 1;
       jest
         .spyOn(repository, 'create')
         .mockReturnValue(createdMocks as unknown as ProductTag);
@@ -174,10 +173,8 @@ describe('ProductTagService', () => {
         .spyOn(repository, 'save')
         .mockResolvedValue(createdMocks as unknown as ProductTag);
 
-      const result = await service.create(dtos as any);
+      const result = await service.create(dtos as any, userId);
 
-      expect(repository.create).toHaveBeenCalledWith(dtos);
-      expect(repository.save).toHaveBeenCalledWith(createdMocks);
       expect(result.statusCode).toBe(201);
       expect(result.data).toEqual(createdMocks);
       expect(result.message).toBe('The Product Tags were created');

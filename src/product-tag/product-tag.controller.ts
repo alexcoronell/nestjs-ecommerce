@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
 
 /* Services */
 import { ProductTagService } from './product-tag.service';
+
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { CreateProductTagDto } from './dto/create-product-tag.dto';
@@ -36,13 +47,21 @@ export class ProductTagController {
   }
 
   @Post()
-  create(@Body() createProductTagDto: CreateProductTagDto) {
-    return this.productTagService.create(createProductTagDto);
+  create(
+    @Body() createProductTagDto: CreateProductTagDto,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user;
+    return this.productTagService.create(createProductTagDto, userId);
   }
 
   @Post('many')
-  createMany(@Body() dtos: CreateProductTagDto | CreateProductTagDto[]) {
-    return this.productTagService.createMany(dtos);
+  createMany(
+    @Body() dtos: CreateProductTagDto | CreateProductTagDto[],
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user;
+    return this.productTagService.createMany(dtos, userId);
   }
 
   @Delete()

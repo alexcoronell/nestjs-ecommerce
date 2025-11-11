@@ -2,6 +2,9 @@ import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* Entities */
 import { ProductTag } from '@product_tag/entities/product-tag.entity';
 import { Product } from '@product/entities/product.entity';
@@ -75,13 +78,17 @@ export class ProductTagService {
     };
   }
 
-  async create(dto: CreateProductTagDto): Promise<Result<ProductTag>> {
+  async create(
+    dto: CreateProductTagDto,
+    userId: AuthRequest['user'],
+  ): Promise<Result<ProductTag>> {
     const productId = dto.product;
     const tagId = dto.tag;
 
     const productTag = this.repo.create({
-      product: { id: productId } as Product,
-      tag: { id: tagId } as Tag,
+      product: { id: productId },
+      tag: { id: tagId },
+      createdBy: { id: userId },
     });
     await this.repo.save(productTag);
     return {
@@ -93,11 +100,13 @@ export class ProductTagService {
 
   async createMany(
     dtos: CreateProductTagDto | CreateProductTagDto[],
+    userId: AuthRequest['user'],
   ): Promise<Result<ProductTag[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];
     const createProductTags = dtosArray.map((item) => ({
       product: { id: item.product },
       tag: { id: item.tag },
+      createdBy: { id: userId },
     }));
     const newProductTags = this.repo.create(createProductTags);
     const productTags = await this.repo.save(newProductTags);

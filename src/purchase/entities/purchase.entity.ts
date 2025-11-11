@@ -1,22 +1,19 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
-  UpdateDateColumn,
 } from 'typeorm';
+
+import { BaseEntity } from '@commons/entities/baseEntity';
 import { PurchaseDetail } from '@purchase_detail/entities/purchase-detail.entity';
 import { Supplier } from '@supplier/entities/supplier.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('purchases')
-export class Purchase {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Purchase extends BaseEntity {
   @CreateDateColumn({
     name: 'purchase_date',
     type: 'timestamp',
@@ -32,30 +29,6 @@ export class Purchase {
     nullable: false,
   })
   totalAmount: number;
-
-  @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  updatedAt: Date;
-
-  @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
-  deletedAt: Date | null;
-
-  @Column({
-    name: 'is_deleted',
-    type: 'boolean',
-    default: false,
-  })
-  isDeleted: boolean;
 
   /**************************** Relations ****************************/
   @ManyToOne(() => User, (user) => user.createdPurchases, { nullable: false })
@@ -77,5 +50,5 @@ export class Purchase {
   supplier: Supplier;
 
   @OneToMany(() => PurchaseDetail, (detail) => detail.purchase)
-  purchaseDetails: PurchaseDetail[];
+  purchaseDetails?: PurchaseDetail[];
 }

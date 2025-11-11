@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -13,6 +10,7 @@ import { PurchaseService } from './purchase.service';
 
 /* Entity */
 import { Purchase } from './entities/purchase.entity';
+import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -112,7 +110,7 @@ describe('PurchaseService', () => {
         await service.findBySupplierId(supplierId);
       expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { supplier: supplierId, isDeleted: false },
+        where: { supplier: { id: supplierId }, isDeleted: false },
         relations: ['createdBy'],
       });
       expect(statusCode).toBe(200);
@@ -124,11 +122,19 @@ describe('PurchaseService', () => {
   describe('create purchase service', () => {
     it('create should return a Purchase', async () => {
       const mock = generatePurchase();
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const mockNewPurchase = {
+        ...mock,
+        supplier: mock.supplier.id,
+      };
+
+      const { statusCode, data } = await service.create(
+        mockNewPurchase,
+        userId,
+      );
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
@@ -138,13 +144,14 @@ describe('PurchaseService', () => {
     it('update should return a Purchase', async () => {
       const mock = generatePurchase();
       const id = mock.id;
+      const userId: User['id'] = 1;
       const changes: UpdatePurchaseDto = { totalAmount: 100 };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -154,10 +161,11 @@ describe('PurchaseService', () => {
 
     it('update should throw NotFoundException if purchase not found', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { totalAmount: 100 });
+        await service.update(id, userId, { totalAmount: 100 });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Purchase with ID ${id} not found`);
@@ -168,6 +176,7 @@ describe('PurchaseService', () => {
   describe('remove purchase services', () => {
     it('remove should return status and message', async () => {
       const mock = generatePurchase();
+      const userId: User['id'] = 1;
       const id = mock.id;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
@@ -176,16 +185,17 @@ describe('PurchaseService', () => {
         .mockReturnValue({ ...mock, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Purchase with id: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Purchase does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Purchase with ID ${id} not found`),
       );
     });

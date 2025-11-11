@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Purchase } from './entities/purchase.entity';
@@ -83,11 +84,13 @@ export class PurchaseService
     };
   }
 
-  async create(dto: CreatePurchaseDto) {
+  async create(dto: CreatePurchaseDto, userId: AuthRequest['user']) {
     const suppliedId = dto.supplier;
     const newPurchase = this.repo.create({
       ...dto,
       supplier: { id: suppliedId } as Supplier,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const purchase = await this.repo.save(newPurchase);
     return {
@@ -97,10 +100,18 @@ export class PurchaseService
     };
   }
 
-  async update(id: number, changes: UpdatePurchaseDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdatePurchaseDto,
+  ) {
     const { data } = await this.findOne(id);
     const supplierId = changes.supplier;
-    this.repo.merge(data, { ...changes, supplier: { id: supplierId } });
+    this.repo.merge(data, {
+      ...changes,
+      supplier: { id: supplierId },
+      updatedBy: { id: userId },
+    });
     const rta = await this.repo.save(data);
     return {
       statusCode: HttpStatus.OK,
@@ -109,10 +120,14 @@ export class PurchaseService
     };
   }
 
-  async remove(id: Purchase['id']) {
+  async remove(id: Purchase['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true };
+    const changes = {
+      isDeleted: true,
+      deletedBy: { id: userId },
+      deletedAt: new Date(),
+    };
     this.repo.merge(data, changes);
     await this.repo.save(data);
     return {

@@ -7,6 +7,9 @@ import { PurchaseController } from './purchase.controller';
 /* Services */
 import { PurchaseService } from './purchase.service';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* Entities */
 import { Purchase } from './entities/purchase.entity';
 
@@ -82,14 +85,15 @@ describe('PurchaseController', () => {
     });
 
     it('should return a purchase by supplier id', async () => {
-      expect(await controller.findOneBySupplierId(mockPurchase.supplier));
+      expect(await controller.findOneBySupplierId(mockPurchase.supplier.id));
       expect(service.findBySupplierId).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('create purchases controller', () => {
     it('should call create purchase service', async () => {
-      await controller.create(mockNewPurchase);
+      const request = { user: 1 };
+      await controller.create(mockNewPurchase, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -97,14 +101,16 @@ describe('PurchaseController', () => {
   describe('update purchases controller', () => {
     it('should call update purchases service', async () => {
       const changes = { totalAmount: 100 };
-      await controller.update(1, changes);
+      const request = { user: 1 };
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove purchases controller', () => {
     it('should call remove purchases service', async () => {
-      await controller.remove(1);
+      const request = { user: 1 };
+      await controller.remove(1, request as AuthRequest);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

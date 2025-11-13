@@ -1,9 +1,5 @@
-/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -14,6 +10,7 @@ import { ProductSupplierService } from './product-supplier.service';
 
 /* Entity */
 import { ProductSupplier } from './entities/product-supplier.entity';
+import { User } from '@user/entities/user.entity';
 
 /* Faker */
 import {
@@ -145,11 +142,16 @@ describe('ProductSupplierService', () => {
   describe('create product tags service', () => {
     it('create should return a Product', async () => {
       const mock = generateProductSupplier();
-
+      const dto = {
+        ...mock,
+        product: mock.product.id,
+        supplier: mock.supplier.id,
+      };
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const { statusCode, data } = await service.create(dto, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
@@ -159,13 +161,14 @@ describe('ProductSupplierService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateProductSupplier();
       const id = mock.id;
+      const userId: User['id'] = 1;
       const changes: UpdateProductSupplierDto = { costPrice: 100 };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -177,10 +180,11 @@ describe('ProductSupplierService', () => {
 
     it('update should throw NotFoundException if Product does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { costPrice: 100 });
+        await service.update(id, userId, { costPrice: 100 });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(
@@ -194,14 +198,14 @@ describe('ProductSupplierService', () => {
     it('remove should return status and message', async () => {
       const mock = generateProductSupplier();
       const id = mock.id;
-
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest
         .spyOn(repository, 'merge')
         .mockReturnValue({ ...mock, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
         `The Product Supplier with id: ${id} has been deleted`,
@@ -210,9 +214,10 @@ describe('ProductSupplierService', () => {
 
     it('remove should throw NotFoundException if Product Supplier does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Product Supplier with id: ${id} not found`),
       );
     });

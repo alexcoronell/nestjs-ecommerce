@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
@@ -108,11 +109,14 @@ export class ProductSupplierService
 
   async create(
     dto: CreateProductSupplierDto,
+    userId: AuthRequest['user'],
   ): Promise<Result<ProductSupplier>> {
     const newProductSupplier = this.repo.create({
       ...dto,
-      product: { id: dto.product } as Product,
-      supplier: { id: dto.supplier } as Supplier,
+      product: { id: dto.product },
+      supplier: { id: dto.supplier },
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
     const productSupplier = await this.repo.save(newProductSupplier);
     return {
@@ -122,12 +126,17 @@ export class ProductSupplierService
     };
   }
 
-  async update(id: number, changes: UpdateProductSupplierDto) {
+  async update(
+    id: number,
+    userId: AuthRequest['user'],
+    changes: UpdateProductSupplierDto,
+  ) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as ProductSupplier, {
       ...changes,
       product: { id: changes.product } as Product,
       supplier: { id: changes.supplier } as Supplier,
+      updatedBy: { id: userId },
     });
     const rta = await this.repo.save(data as ProductSupplier);
     return {
@@ -137,9 +146,13 @@ export class ProductSupplierService
     };
   }
 
-  async remove(id: ProductSupplier['id']) {
+  async remove(id: ProductSupplier['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
-    const changes = { isDeleted: true };
+    const changes = {
+      isDeleted: true,
+      deletedBy: { id: userId },
+      deletedAt: new Date(),
+    };
     this.repo.merge(data as ProductSupplier, changes);
     await this.repo.save(data as ProductSupplier);
     return {

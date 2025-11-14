@@ -6,7 +6,12 @@ import { Reflector } from '@nestjs/core';
 
 import { AuditInterceptor } from './audit.interceptor';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
+
+/* Interfaces */
 import { PayloadToken } from '@auth/interfaces/token.interface';
+
+/* Enums */
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 
 describe('AuditInterceptor', () => {
   let interceptor: AuditInterceptor;
@@ -38,7 +43,7 @@ describe('AuditInterceptor', () => {
     const request = {
       method: 'POST',
       body: {} as any,
-      user: { user: userId, isAdmin: true } as PayloadToken,
+      user: { user: userId, role: UserRoleEnum.ADMIN } as PayloadToken,
     };
 
     const context: ExecutionContext = {

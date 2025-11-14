@@ -16,6 +16,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 /* Faker */
 import { generateProduct, generateManyProducts } from '@faker/product.faker';
+import { User } from '@user/entities/user.entity';
+import { CreateProductDto } from './dto/create-product.dto';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -145,23 +147,37 @@ describe('ProductService', () => {
   describe('create products services', () => {
     it('create should return a Product', async () => {
       const mock = generateProduct();
+      const userId: User['id'] = 1;
+      const dto: CreateProductDto = {
+        ...mock,
+        category: mock.category.id,
+        subcategory: mock.subcategory.id,
+        brand: mock.brand.id,
+      };
 
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const { statusCode, data } = await service.create(dto, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
 
     it('create should return Conflict Exception when name Product exists', async () => {
       const mock = generateProduct();
+      const userId: User['id'] = 1;
+      const dto: CreateProductDto = {
+        ...mock,
+        category: mock.category.id,
+        subcategory: mock.subcategory.id,
+        brand: mock.brand.id,
+      };
 
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
       try {
-        await service.create(mock);
+        await service.create(dto, userId);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(`Product ${mock.name} already exists`);
@@ -173,13 +189,14 @@ describe('ProductService', () => {
     it('update should return message: have been modified', async () => {
       const mock = generateProduct();
       const id = mock.id;
-      const changes: UpdateProductDto = { name: 'newName' };
+      const userId: User['id'] = 1;
+      const changes: UpdateProductDto = { name: 'new-name' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -189,10 +206,11 @@ describe('ProductService', () => {
 
     it('update should throw NotFoundException if Product does not exist', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
-        await service.update(id, { name: 'newName' });
+        await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(`The Product with id: ${id} not found`);
@@ -204,6 +222,7 @@ describe('ProductService', () => {
     it('remove should return status and message', async () => {
       const mock = generateProduct();
       const id = mock.id;
+      const userId: User['id'] = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest
@@ -211,16 +230,17 @@ describe('ProductService', () => {
         .mockReturnValue({ ...mock, isDeleted: true });
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.remove(id);
+      const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(`The Product with id: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Product does not exist with Rejects', async () => {
       const id = 1;
+      const userId: User['id'] = 1;
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.remove(id)).rejects.toThrowError(
+      await expect(service.remove(id, userId)).rejects.toThrowError(
         new NotFoundException(`The Product with id: ${id} not found`),
       );
     });

@@ -52,23 +52,23 @@ export class Product extends BaseEntity {
   deletedBy: User | null;
 
   @OneToMany(() => ProductDiscount, (items) => items.product)
-  productDiscounts: ProductDiscount[];
+  productDiscounts?: ProductDiscount[];
 
   @OneToMany(() => ProductImage, (items) => items.product)
-  images: ProductImage[];
+  images?: ProductImage[];
 
   @OneToMany(() => ProductSupplier, (items) => items.product)
-  productSuppliers: ProductSupplier[];
+  productSuppliers?: ProductSupplier[];
 
   @OneToMany(() => PurchaseDetail, (items) => items.product)
-  purchaseDetails: PurchaseDetail[];
+  purchaseDetails?: PurchaseDetail[];
 
   @OneToMany(() => ProductTag, (items) => items.product)
-  tags: ProductTag[];
+  tags?: ProductTag[];
 
   @OneToMany(() => SaleDetail, (items) => items.product)
-  saleDetails: SaleDetail[];
+  saleDetails?: SaleDetail[];
 
   @OneToMany(() => Wishlist, (items) => items.product)
-  wishlists: Wishlist[];
+  wishlists?: Wishlist[];
 }

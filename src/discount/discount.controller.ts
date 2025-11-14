@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 
 /* Interface */
-import { IBaseController } from '@commons/interfaces/i-base-controller';
 import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+import { IBaseController } from '@commons/interfaces/i-base-controller';
 
 /* Services */
 import { DiscountService } from '@discount/discount.service';

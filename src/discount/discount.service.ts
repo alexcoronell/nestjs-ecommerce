@@ -137,7 +137,11 @@ export class DiscountService
   async remove(id: Discount['id'], userId: AuthRequest['user']) {
     const { data } = await this.findOne(id);
 
-    const changes = { isDeleted: true, deletedBy: { id: userId } };
+    const changes = {
+      isDeleted: true,
+      deletedBy: { id: userId },
+      deletedAt: new Date(),
+    };
     this.repo.merge(data as Discount, changes);
     await this.repo.save(data as Discount);
     return {

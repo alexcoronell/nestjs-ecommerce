@@ -7,9 +7,11 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 
 /* Interface */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseController } from '@commons/interfaces/i-base-controller';
 
 /* Services */
@@ -54,20 +56,24 @@ export class ProductController
   }
 
   @Post()
-  create(@Body() payload: CreateProductDto) {
-    return this.productService.create(payload);
+  create(@Body() payload: CreateProductDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.productService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
     @Body() updateCategoryDto: UpdateProductDto,
   ) {
-    return this.productService.update(+id, updateCategoryDto);
+    const userId = req.user;
+    return this.productService.update(+id, userId, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.productService.remove(+id, userId);
   }
 }

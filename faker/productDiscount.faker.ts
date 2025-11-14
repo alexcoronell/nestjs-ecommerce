@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { faker } from '@faker-js/faker/.';
 
 /* Entity */
@@ -16,6 +15,16 @@ export const createProductDiscount = (): CreateProductDiscountDto => ({
   product: faker.number.int({ min: 1, max: 100 }),
   discount: faker.number.int({ min: 1, max: 100 }),
 });
+
+export const generateNewProductDiscounts = (
+  size: number = 1,
+): CreateProductDiscountDto[] => {
+  const newProducDiscounts: CreateProductDiscountDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newProducDiscounts.push(createProductDiscount());
+  }
+  return newProducDiscounts;
+};
 
 export const generateProductDiscount = (): ProductDiscount => {
   const product = generateProduct();

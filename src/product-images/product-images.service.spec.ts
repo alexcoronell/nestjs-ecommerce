@@ -11,6 +11,8 @@ import { ProductImagesService } from '@product_images/product-images.service';
 /* Entity */
 import { ProductImage } from './entities/product-image.entity';
 import { User } from '@user/entities/user.entity';
+
+/* DTO */
 import { UpdateProductImageDto } from './dto/update-product-image.dto';
 
 /* Faker */

@@ -4,12 +4,14 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Product } from '@product/entities/product.entity';
 import { Discount } from '@discount/entities/discount.entity';
 import { User } from '@user/entities/user.entity';
 
 @Entity('product_discounts')
+@Unique(['product', 'discount'])
 export class ProductDiscount {
   @PrimaryColumn({ name: 'product_id', type: 'int' })
   productId: number;

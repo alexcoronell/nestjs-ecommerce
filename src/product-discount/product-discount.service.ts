@@ -2,6 +2,9 @@ import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* Entities */
 import { ProductDiscount } from './entities/product-discount.entity';
 import { Product } from '@product/entities/product.entity';
@@ -82,10 +85,12 @@ export class ProductDiscountService {
 
   async create(
     dto: CreateProductDiscountDto,
+    userId: AuthRequest['user'],
   ): Promise<Result<ProductDiscount>> {
     const productDiscount = this.repo.create({
       product: { id: dto.product } as Product,
       discount: { id: dto.discount } as Discount,
+      createdBy: { id: userId },
     });
     await this.repo.save(productDiscount);
     return {
@@ -97,11 +102,13 @@ export class ProductDiscountService {
 
   async createMany(
     dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
+    userId: AuthRequest['user'],
   ): Promise<Result<ProductDiscount[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];
     const createProductDiscounts = dtosArray.map((item) => ({
       product: { id: item.product } as Product,
       discount: { id: item.discount } as Discount,
+      createdBy: { id: userId },
     }));
     const newProductDiscounts = this.repo.create(createProductDiscounts);
     const productDiscounts = await this.repo.save(newProductDiscounts);

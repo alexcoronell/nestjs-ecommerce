@@ -12,7 +12,12 @@ import { UserService } from '@user/user.service';
 /* Config */
 import config from '@config/index';
 
+/* Enums */
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
+
+/* Fakers */
 import { generateUser } from '@faker/user.faker';
+import { PayloadToken } from './interfaces/token.interface';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -117,17 +122,14 @@ describe('AuthService', () => {
     describe('generateRefreshToken', () => {
       it('should throw an error if refresh token secret is not defined', async () => {
         service.jwtRefreshTokenSecret = null;
-        await expect(
-          service['generateRefreshToken']({
-            user: 1,
-            isAdmin: false,
-            isCustomer: false,
-          }),
-        ).rejects.toThrow('JWT refresh token secret is not defined');
+        const payload: PayloadToken = { user: 1, role: UserRoleEnum.ADMIN };
+        await expect(service['generateRefreshToken'](payload)).rejects.toThrow(
+          'JWT refresh token secret is not defined',
+        );
       });
 
       it('should generate a refresh token', async () => {
-        const payload = { user: 1, isAdmin: false, isCustomer: false };
+        const payload: PayloadToken = { user: 1, role: UserRoleEnum.ADMIN };
         const result = await service['generateRefreshToken'](payload);
         expect(result).toBe('mockedRefreshToken');
       });

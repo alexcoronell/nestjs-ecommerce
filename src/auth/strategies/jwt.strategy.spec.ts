@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtStrategy } from './jwt.strategy';
+
+import { PayloadToken } from '@auth/interfaces/token.interface';
+import { UserRoleEnum } from '@commons/enums/user-role.enum';
 import config from '@config/index';
 
 describe('JwtStrategy', () => {
@@ -28,7 +31,7 @@ describe('JwtStrategy', () => {
   });
 
   it('should return payload on validate', () => {
-    const payload = { user: 1, isAdmin: true, isCustomer: false };
+    const payload: PayloadToken = { user: 1, role: UserRoleEnum.ADMIN };
     expect(strategy.validate(payload)).toEqual(payload);
   });
 });

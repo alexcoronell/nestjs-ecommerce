@@ -1,5 +1,20 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
+
+/* Interface */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Services */
 import { ProductDiscountService } from './product-discount.service';
+
+/* DTO's */
 import { CreateProductDiscountDto } from './dto/create-product-discount.dto';
 
 @Controller('product-discount')
@@ -36,15 +51,21 @@ export class ProductDiscountController {
   }
 
   @Post()
-  create(@Body() createProductDiscountDto: CreateProductDiscountDto) {
-    return this.productDiscountService.create(createProductDiscountDto);
+  create(
+    @Body() createProductDiscountDto: CreateProductDiscountDto,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user;
+    return this.productDiscountService.create(createProductDiscountDto, userId);
   }
 
   @Post('many')
   createMany(
     @Body() dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
+    @Req() req: AuthRequest,
   ) {
-    return this.productDiscountService.createMany(dtos);
+    const userId = req.user;
+    return this.productDiscountService.createMany(dtos, userId);
   }
 
   @Delete()

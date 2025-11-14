@@ -3,16 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
-import { Product } from '@product/entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
-import { User } from '@user/entities/user.entity';
 
 /* DTO's */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
-import { UpdateProductImageDto } from '@product_images/dto/update-product-image.dto';
+import { UpdateProductImageDto } from './dto/update-product-image.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
@@ -72,13 +71,12 @@ export class ProductImagesService
     };
   }
 
-  async create(dto: CreateProductImageDto) {
+  async create(dto: CreateProductImageDto, userId: AuthRequest['user']) {
     const productId = dto.product;
-    const uploadById = dto.uploadedBy;
     const newProductImage = this.repo.create({
       ...dto,
-      product: { id: productId } as Product,
-      uploadedBy: { id: uploadById } as User,
+      product: { id: productId },
+      uploadedBy: { id: userId },
     });
     const productImage = await this.repo.save(newProductImage);
     return {
@@ -88,20 +86,21 @@ export class ProductImagesService
     };
   }
 
-  async update(id: number, changes: UpdateProductImageDto) {
+  async update(
+    id: ProductImage['id'],
+    userId: AuthRequest['user'],
+    changes: UpdateProductImageDto,
+  ) {
     const { data } = await this.findOne(id);
-    const productId = changes.product;
-    const uploadById = changes.uploadedBy;
     this.repo.merge(data as ProductImage, {
       ...changes,
-      product: { id: productId } as Product,
-      uploadedBy: { id: uploadById } as User,
+      updatedBy: { id: userId },
     });
     const rta = await this.repo.save(data as ProductImage);
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Product Image with id: ${id} has been modified`,
+      message: `The Product Image with ID: ${id} has been modified`,
     };
   }
 

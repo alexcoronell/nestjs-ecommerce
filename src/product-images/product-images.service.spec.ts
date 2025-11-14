@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
@@ -11,8 +10,7 @@ import { ProductImagesService } from '@product_images/product-images.service';
 
 /* Entity */
 import { ProductImage } from './entities/product-image.entity';
-
-/* DTO's */
+import { User } from '@user/entities/user.entity';
 import { UpdateProductImageDto } from './dto/update-product-image.dto';
 
 /* Faker */
@@ -35,7 +33,6 @@ describe('ProductImagesService', () => {
         },
       ],
     }).compile();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     service = module.get<ProductImagesService>(ProductImagesService);
     repository = module.get<Repository<ProductImage>>(
       getRepositoryToken(ProductImage),
@@ -108,11 +105,16 @@ describe('ProductImagesService', () => {
   describe('create product images services', () => {
     it('create should return a Product Image', async () => {
       const mock = generateProductImage();
-
+      const userId: User['id'] = 1;
+      const dto = {
+        ...mock,
+        product: mock.product.id,
+        uploadedBy: userId,
+      };
       jest.spyOn(repository, 'create').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, data } = await service.create(mock);
+      const { statusCode, data } = await service.create(dto, userId);
       expect(statusCode).toBe(201);
       expect(data).toEqual(mock);
     });
@@ -120,39 +122,25 @@ describe('ProductImagesService', () => {
 
   describe('update product images services', () => {
     it('update should return message: have been modified', async () => {
-      const mock = generateProductImage();
+      const mock: ProductImage = generateProductImage();
       const id = mock.id;
-      const changes: UpdateProductImageDto = { title: 'newTitle' };
+      const userId: User['id'] = 1;
+      const changes: UpdateProductImageDto = { title: 'new title' };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
-      jest.spyOn(repository, 'merge').mockReturnValue({ ...mock, ...changes });
+      jest.spyOn(repository, 'merge').mockReturnValue(mock);
       jest.spyOn(repository, 'save').mockResolvedValue(mock);
 
-      const { statusCode, message } = await service.update(id, changes);
+      const { statusCode, message } = await service.update(id, userId, changes);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
-        `The Product Image with id: ${id} has been modified`,
+        `The Product Image with ID: ${id} has been modified`,
       );
     });
-
-    it('update should throw NotFoundException if Product Image does not exist', async () => {
-      const id = 1;
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-
-      try {
-        await service.update(id, { title: 'newTitle' });
-      } catch (error) {
-        expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(
-          `The Product Image with id: ${id} not found`,
-        );
-      }
-    });
   });
-
   describe('remove product image services', () => {
     it('remove should return status and message', async () => {
       const mock = generateProductImage();

@@ -3,13 +3,15 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ParseIntPipe,
+  Req,
+  Patch,
 } from '@nestjs/common';
 
 /* Interface */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseController } from '@commons/interfaces/i-base-controller';
 
 /* Services */
@@ -20,7 +22,7 @@ import { ProductImage } from './entities/product-image.entity';
 
 /* DTO's */
 import { CreateProductImageDto } from '@product_images/dto/create-product-image.dto';
-import { UpdateProductImageDto } from '@product_images/dto/update-product-image.dto';
+import { UpdateProductImageDto } from './dto/update-product-image.dto';
 
 @Controller('product-images')
 export class ProductImagesController
@@ -50,16 +52,19 @@ export class ProductImagesController
   }
 
   @Post()
-  create(@Body() payload: CreateProductImageDto) {
-    return this.productImagesService.create(payload);
+  create(@Body() payload: CreateProductImageDto, @Req() req: AuthRequest) {
+    const userId = req.user;
+    return this.productImagesService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() changes: UpdateProductImageDto,
+    @Req() req: AuthRequest,
+    @Body() updateProductImageDto: UpdateProductImageDto,
   ) {
-    return this.productImagesService.update(+id, changes);
+    const userId = req.user;
+    return this.productImagesService.update(+id, userId, updateProductImageDto);
   }
 
   @Delete(':id')

@@ -32,8 +32,8 @@ export class CreateProductImageDto {
   @ApiProperty()
   product: number;
 
-  @IsNumber()
-  @Min(0)
+  @IsBoolean()
+  @IsOptional()
   @ApiProperty()
-  uploadedBy: number;
+  isActive: boolean;
 }

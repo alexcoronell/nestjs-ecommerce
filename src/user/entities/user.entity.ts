@@ -146,6 +146,9 @@ export class User extends BaseEntity {
   @OneToMany(() => ProductImage, (items) => items.uploadedBy)
   uploadedProductImages?: ProductImage[];
 
+  @OneToMany(() => ProductImage, (items) => items.updatedBy)
+  updatedProductImages?: ProductImage[];
+
   /* Product Suppliers */
   @OneToMany(() => ProductSupplier, (items) => items.createdBy)
   createdProductSuppliers?: ProductSupplier[];

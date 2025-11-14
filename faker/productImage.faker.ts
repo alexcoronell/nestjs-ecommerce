@@ -12,12 +12,22 @@ import { generateProduct } from './product.faker';
 import { generateUser } from './user.faker';
 
 export const createProductImage = (): CreateProductImageDto => ({
-  filePath: faker.system.filePath(),
+  filePath: faker.image.url(),
   title: faker.lorem.words(3),
   isMain: faker.datatype.boolean(),
-  product: faker.number.int(),
-  uploadedBy: faker.number.int(),
+  isActive: faker.datatype.boolean(),
+  product: faker.number.int({ min: 1, max: 10 }),
 });
+
+export const generateNewProductImage = (
+  size: number = 1,
+): CreateProductImageDto[] => {
+  const newBrands: CreateProductImageDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newBrands.push(createProductImage());
+  }
+  return newBrands;
+};
 
 export const generateProductImage = (id: number = 1): ProductImage => ({
   ...generateBaseEntity(id),
@@ -25,6 +35,7 @@ export const generateProductImage = (id: number = 1): ProductImage => ({
   id,
   product: generateProduct(),
   uploadedBy: generateUser(),
+  updatedBy: generateUser(),
 });
 
 export const generateManyProductImages = (size: number): ProductImage[] => {

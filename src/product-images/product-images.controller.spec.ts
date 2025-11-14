@@ -7,6 +7,9 @@ import { ProductImagesController } from '@product_images/product-images.controll
 /* Services */
 import { ProductImagesService } from '@product_images/product-images.service';
 
+/* Interfaces */
+import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
 /* Entities */
 import { ProductImage } from './entities/product-image.entity';
 
@@ -83,15 +86,17 @@ describe('ProductImagesController', () => {
 
   describe('create product images controller', () => {
     it('should call create shipping company service', async () => {
-      await controller.create(mockNewProductImage);
+      const request = { user: 1 };
+      await controller.create(mockNewProductImage, request as AuthRequest);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('update product images controller', () => {
-    it('should call update product images service', async () => {
-      const changes = { title: 'newName' };
-      await controller.update(1, changes);
+  describe('update products images supplier controller', () => {
+    it('should call update product image service', async () => {
+      const request = { user: 1 };
+      const changes = { title: 'new title' };
+      await controller.update(1, request as AuthRequest, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });

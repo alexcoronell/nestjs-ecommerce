@@ -7,12 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { SubcategoryService } from './subcategory.service';
@@ -62,24 +63,21 @@ export class SubcategoryController
   }
 
   @Post()
-  create(@Body() payload: CreateSubcategoryDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateSubcategoryDto, @UserId() userId: number) {
     return this.subcategoryService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() changes: UpdateSubcategoryDto,
   ) {
-    const userId = req.user;
     return this.subcategoryService.update(+id, userId, changes);
   }
 
   @Delete(':id¨')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.subcategoryService.remove(+id, userId);
   }
 }

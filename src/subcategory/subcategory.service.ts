@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* Entities */
 import { Subcategory } from './entities/subcategory.entity';
 
@@ -113,7 +111,7 @@ export class SubcategoryService
     };
   }
 
-  async create(dto: CreateSubcategoryDto, userId: AuthRequest['user']) {
+  async create(dto: CreateSubcategoryDto, userId: number) {
     const categoryId = dto.category;
 
     const newSubcategory = this.repo.create({
@@ -130,11 +128,7 @@ export class SubcategoryService
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateSubcategoryDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateSubcategoryDto) {
     const { data } = await this.findOne(id);
     const categoryId = changes.category;
     this.repo.merge(data, {
@@ -150,7 +144,7 @@ export class SubcategoryService
     };
   }
 
-  async remove(id: Subcategory['id'], userId: AuthRequest['user']) {
+  async remove(id: Subcategory['id'], userId: number) {
     const { data } = await this.findOne(id);
     const changes = {
       isDeleted: true,

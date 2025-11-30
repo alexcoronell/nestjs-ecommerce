@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
@@ -71,7 +70,7 @@ export class ProductImagesService
     };
   }
 
-  async create(dto: CreateProductImageDto, userId: AuthRequest['user']) {
+  async create(dto: CreateProductImageDto, userId: number) {
     const productId = dto.product;
     const newProductImage = this.repo.create({
       ...dto,
@@ -88,7 +87,7 @@ export class ProductImagesService
 
   async update(
     id: ProductImage['id'],
-    userId: AuthRequest['user'],
+    userId: number,
     changes: UpdateProductImageDto,
   ) {
     const { data } = await this.findOne(id);

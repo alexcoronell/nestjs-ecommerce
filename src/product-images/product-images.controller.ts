@@ -6,13 +6,14 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
   Patch,
 } from '@nestjs/common';
 
 /* Interface */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { ProductImagesService } from '@product_images/product-images.service';
@@ -52,18 +53,16 @@ export class ProductImagesController
   }
 
   @Post()
-  create(@Body() payload: CreateProductImageDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateProductImageDto, @UserId() userId: number) {
     return this.productImagesService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateProductImageDto: UpdateProductImageDto,
   ) {
-    const userId = req.user;
     return this.productImagesService.update(+id, userId, updateProductImageDto);
   }
 

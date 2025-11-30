@@ -8,7 +8,6 @@ import { StoreDetailController } from './store-detail.controller';
 import { StoreDetailService } from './store-detail.service';
 
 /* Entities */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { StoreDetail } from './entities/store-detail.entity';
 
 /* Faker */
@@ -54,8 +53,8 @@ describe('StoreDetailController', () => {
   describe('update Store Detail controller', () => {
     it('should call update Store Detail service', async () => {
       const changes = { name: 'newName' };
-      const request = { user: 1 };
-      await controller.update(1, request as AuthRequest, changes);
+      const userId = 1;
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });

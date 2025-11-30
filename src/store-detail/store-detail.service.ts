@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Entities */
 import { StoreDetail } from './entities/store-detail.entity';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* DTO's */
 import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
@@ -33,11 +32,7 @@ export class StoreDetailService {
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateStoreDetailDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateStoreDetailDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as StoreDetail, {
       ...changes,

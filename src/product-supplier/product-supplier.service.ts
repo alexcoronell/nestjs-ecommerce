@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
@@ -109,7 +108,7 @@ export class ProductSupplierService
 
   async create(
     dto: CreateProductSupplierDto,
-    userId: AuthRequest['user'],
+    userId: number,
   ): Promise<Result<ProductSupplier>> {
     const newProductSupplier = this.repo.create({
       ...dto,
@@ -126,11 +125,7 @@ export class ProductSupplierService
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateProductSupplierDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateProductSupplierDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as ProductSupplier, {
       ...changes,
@@ -146,7 +141,7 @@ export class ProductSupplierService
     };
   }
 
-  async remove(id: ProductSupplier['id'], userId: AuthRequest['user']) {
+  async remove(id: ProductSupplier['id'], userId: number) {
     const { data } = await this.findOne(id);
     const changes = {
       isDeleted: true,

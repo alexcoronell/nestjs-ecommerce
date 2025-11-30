@@ -7,12 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
 } from '@nestjs/common';
 
 /* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { ProductSupplierService } from './product-supplier.service';
@@ -68,24 +69,21 @@ export class ProductSupplierController
   }
 
   @Post()
-  create(@Body() payload: CreateProductSupplierDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateProductSupplierDto, @UserId() userId: number) {
     return this.productSupplierService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateProductSupplierDto,
   ) {
-    const userId = req.user;
     return this.productSupplierService.update(+id, userId, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.productSupplierService.remove(+id, userId);
   }
 }

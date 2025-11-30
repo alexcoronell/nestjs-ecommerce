@@ -7,9 +7,6 @@ import { ProductSupplierController } from './product-supplier.controller';
 /* Services */
 import { ProductSupplierService } from './product-supplier.service';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* Entities */
 import { ProductSupplier } from './entities/product-supplier.entity';
 
@@ -102,25 +99,25 @@ describe('ProductSupplierController', () => {
 
   describe('create products controller', () => {
     it('should call create product supplier service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewProductSupplier, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewProductSupplier, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update products supplier controller', () => {
     it('should call update product supplier service', async () => {
-      const request = { user: 1 };
+      const userId = 1;
       const changes = { costPrice: 100 };
-      await controller.update(1, request as AuthRequest, changes);
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove products supplier controller', () => {
     it('should call remove product supplier service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Category } from './entities/category.entity';
@@ -162,7 +161,7 @@ export class CategoryService
    * @param dto - The data transfer object containing the category details.
    * @returns An object containing the created category, an HTTP status code, and a success message.
    */
-  async create(dto: CreateCategoryDto, userId: AuthRequest['user']) {
+  async create(dto: CreateCategoryDto, userId: number) {
     const newCategory = this.repo.create({
       ...dto,
       createdBy: { id: userId },
@@ -182,11 +181,7 @@ export class CategoryService
    * @param changes - The data transfer object containing the updated category details.
    * @returns An object containing the updated category, an HTTP status code, and a success message.
    */
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateCategoryDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateCategoryDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as Category, {
       ...changes,
@@ -205,7 +200,7 @@ export class CategoryService
    * @param id - The ID of the category to delete.
    * @returns An object containing an HTTP status code and a success message.
    */
-  async remove(id: Category['id'], userId: AuthRequest['user']) {
+  async remove(id: Category['id'], userId: number) {
     const { data } = await this.findOne(id);
     const changes = { isDeleted: true, deletedBy: { id: userId } };
     this.repo.merge(data as Category, changes);

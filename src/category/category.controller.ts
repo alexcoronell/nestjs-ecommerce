@@ -8,12 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { CategoryService } from './category.service';
@@ -129,8 +130,7 @@ export class CategoryController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() payload: CreateCategoryDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateCategoryDto, @UserId() userId: number) {
     return this.categoryService.create(payload, userId);
   }
 
@@ -145,10 +145,9 @@ export class CategoryController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    const userId = req.user;
     return this.categoryService.update(+id, userId, updateCategoryDto);
   }
 
@@ -160,8 +159,7 @@ export class CategoryController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.categoryService.remove(+id, userId);
   }
 }

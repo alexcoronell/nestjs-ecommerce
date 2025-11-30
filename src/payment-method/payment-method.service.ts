@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
@@ -116,7 +115,7 @@ export class PaymentMethodService
    * @param dto - The data transfer object containing creation data.
    * @returns An object containing the created PaymentMethod, HTTP status code, and a message.
    */
-  async create(dto: CreatePaymentMethodDto, userId: AuthRequest['user']) {
+  async create(dto: CreatePaymentMethodDto, userId: number) {
     const newPaymentMethod = this.repo.create({
       ...dto,
       createdBy: { id: userId },
@@ -137,11 +136,7 @@ export class PaymentMethodService
    * @param changes - The data transfer object containing update data.
    * @returns An object containing the updated PaymentMethod, HTTP status code, and a message.
    */
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdatePaymentMethodDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdatePaymentMethodDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as PaymentMethod, {
       ...changes,
@@ -161,7 +156,7 @@ export class PaymentMethodService
    * @param id - The ID of the PaymentMethod to delete.
    * @returns An object containing HTTP status code and a message.
    */
-  async remove(id: PaymentMethod['id'], userId: AuthRequest['user']) {
+  async remove(id: PaymentMethod['id'], userId: number) {
     const { data } = await this.findOne(id);
 
     const changes = { isDeleted: true };

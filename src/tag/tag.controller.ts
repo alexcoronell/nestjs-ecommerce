@@ -7,12 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { TagService } from './tag.service';
@@ -56,24 +57,21 @@ export class TagController
   }
 
   @Post()
-  create(@Body() payload: CreateTagDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateTagDto, @UserId() userId: number) {
     return this.tagService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateTagDto,
   ) {
-    const userId = req.user;
     return this.tagService.update(+id, userId, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.tagService.remove(+id, userId);
   }
 }

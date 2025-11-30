@@ -7,9 +7,6 @@ import { ProductDiscountController } from './product-discount.controller';
 /* Services */
 import { ProductDiscountService } from './product-discount.service';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* Entities */
 import { ProductDiscount } from './entities/product-discount.entity';
 
@@ -120,32 +117,26 @@ describe('ProductDiscountController', () => {
 
   describe('Create product discounts controller', () => {
     it('should call create productDiscount service', async () => {
-      const request = { user: 1 };
-      expect(
-        await controller.create(mockNewProductDiscount, request as AuthRequest),
-      ).toBe(mockCreateResult);
+      const userId = 1;
+      expect(await controller.create(mockNewProductDiscount, userId)).toBe(
+        mockCreateResult,
+      );
       expect(service.create).toHaveBeenCalledTimes(1);
     });
 
     it('should call createMany productDiscount service with array', async () => {
-      const request = { user: 1 };
+      const userId = 1;
       expect(
-        await controller.createMany(
-          [mockNewProductDiscount],
-          request as AuthRequest,
-        ),
+        await controller.createMany([mockNewProductDiscount], userId),
       ).toBe(mockCreateManyResult);
       expect(service.createMany).toHaveBeenCalledTimes(1);
     });
 
     it('should call createMany productDiscount service with single dto', async () => {
-      const request = { user: 1 };
-      expect(
-        await controller.createMany(
-          mockNewProductDiscount,
-          request as AuthRequest,
-        ),
-      ).toBe(mockCreateManyResult);
+      const userId = 1;
+      expect(await controller.createMany(mockNewProductDiscount, userId)).toBe(
+        mockCreateManyResult,
+      );
       expect(service.createMany).toHaveBeenCalledTimes(2); // Called twice now
     });
   });

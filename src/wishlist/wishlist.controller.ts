@@ -6,14 +6,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
 } from '@nestjs/common';
 
 /* Services */
 import { WishlistService } from './wishlist.service';
 
-/* Interface */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* DTO's */
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -54,9 +53,8 @@ export class WishlistController {
   @Post()
   create(
     @Body() createWishlistDto: CreateWishlistDto,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
   ) {
-    const userId = req.user;
     return this.wishlistService.create(createWishlistDto, userId);
   }
 

@@ -2,9 +2,6 @@ import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* Entities */
 import { Product } from '@product/entities/product.entity';
 import { User } from '@user/entities/user.entity';
@@ -88,7 +85,7 @@ export class WishlistService {
     };
   }
 
-  async create(dto: CreateWishlistDto, userId: AuthRequest['user']) {
+  async create(dto: CreateWishlistDto, userId: number) {
     const { product } = dto;
     const newItem = this.repo.create({
       user: { id: userId } as User,

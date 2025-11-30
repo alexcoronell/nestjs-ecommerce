@@ -138,7 +138,7 @@ describe('UserControler (e2e) [POST]', () => {
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(201);
       expect(data.firstname).toEqual(seedNewUser.firstname);
-      expect(data.createdBy).toEqual(adminUser?.id);
+      expect(data.createdBy.id).toEqual(adminUser?.id);
     });
 
     it('/ should  return conflict exception with existing email', async () => {

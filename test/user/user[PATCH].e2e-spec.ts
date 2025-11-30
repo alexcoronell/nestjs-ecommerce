@@ -155,7 +155,7 @@ describe('UserControler (e2e) [PATCH]', () => {
       expect(statusCode).toBe(200);
       expect(data.firstname).toBe(updatedData.firstname);
       expect(data.lastname).toBe(updatedData.lastname);
-      expect(data.updatedBy).toEqual(sellerUser?.id);
+      expect(data.updatedBy.id).toEqual(sellerUser?.id);
     });
 
     it('/:id should return conflict exception with existing email', async () => {

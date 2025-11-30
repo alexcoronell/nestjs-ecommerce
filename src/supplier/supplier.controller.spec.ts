@@ -11,9 +11,6 @@ import { SupplierService } from './supplier.service';
 /* Entities */
 import { Supplier } from './entities/supplier.entity';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* DTO's */
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 
@@ -93,8 +90,8 @@ describe('SupplierController', () => {
 
   describe('create supplier controller', () => {
     it('should call create supplier service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewSupplier, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewSupplier, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -102,16 +99,16 @@ describe('SupplierController', () => {
   describe('update supplier controller', () => {
     it('should call update supplier service', async () => {
       const changes = { name: 'newName' };
-      const request = { user: 1 };
-      await controller.update(1, request as AuthRequest, changes);
+      const userId = 1;
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove supplier controller', () => {
     it('shoudl call remove supplier service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Sale } from '@sale/entities/sale.entity';
@@ -118,7 +117,7 @@ export class ShipmentService
     };
   }
 
-  async create(dto: CreateShipmentDto, userId: AuthRequest['user']) {
+  async create(dto: CreateShipmentDto, userId: number) {
     const saleId = dto.sale;
     const shippingCompanyId = dto.shippingCompany;
 
@@ -139,11 +138,7 @@ export class ShipmentService
     };
   }
 
-  async update(
-    id: Shipment['id'],
-    userId: AuthRequest['user'],
-    changes: UpdateShipmentDto,
-  ) {
+  async update(id: Shipment['id'], userId: number, changes: UpdateShipmentDto) {
     const { data } = await this.findOne(id);
     const saleId = changes.sale;
     const shippingCompanyId = changes.shippingCompany;
@@ -161,7 +156,7 @@ export class ShipmentService
     };
   }
 
-  async remove(id: Shipment['id'], userId: AuthRequest['user']) {
+  async remove(id: Shipment['id'], userId: number) {
     const { data } = await this.findOne(id);
 
     const changes = {

@@ -13,7 +13,9 @@ import { ApiTags } from '@nestjs/swagger';
 
 /* Interfaces */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { UserService } from './user.service';
@@ -30,7 +32,6 @@ import { UpdatePasswordDto } from './dto/update-password-user';
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
 import { OwnerOrAdminGuard } from '@auth/guards/owner-or-admin-auth/owner-or-admin-auth.guard';
-import { Req } from '@nestjs/common';
 
 @ApiTags('Users')
 @Controller('user')
@@ -129,8 +130,7 @@ export class UserController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() payload: CreateUserDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateUserDto, @UserId() userId: number) {
     return this.userService.create(payload, userId);
   }
 
@@ -149,10 +149,9 @@ export class UserController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() changes: UpdateUserDto,
   ) {
-    const userId = req.user;
     return this.userService.update(id, userId, changes);
   }
 
@@ -178,8 +177,7 @@ export class UserController
    */
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.userService.remove(id, userId);
   }
 }

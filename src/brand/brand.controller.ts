@@ -8,18 +8,15 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 
-/* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Services */
 import { BrandService } from '@brand/brand.service';
 
-/* Entities */
-import { Brand } from './entities/brand.entity';
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* DTO's */
 import { CreateBrandDto } from '@brand/dto/create-brand.dto';
@@ -29,6 +26,7 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
 import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { Brand } from './entities/brand.entity';
 
 /**
  * Controller for managing brand-related operations.
@@ -127,8 +125,7 @@ export class BrandController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() payload: CreateBrandDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateBrandDto, @UserId() userId: number) {
     return this.brandService.create(payload, userId);
   }
 
@@ -143,10 +140,9 @@ export class BrandController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateBrandDto,
   ) {
-    const userId = req.user;
     return this.brandService.update(+id, userId, updateCategoryDto);
   }
 
@@ -158,8 +154,7 @@ export class BrandController
    */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.brandService.remove(+id, userId);
   }
 }

@@ -14,7 +14,6 @@ import * as bcrypt from 'bcrypt';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { User } from '@user/entities/user.entity';
@@ -304,10 +303,7 @@ export class UserService
    * the response, for maximum safety and maintainability, consider returning a
    * dedicated `UserResponseDto` instead of the raw entity.
    */
-  async create(
-    dto: CreateUserDto,
-    userId: AuthRequest['user'],
-  ): Promise<Result<User>> {
+  async create(dto: CreateUserDto, userId: number): Promise<Result<User>> {
     const email = dto.email.toLowerCase();
 
     const existUserEmail = await this.userRepo.findOneBy({ email });
@@ -399,7 +395,7 @@ export class UserService
    */
   async update(
     id: number,
-    userId: AuthRequest['user'],
+    userId: number,
     changes: UpdateUserDto,
   ): Promise<Result<User>> {
     const { data } = await this.findOne(id);
@@ -452,7 +448,7 @@ export class UserService
   }
 
   /* Remove */
-  async remove(id: User['id'], userId: AuthRequest['user']) {
+  async remove(id: User['id'], userId: number) {
     const { data } = await this.findOneWithoutRelations(id);
     const user = data as User;
 

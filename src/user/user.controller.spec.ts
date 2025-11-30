@@ -7,9 +7,6 @@ import { UserController } from './user.controller';
 /* Services */
 import { UserService } from './user.service';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* DTO's */
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -120,8 +117,8 @@ describe('UserController', () => {
 
   describe('create user controller', () => {
     it('should call create user service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewUser, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewUser, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
 
@@ -133,9 +130,9 @@ describe('UserController', () => {
 
   describe('update user controller', () => {
     it('should call update user service', async () => {
-      const request = { user: 1 };
+      const userId = 1;
       const changes: UpdateUserDto = { firstname: 'newFirstname' };
-      await controller.update(1, request as AuthRequest, changes);
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
 
@@ -148,8 +145,8 @@ describe('UserController', () => {
 
   describe('remove user controller', () => {
     it('shoudl call remove user service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

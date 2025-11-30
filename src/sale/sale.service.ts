@@ -10,7 +10,6 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 
 /* Types */
 import { Result } from '@commons/types/result.type';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { PaymentMethod } from '@payment_method/entities/payment-method.entity';
 import { User } from '@user/entities/user.entity';
 
@@ -101,10 +100,7 @@ export class SaleService {
     return { statusCode: HttpStatus.OK, data: sale };
   }
 
-  async create(
-    dto: CreateSaleDto,
-    userId: AuthRequest['user'],
-  ): Promise<Result<Sale>> {
+  async create(dto: CreateSaleDto, userId: number): Promise<Result<Sale>> {
     const paymentMethodId = dto.paymentMethod;
     const newSale = {
       ...dto,
@@ -116,7 +112,7 @@ export class SaleService {
     return { statusCode: HttpStatus.CREATED, data: savedSale };
   }
 
-  async cancel(id: number, userId: AuthRequest['user']) {
+  async cancel(id: number, userId: number) {
     const { data } = await this.findOne(id);
     const changes = {
       isCancelled: true,

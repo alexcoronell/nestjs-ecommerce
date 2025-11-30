@@ -1,14 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
@@ -48,14 +41,12 @@ export class SaleController {
   }
 
   @Post()
-  create(@Body() dto: CreateSaleDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() dto: CreateSaleDto, @UserId() userId: number) {
     return this.saleService.create(dto, userId);
   }
 
   @Delete(':id')
-  cancel(@Param('id') id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  cancel(@Param('id') id: number, @UserId() userId: number) {
     return this.saleService.cancel(+id, userId);
   }
 }

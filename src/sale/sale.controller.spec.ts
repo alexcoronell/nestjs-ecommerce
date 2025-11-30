@@ -7,9 +7,6 @@ import { SaleController } from './sale.controller';
 /* Services */
 import { SaleService } from './sale.service';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* DTO's */
 import { CreateSaleDto } from './dto/create-sale.dto';
 
@@ -100,9 +97,9 @@ describe('SaleController', () => {
 
   describe('Create sale controller', () => {
     it('should call create sale service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewSale, request as AuthRequest);
-      expect(service.create).toHaveBeenCalledWith(mockNewSale, request.user);
+      const userId = 1;
+      await controller.create(mockNewSale, userId);
+      expect(service.create).toHaveBeenCalledWith(mockNewSale, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -110,9 +107,9 @@ describe('SaleController', () => {
   describe('Cancel sale controller', () => {
     it('should call cancel sale service', async () => {
       const id = 1;
-      const request = { user: 1 };
-      await controller.cancel(id, request as AuthRequest);
-      expect(service.cancel).toHaveBeenCalledWith(id, request.user);
+      const userId = 1;
+      await controller.cancel(id, userId);
+      expect(service.cancel).toHaveBeenCalledWith(id, userId);
       expect(service.cancel).toHaveBeenCalledTimes(1);
     });
   });

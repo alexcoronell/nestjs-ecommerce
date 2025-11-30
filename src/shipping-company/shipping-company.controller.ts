@@ -7,12 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
 } from '@nestjs/common';
 
 /* Interface */
 import { IBaseController } from '@commons/interfaces/i-base-controller';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { ShippingCompanyService } from './shipping-company.service';
@@ -63,24 +64,21 @@ export class ShippingCompanyController
   }
 
   @Post()
-  create(@Body() payload: CreateShippingCompanyDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateShippingCompanyDto, @UserId() userId: number) {
     return this.shippingCompanyService.create(payload, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateShippingCompanyDto,
   ) {
-    const userId = req.user;
     return this.shippingCompanyService.update(+id, userId, updateCategoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.shippingCompanyService.remove(+id, userId);
   }
 }

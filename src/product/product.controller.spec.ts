@@ -10,9 +10,6 @@ import { ProductService } from './product.service';
 /* Entities */
 import { Product } from './entities/product.entity';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* DTO's */
 import { CreateProductDto } from './dto/create-product.dto';
 
@@ -92,25 +89,25 @@ describe('ProductController', () => {
 
   describe('create products controller', () => {
     it('should call create shipping company service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewProduct, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewProduct, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update products controller', () => {
     it('should call update products service', async () => {
-      const request = { user: 1 };
+      const userId = 1;
       const changes = { name: 'newName' };
-      await controller.update(1, request as AuthRequest, changes);
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove products controller', () => {
     it('shoudl call remove products service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

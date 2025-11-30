@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 /* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseService } from '@commons/interfaces/i-base-service';
 
 /* Entities */
@@ -87,7 +86,7 @@ export class ProductService
     };
   }
 
-  async create(dto: CreateProductDto, userId: AuthRequest['user']) {
+  async create(dto: CreateProductDto, userId: number) {
     const brandId = dto.brand;
     const categoryId = dto.category;
     const subcategoryId = dto.subcategory;
@@ -108,11 +107,7 @@ export class ProductService
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateProductDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateProductDto) {
     const { data } = await this.findOne(id);
     const brandId = changes.brand;
     const categoryId = changes.category;
@@ -133,7 +128,7 @@ export class ProductService
     };
   }
 
-  async remove(id: Product['id'], userId: AuthRequest['user']) {
+  async remove(id: Product['id'], userId: number) {
     const { data } = await this.findOne(id);
 
     const changes = {

@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Discount } from '@discount/entities/discount.entity';
@@ -102,7 +101,7 @@ export class DiscountService
     };
   }
 
-  async create(dto: CreateDiscountDto, userId: AuthRequest['user']) {
+  async create(dto: CreateDiscountDto, userId: number) {
     const newDiscount = this.repo.create({
       ...dto,
       createdBy: { id: userId },
@@ -116,11 +115,7 @@ export class DiscountService
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdateDiscountDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdateDiscountDto) {
     const { data } = await this.findOne(id);
     this.repo.merge(data as Discount, {
       ...changes,
@@ -134,7 +129,7 @@ export class DiscountService
     };
   }
 
-  async remove(id: Discount['id'], userId: AuthRequest['user']) {
+  async remove(id: Discount['id'], userId: number) {
     const { data } = await this.findOne(id);
 
     const changes = {

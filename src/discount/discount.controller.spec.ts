@@ -10,9 +10,6 @@ import { DiscountService } from './discount.service';
 /* Entities */
 import { Discount } from './entities/discount.entity';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* DTO's */
 import { CreateDiscountDto } from './dto/create-discount.dto';
 
@@ -92,25 +89,25 @@ describe('DiscountController', () => {
 
   describe('create discounts controller', () => {
     it('should call create discount service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewDiscount, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewDiscount, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('update discounts controller', () => {
     it('should call update discounts service', async () => {
-      const request = { user: 1 };
+      const userId = 1;
       const changes = { code: 'newCode' };
-      await controller.update(1, request as AuthRequest, changes);
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove discounts controller', () => {
     it('shoudl call remove discounts service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

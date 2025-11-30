@@ -8,12 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 
 /* Interface */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 import { IBaseController } from '@commons/interfaces/i-base-controller';
+
+/* Decorators */
+import { UserId } from '@auth/decorators/user-id.decorator';
 
 /* Services */
 import { DiscountService } from '@discount/discount.service';
@@ -64,8 +65,7 @@ export class DiscountController
 
   @UseGuards(AdminGuard)
   @Post()
-  create(@Body() payload: CreateDiscountDto, @Req() req: AuthRequest) {
-    const userId = req.user;
+  create(@Body() payload: CreateDiscountDto, @UserId() userId: number) {
     return this.discountService.create(payload, userId);
   }
 
@@ -73,17 +73,15 @@ export class DiscountController
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthRequest,
+    @UserId() userId: number,
     @Body() updateCategoryDto: UpdateDiscountDto,
   ) {
-    const userId = req.user;
     return this.discountService.update(+id, userId, updateCategoryDto);
   }
 
   @UseGuards(AdminGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: AuthRequest) {
-    const userId = req.user;
+  remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.discountService.remove(+id, userId);
   }
 }

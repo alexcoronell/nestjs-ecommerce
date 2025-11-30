@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 /* Interfaces */
 import { IBaseService } from '@commons/interfaces/i-base-service';
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
 
 /* Entities */
 import { Purchase } from './entities/purchase.entity';
@@ -84,7 +83,7 @@ export class PurchaseService
     };
   }
 
-  async create(dto: CreatePurchaseDto, userId: AuthRequest['user']) {
+  async create(dto: CreatePurchaseDto, userId: number) {
     const suppliedId = dto.supplier;
     const newPurchase = this.repo.create({
       ...dto,
@@ -100,11 +99,7 @@ export class PurchaseService
     };
   }
 
-  async update(
-    id: number,
-    userId: AuthRequest['user'],
-    changes: UpdatePurchaseDto,
-  ) {
+  async update(id: number, userId: number, changes: UpdatePurchaseDto) {
     const { data } = await this.findOne(id);
     const supplierId = changes.supplier;
     this.repo.merge(data, {
@@ -120,7 +115,7 @@ export class PurchaseService
     };
   }
 
-  async remove(id: Purchase['id'], userId: AuthRequest['user']) {
+  async remove(id: Purchase['id'], userId: number) {
     const { data } = await this.findOne(id);
 
     const changes = {

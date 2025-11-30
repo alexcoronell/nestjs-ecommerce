@@ -7,9 +7,6 @@ import { PurchaseController } from './purchase.controller';
 /* Services */
 import { PurchaseService } from './purchase.service';
 
-/* Interfaces */
-import { AuthRequest } from '@auth/interfaces/auth-request.interface';
-
 /* Entities */
 import { Purchase } from './entities/purchase.entity';
 
@@ -92,8 +89,8 @@ describe('PurchaseController', () => {
 
   describe('create purchases controller', () => {
     it('should call create purchase service', async () => {
-      const request = { user: 1 };
-      await controller.create(mockNewPurchase, request as AuthRequest);
+      const userId = 1;
+      await controller.create(mockNewPurchase, userId);
       expect(service.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -101,16 +98,16 @@ describe('PurchaseController', () => {
   describe('update purchases controller', () => {
     it('should call update purchases service', async () => {
       const changes = { totalAmount: 100 };
-      const request = { user: 1 };
-      await controller.update(1, request as AuthRequest, changes);
+      const userId = 1;
+      await controller.update(1, userId, changes);
       expect(service.update).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('remove purchases controller', () => {
     it('should call remove purchases service', async () => {
-      const request = { user: 1 };
-      await controller.remove(1, request as AuthRequest);
+      const userId = 1;
+      await controller.remove(1, userId);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });

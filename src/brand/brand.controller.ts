@@ -18,6 +18,9 @@ import { BrandService } from '@brand/brand.service';
 /* Decorators */
 import { UserId } from '@auth/decorators/user-id.decorator';
 
+/* Entities */
+import { Brand } from './entities/brand.entity';
+
 /* DTO's */
 import { CreateBrandDto } from '@brand/dto/create-brand.dto';
 import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
@@ -26,7 +29,6 @@ import { UpdateBrandDto } from '@brand/dto/update-brand.dto';
 import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
 import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
-import { Brand } from './entities/brand.entity';
 
 /**
  * Controller for managing brand-related operations.

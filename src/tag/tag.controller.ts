@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,17 +26,24 @@ import { Tag } from './entities/tag.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+
 @Controller('tag')
 export class TagController
   implements IBaseController<Tag, CreateTagDto, UpdateTagDto>
 {
   constructor(private readonly tagService: TagService) {}
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count-all')
   countAll() {
     return this.tagService.countAll();
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count')
   count() {
     return this.tagService.count();
@@ -46,21 +54,25 @@ export class TagController
     return this.tagService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tagService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('name/:name')
   findOneByname(@Param('name') name: string) {
     return this.tagService.findOneByName(name);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(@Body() payload: CreateTagDto, @UserId() userId: number) {
     return this.tagService.create(payload, userId);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -70,6 +82,7 @@ export class TagController
     return this.tagService.update(+id, userId, updateCategoryDto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.tagService.remove(+id, userId);

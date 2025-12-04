@@ -105,7 +105,7 @@ describe('TagService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Tag with id: ${id} not found`);
+        expect(error.message).toBe(`The Tag with ID: ${id} not found`);
       }
     });
 
@@ -114,7 +114,7 @@ describe('TagService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Tag with id: ${id} not found`),
+        new NotFoundException(`The Tag with ID: ${id} not found`),
       );
     });
 
@@ -137,7 +137,7 @@ describe('TagService', () => {
         await service.findOneByName(name);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Tag with name: ${name} not found`);
+        expect(error.message).toBe(`The Tag with NAME: ${name} not found`);
       }
     });
   });
@@ -185,7 +185,7 @@ describe('TagService', () => {
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Tag with id: ${id} has been modified`);
+      expect(message).toEqual(`The Tag with ID: ${id} has been modified`);
     });
 
     it('update should throw NotFoundException if Tag does not exist', async () => {
@@ -197,7 +197,7 @@ describe('TagService', () => {
         await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Tag with id: ${id} not found`);
+        expect(error.message).toBe(`The Tag with ID: ${id} not found`);
       }
     });
   });
@@ -216,7 +216,7 @@ describe('TagService', () => {
 
       const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Tag with id: ${id} has been deleted`);
+      expect(message).toEqual(`The Tag with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Tag does not exist with Rejects', async () => {
@@ -225,7 +225,7 @@ describe('TagService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id, userId)).rejects.toThrowError(
-        new NotFoundException(`The Tag with id: ${id} not found`),
+        new NotFoundException(`The Tag with ID: ${id} not found`),
       );
     });
   });

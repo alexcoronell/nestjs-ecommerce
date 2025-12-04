@@ -61,7 +61,7 @@ export class TagService
       where: { id, isDeleted: false },
     });
     if (!data) {
-      throw new NotFoundException(`The Tag with id: ${id} not found`);
+      throw new NotFoundException(`The Tag with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -75,7 +75,7 @@ export class TagService
       where: { name, isDeleted: false },
     });
     if (!data) {
-      throw new NotFoundException(`The Tag with name: ${name} not found`);
+      throw new NotFoundException(`The Tag with NAME: ${name} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -104,7 +104,7 @@ export class TagService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Tag with id: ${id} has been modified`,
+      message: `The Tag with ID: ${id} has been modified`,
     };
   }
 
@@ -116,7 +116,7 @@ export class TagService
     await this.repo.save(data as Tag);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Tag with id: ${id} has been deleted`,
+      message: `The Tag with ID: ${id} has been deleted`,
     };
   }
 }

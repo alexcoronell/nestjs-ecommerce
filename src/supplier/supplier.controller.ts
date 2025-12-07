@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,6 +26,11 @@ import { Supplier } from './entities/supplier.entity';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('supplier')
 /**
  * Controller responsible for handling supplier-related HTTP requests.
@@ -47,6 +53,7 @@ export class SupplierController
    * Returns the total count of all suppliers, including those that may be soft-deleted or inactive.
    * @returns The total number of suppliers.
    */
+  //@UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count-all')
   countAll() {
     return this.supplierService.countAll();

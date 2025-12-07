@@ -106,7 +106,7 @@ describe('SupplierService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Supplier with id: ${id} not found`);
+        expect(error.message).toBe(`The Supplier with ID: ${id} not found`);
       }
     });
 
@@ -115,7 +115,7 @@ describe('SupplierService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Supplier with id: ${id} not found`),
+        new NotFoundException(`The Supplier with ID: ${id} not found`),
       );
     });
 
@@ -140,7 +140,7 @@ describe('SupplierService', () => {
         await service.findOneByName(name);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Supplier with name: ${name} not found`);
+        expect(error.message).toBe(`The Supplier with NAME: ${name} not found`);
       }
     });
   });
@@ -193,7 +193,7 @@ describe('SupplierService', () => {
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Supplier with id: ${id} has been modified`);
+      expect(message).toEqual(`The Supplier with ID: ${id} has been modified`);
     });
 
     it('update should throw NotFoundException if Supplier does not exist', async () => {
@@ -205,7 +205,7 @@ describe('SupplierService', () => {
         await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Supplier with id: ${id} not found`);
+        expect(error.message).toBe(`The Supplier with ID: ${id} not found`);
       }
     });
   });
@@ -224,7 +224,7 @@ describe('SupplierService', () => {
 
       const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Supplier with id: ${id} has been deleted`);
+      expect(message).toEqual(`The Supplier with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if supplier does not exist with Rejects', async () => {
@@ -233,7 +233,7 @@ describe('SupplierService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id, userId)).rejects.toThrowError(
-        new NotFoundException(`The Supplier with id: ${id} not found`),
+        new NotFoundException(`The Supplier with ID: ${id} not found`),
       );
     });
   });

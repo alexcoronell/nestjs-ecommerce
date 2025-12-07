@@ -94,7 +94,7 @@ export class SupplierService
       where: { id, isDeleted: false },
     });
     if (!supplier) {
-      throw new NotFoundException(`The Supplier with id: ${id} not found`);
+      throw new NotFoundException(`The Supplier with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -115,7 +115,7 @@ export class SupplierService
       where: { name, isDeleted: false },
     });
     if (!supplier) {
-      throw new NotFoundException(`The Supplier with name: ${name} not found`);
+      throw new NotFoundException(`The Supplier with NAME: ${name} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -160,7 +160,7 @@ export class SupplierService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Supplier with id: ${id} has been modified`,
+      message: `The Supplier with ID: ${id} has been modified`,
     };
   }
 
@@ -182,7 +182,7 @@ export class SupplierService
     await this.repo.save(data as Supplier);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Supplier with id: ${id} has been deleted`,
+      message: `The Supplier with ID: ${id} has been deleted`,
     };
   }
 }

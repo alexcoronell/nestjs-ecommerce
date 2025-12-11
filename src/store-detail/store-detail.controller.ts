@@ -5,6 +5,7 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Services */
@@ -21,10 +22,15 @@ import { UpdateStoreDetailDto } from './dto/update-store-detail.dto';
 
 import { Result } from '@commons/types/result.type';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+
 @Controller('store-detail')
 export class StoreDetailController {
   constructor(private readonly storeDetailService: StoreDetailService) {}
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Result<StoreDetail>> {
     return this.storeDetailService.findOne(+id);

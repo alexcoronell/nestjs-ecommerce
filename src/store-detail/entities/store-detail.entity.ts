@@ -53,8 +53,6 @@ export class StoreDetail {
 
   @UpdateDateColumn({
     name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
 

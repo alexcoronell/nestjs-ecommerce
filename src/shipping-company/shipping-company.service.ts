@@ -67,7 +67,7 @@ export class ShippingCompanyService
     });
     if (!data) {
       throw new NotFoundException(
-        `The Shipping Company with id: ${id} not found`,
+        `The Shipping Company with ID: ${id} not found`,
       );
     }
     return {
@@ -83,7 +83,7 @@ export class ShippingCompanyService
     });
     if (!data) {
       throw new NotFoundException(
-        `The Shipping Company with name: ${name} not found`,
+        `The Shipping Company with NAME: ${name} not found`,
       );
     }
     return {
@@ -116,7 +116,7 @@ export class ShippingCompanyService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Shipping Company with id: ${id} has been modified`,
+      message: `The Shipping Company with ID: ${id} has been modified`,
     };
   }
 
@@ -132,7 +132,7 @@ export class ShippingCompanyService
     await this.repo.save(data as ShippingCompany);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Shipping Company with id: ${id} has been deleted`,
+      message: `The Shipping Company with ID: ${id} has been deleted`,
     };
   }
 }

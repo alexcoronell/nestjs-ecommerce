@@ -1,0 +1,211 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConflictException, INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { App } from 'supertest/types';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Reflector, APP_INTERCEPTOR } from '@nestjs/core';
+
+/* Modules */
+import { AppModule } from '../../src/app.module';
+import { ShippingCompanyModule } from '@shipping_company/shipping-company.module';
+import { UserModule } from '@user/user.module';
+
+/* Interfaces */
+import { User } from '@user/entities/user.entity';
+
+/* Interceptors */
+import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
+
+/* Seed */
+import { upSeed, downSeed } from '../utils/seed';
+
+/* DataSource */
+import { dataSource } from '../utils/seed';
+
+/* Faker */
+import {
+  createShippingCompany,
+  generateNewShippingCompanies,
+} from '@faker/shippingCompany.faker';
+
+/* Users for Login */
+import {
+  seedNewAdminUser,
+  adminPassword,
+  seedNewSellerUser,
+  sellerPassword,
+  seedNewCustomerUser,
+  customerPassword,
+} from '../utils/user.seed';
+
+/* ApiKey */
+const API_KEY = process.env.API_KEY || 'api-e2e-key';
+
+describe('CategoryController (e2e) [POST]', () => {
+  let app: INestApplication<App>;
+  let repo: any = undefined;
+  let repoUser: any = undefined;
+  let adminUser: User | null = null;
+  let sellerUser: User | null = null;
+  let customerUser: User | null = null;
+  let adminAccessToken: string;
+  let sellerAccessToken: string;
+  let customerAccessToken: string;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          envFilePath: '.env.e2e',
+        }),
+        TypeOrmModule.forRootAsync({
+          useFactory: () => ({
+            synchronize: true,
+            ...dataSource.options,
+          }),
+        }),
+        AppModule,
+        ShippingCompanyModule,
+        UserModule,
+      ],
+      providers: [
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: AuditInterceptor,
+        },
+        Reflector,
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+    repo = app.get('ShippingCompanyRepository');
+    repoUser = app.get('UserRepository');
+    const shippingCompanies = generateNewShippingCompanies(10);
+    await repo.save(shippingCompanies);
+  });
+
+  beforeEach(async () => {
+    await upSeed();
+    adminUser = await repoUser.save(await seedNewAdminUser());
+    sellerUser = await repoUser.save(await seedNewSellerUser());
+    customerUser = await repoUser.save(await seedNewCustomerUser());
+
+    /* Login Admin User */
+    const loginAdmin = await request(app.getHttpServer())
+      .post('/auth/user/login')
+      .set('x-api-key', API_KEY)
+      .send({
+        email: adminUser?.email,
+        password: adminPassword,
+      });
+    const { access_token: tempAdminAccessToken } = loginAdmin.body;
+    adminAccessToken = tempAdminAccessToken;
+
+    /* Login Seller User */
+    const loginSeller = await request(app.getHttpServer())
+      .post('/auth/user/login')
+      .set('x-api-key', API_KEY)
+      .send({
+        email: sellerUser?.email,
+        password: sellerPassword,
+      });
+    const { access_token: tempSellerAccessToken } = loginSeller.body;
+    sellerAccessToken = tempSellerAccessToken;
+
+    /* Login Customer User */
+    const loginCustomer = await request(app.getHttpServer())
+      .post('/auth/user/login')
+      .set('x-api-key', API_KEY)
+      .send({
+        email: customerUser?.email,
+        password: customerPassword,
+      });
+    const { access_token: tempCustomererAccessToken } = loginCustomer.body;
+    customerAccessToken = tempCustomererAccessToken;
+  });
+
+  describe('POST shipping company', () => {
+    it('/ should create a shipping company, return 201 and the shipping company with admin user', async () => {
+      const newShippingCompany = createShippingCompany();
+      const res = await request(app.getHttpServer())
+        .post('/shipping-company')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newShippingCompany);
+      const { statusCode, data } = res.body;
+      expect(statusCode).toBe(201);
+      expect(data.name).toEqual(newShippingCompany.name);
+    });
+
+    it('/ should create a shipping company, return 401 if user is seller', async () => {
+      const newShippingCompany = createShippingCompany();
+      const res = await request(app.getHttpServer())
+        .post('/shipping-company')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${sellerAccessToken}`)
+        .send(newShippingCompany);
+      const { statusCode, error } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+    });
+
+    it('/ should create a shipping company, return 401 if user is custonmer', async () => {
+      const newShippingCompany = createShippingCompany();
+      const res = await request(app.getHttpServer())
+        .post('/shipping-company')
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${customerAccessToken}`)
+        .send(newShippingCompany);
+      const { statusCode, error } = res.body;
+      expect(statusCode).toBe(401);
+      expect(error).toBe('Unauthorized');
+    });
+
+    it('/ should return a  conflict exception with existing category name', async () => {
+      const newShippingCompany = createShippingCompany();
+      await repo.save(newShippingCompany);
+      const repeatedShippingCompany = {
+        ...createShippingCompany(),
+        name: newShippingCompany.name,
+      };
+      try {
+        await request(app.getHttpServer())
+          .post('/shipping-company')
+          .send(repeatedShippingCompany);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          `The shipping company NAME ${repeatedShippingCompany.name} is already in use`,
+        );
+      }
+    });
+
+    it('/ should create a shipping company, return 401 if api key is missing', async () => {
+      const newShippingCompany = createShippingCompany();
+      const res = await request(app.getHttpServer())
+        .post('/shipping-company')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newShippingCompany);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Invalid API key');
+    });
+  });
+
+  afterEach(async () => {
+    await downSeed();
+  });
+
+  afterAll(async () => {
+    await app.close();
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
+  });
+});

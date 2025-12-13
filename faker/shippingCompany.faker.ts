@@ -17,6 +17,16 @@ export const createShippingCompany = (): CreateShippingCompanyDto => ({
   email: faker.internet.email(),
 });
 
+export const generateNewShippingCompanies = (
+  size: number = 1,
+): CreateShippingCompanyDto[] => {
+  const newShippingCompanies: CreateShippingCompanyDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newShippingCompanies.push(createShippingCompany());
+  }
+  return newShippingCompanies;
+};
+
 export const generateShippingCompany = (id: number = 1): ShippingCompany => ({
   ...generateBaseEntity(id),
   ...createShippingCompany(),

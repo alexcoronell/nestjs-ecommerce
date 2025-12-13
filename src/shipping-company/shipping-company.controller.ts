@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,6 +26,12 @@ import { ShippingCompany } from './entities/shipping-company.entity';
 import { CreateShippingCompanyDto } from './dto/create-shipping-company.dto';
 import { UpdateShippingCompanyDto } from './dto/update-shipping-company.dto';
 
+/* Guards */
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+
+@UseGuards(JwtAuthGuard, IsNotCustomerGuard)
 @Controller('shipping-company')
 export class ShippingCompanyController
   implements
@@ -63,11 +70,13 @@ export class ShippingCompanyController
     return this.shippingCompanyService.findOneByName(name);
   }
 
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() payload: CreateShippingCompanyDto, @UserId() userId: number) {
     return this.shippingCompanyService.create(payload, userId);
   }
 
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -77,6 +86,7 @@ export class ShippingCompanyController
     return this.shippingCompanyService.update(+id, userId, updateCategoryDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.shippingCompanyService.remove(+id, userId);

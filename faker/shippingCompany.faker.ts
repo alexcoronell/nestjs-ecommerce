@@ -13,7 +13,7 @@ import { generateUser } from './user.faker';
 export const createShippingCompany = (): CreateShippingCompanyDto => ({
   name: faker.company.name(),
   contactName: faker.person.fullName(),
-  phoneNumber: faker.phone.number(),
+  phoneNumber: faker.phone.number({ style: 'international' }),
   email: faker.internet.email(),
 });
 

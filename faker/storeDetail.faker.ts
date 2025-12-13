@@ -14,7 +14,7 @@ export const generateStoreDetail = (): StoreDetail => ({
   city: faker.location.city(),
   neighborhood: faker.location.county(),
   address: faker.location.streetAddress(),
-  phone: faker.phone.number(),
+  phone: faker.phone.number({ style: 'international' }),
   email: faker.internet.email(),
   legalInformation: faker.lorem.paragraphs(2),
   createdAt: faker.date.anytime(),

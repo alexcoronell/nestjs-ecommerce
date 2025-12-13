@@ -36,12 +36,13 @@ export class StoreDetailController {
     return this.storeDetailService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @UserId() userId: number,
-    @Body() payload: UpdateStoreDetailDto,
+    @Body() updateStoreDetailDto: UpdateStoreDetailDto,
   ): Promise<Result<StoreDetail>> {
-    return this.storeDetailService.update(+id, userId, payload);
+    return this.storeDetailService.update(+id, userId, updateStoreDetailDto);
   }
 }

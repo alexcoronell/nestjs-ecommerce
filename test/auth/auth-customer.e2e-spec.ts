@@ -21,7 +21,7 @@ import { UserModule } from '@user/user.module';
 import { ApiKeyGuard } from '@commons/guards/api-key.guard';
 
 /* Seed */
-import { upSeed, downSeed } from '../utils/seed';
+import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 
 /* DataSource */
 import { dataSource } from '../utils/seed';
@@ -35,6 +35,8 @@ describe('AuthController (e2e) CUSTOMER USER', () => {
   let userCustomer: any = undefined;
 
   beforeAll(async () => {
+    // Initialize database connection once for the entire test suite
+    await initDataSource();
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -76,7 +78,10 @@ describe('AuthController (e2e) CUSTOMER USER', () => {
   });
 
   beforeEach(async () => {
-    await upSeed();
+    // Clean all data before each test to ensure isolation
+    await cleanDB();
+
+    // Create a fresh customer user for each test
     userCustomer = await seedNewCustomerUser();
     await repo.save(userCustomer);
   });
@@ -146,14 +151,9 @@ describe('AuthController (e2e) CUSTOMER USER', () => {
     });
   });
 
-  afterEach(async () => {
-    await downSeed();
-  });
-
   afterAll(async () => {
     await app.close();
-    if (dataSource.isInitialized) {
-      await dataSource.destroy();
-    }
+    // Close database connection after all tests
+    await closeDataSource();
   });
 });

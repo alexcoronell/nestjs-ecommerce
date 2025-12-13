@@ -21,7 +21,7 @@ import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
 import { User } from '@user/entities/user.entity';
 
 /* Seed */
-import { upSeed, downSeed } from '../utils/seed';
+import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 
 /* DataSource */
 import { dataSource } from '../utils/seed';
@@ -54,6 +54,8 @@ describe('UserControler (e2e) [POST]', () => {
   let customerAccessToken: string;
 
   beforeAll(async () => {
+    // Initialize database connection once for the entire test suite
+    await initDataSource();
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -84,7 +86,10 @@ describe('UserControler (e2e) [POST]', () => {
   });
 
   beforeEach(async () => {
-    await upSeed();
+    // Clean all data before each test to ensure isolation
+    await cleanDB();
+
+    // Create fresh users for each test
     adminUser = await repo.save(await seedNewAdminUser());
     sellerUser = await repo.save(await seedNewSellerUser());
     customerUser = await repo.save(await seedNewCustomerUser());
@@ -253,14 +258,9 @@ describe('UserControler (e2e) [POST]', () => {
     });
   });
 
-  afterEach(async () => {
-    await downSeed();
-  });
-
   afterAll(async () => {
     await app.close();
-    if (dataSource.isInitialized) {
-      await dataSource.destroy();
-    }
+    // Close database connection after all tests
+    await closeDataSource();
   });
 });

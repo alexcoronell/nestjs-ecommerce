@@ -54,6 +54,43 @@ export const dataSource = new DataSource({
   ],
 });
 
+/**
+ * Initializes the database connection (call once per test suite)
+ */
+export const initDataSource = async () => {
+  if (!dataSource.isInitialized) {
+    await dataSource.initialize();
+  }
+};
+
+/**
+ * Cleans all data from the database while preserving the schema.
+ * Useful to run before each test (in beforeEach).
+ */
+export const cleanDB = async () => {
+  if (!dataSource.isInitialized) {
+    throw new Error('DataSource not initialized. Call initDataSource() first.');
+  }
+
+  // Get table names from entity metadata
+  const entities = dataSource.entityMetadatas;
+  const tableNames = entities
+    .map((entity) => `"${entity.tableName}"`)
+    .join(', ');
+
+  // Truncate all tables, reset sequences, and ignore foreign key constraints
+  await dataSource.query(`TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`);
+};
+
+/**
+ * Closes the database connection (call once at the end of the test suite)
+ */
+export const closeDataSource = async () => {
+  if (dataSource.isInitialized) {
+    await dataSource.destroy();
+  }
+};
+
 export const upSeed = async () => {
   await dataSource.initialize();
   await dataSource.synchronize(true);

@@ -17,9 +17,20 @@ export const createSubcategory = (
 ): CreateSubcategoryDto => {
   const category = categoryId || faker.number.int({ min: 1, max: 50 });
   return {
-    name: name || faker.lorem.word(),
+    name: name || faker.lorem.words(2),
     category,
   };
+};
+
+export const generateNewSubcategories = (
+  size: number = 1,
+  category = 1,
+): CreateSubcategoryDto[] => {
+  const newSubcategories: CreateSubcategoryDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newSubcategories.push(createSubcategory(category));
+  }
+  return newSubcategories;
 };
 
 export const generateSubcategory = (

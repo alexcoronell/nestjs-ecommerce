@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,6 +26,11 @@ import { Subcategory } from './entities/subcategory.entity';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
+/* Guards */
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+
 @Controller('subcategory')
 export class SubcategoryController
   implements
@@ -32,16 +38,19 @@ export class SubcategoryController
 {
   constructor(private readonly subcategoryService: SubcategoryService) {}
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count-all')
   countAll() {
     return this.subcategoryService.countAll();
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('count')
   count() {
     return this.subcategoryService.count();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   findAll() {
     return this.subcategoryService.findAll();
@@ -52,21 +61,25 @@ export class SubcategoryController
     return this.subcategoryService.findAllByCategory(category);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.subcategoryService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('name/:name')
   findOneByname(@Param('name') name: string) {
     return this.subcategoryService.findOneByName(name);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(@Body() payload: CreateSubcategoryDto, @UserId() userId: number) {
     return this.subcategoryService.create(payload, userId);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -76,6 +89,7 @@ export class SubcategoryController
     return this.subcategoryService.update(+id, userId, changes);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id¨')
   remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.subcategoryService.remove(+id, userId);

@@ -102,7 +102,7 @@ export class SubcategoryService
     });
     if (!data) {
       throw new NotFoundException(
-        `The Subcategory with name: ${name} not found`,
+        `The Subcategory with NAME: ${name} not found`,
       );
     }
     return {
@@ -124,7 +124,7 @@ export class SubcategoryService
     return {
       statusCode: HttpStatus.CREATED,
       data,
-      message: `The Subcategory already exists in this category`,
+      message: `The Subcategory was created`,
     };
   }
 

@@ -10,10 +10,7 @@ import { seedNewCustomerUser, customerPassword } from './user.seed';
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-async function loginCustomer(
-  app: INestApplication<App>,
-  repo: any,
-): Promise<string> {
+async function loginCustomer(app: INestApplication<App>, repo: any) {
   const customerUser = await repo.save(await seedNewCustomerUser());
 
   const login = await request(app.getHttpServer())
@@ -24,7 +21,7 @@ async function loginCustomer(
       password: customerPassword,
     });
   const { access_token } = login.body;
-  return access_token as string;
+  return { customerUser, access_token };
 }
 
 export { loginCustomer };

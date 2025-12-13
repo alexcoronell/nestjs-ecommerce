@@ -14,9 +14,6 @@ import { AppModule } from '../../src/app.module';
 import { PaymentMethodModule } from '@payment_method/payment-method.module';
 import { UserModule } from '@user/user.module';
 
-/* Interfaces */
-import { User } from '@user/entities/user.entity';
-
 /* Interceptors */
 import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
 
@@ -32,15 +29,10 @@ import {
   generateNewPaymentMethods,
 } from '@faker/paymentMethod.faker';
 
-/* Users for Login */
-import {
-  seedNewAdminUser,
-  adminPassword,
-  seedNewSellerUser,
-  sellerPassword,
-  seedNewCustomerUser,
-  customerPassword,
-} from '../utils/user.seed';
+/* Login Users */
+import { loginAdmin } from '../utils/login-admin';
+import { loginSeller } from '../utils/login-seller';
+import { loginCustomer } from '../utils/login-customer';
 
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
@@ -49,9 +41,6 @@ describe('PaymentMethodController (e2e) [GET]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
   let repoUser: any = undefined;
-  let adminUser: User | null = null;
-  let sellerUser: User | null = null;
-  let customerUser: User | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
   let customerAccessToken: string;
@@ -96,43 +85,13 @@ describe('PaymentMethodController (e2e) [GET]', () => {
     // Clean all data before each test to ensure isolation
     await cleanDB();
 
-    // Create fresh users for each test
-    adminUser = await repoUser.save(await seedNewAdminUser());
-    sellerUser = await repoUser.save(await seedNewSellerUser());
-    customerUser = await repoUser.save(await seedNewCustomerUser());
-
-    /* Login Admin User */
-    const loginAdmin = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: adminUser?.email,
-        password: adminPassword,
-      });
-    const { access_token: tempAdminAccessToken } = loginAdmin.body;
-    adminAccessToken = tempAdminAccessToken;
-
-    /* Login Seller User */
-    const loginSeller = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: sellerUser?.email,
-        password: sellerPassword,
-      });
-    const { access_token: tempSellerAccessToken } = loginSeller.body;
-    sellerAccessToken = tempSellerAccessToken;
-
-    /* Login Customer User */
-    const loginCustomer = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: customerUser?.email,
-        password: customerPassword,
-      });
-    const { access_token: tempCustomererAccessToken } = loginCustomer.body;
-    customerAccessToken = tempCustomererAccessToken;
+    /* Login Users */
+    const resLoginAdmin = await loginAdmin(app, repoUser);
+    adminAccessToken = resLoginAdmin.access_token;
+    const resLoginSeller = await loginSeller(app, repoUser);
+    sellerAccessToken = resLoginSeller.access_token;
+    const resLoginCustomer = await loginCustomer(app, repoUser);
+    customerAccessToken = resLoginCustomer.access_token;
   });
 
   describe('GET Payment Method - Count-All', () => {

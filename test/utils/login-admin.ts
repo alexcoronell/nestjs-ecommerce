@@ -10,10 +10,7 @@ import { seedNewAdminUser, adminPassword } from './user.seed';
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-async function loginAdmin(
-  app: INestApplication<App>,
-  repo: any,
-): Promise<string> {
+async function loginAdmin(app: INestApplication<App>, repo: any) {
   const adminUser = await repo.save(await seedNewAdminUser());
 
   const login = await request(app.getHttpServer())
@@ -24,7 +21,7 @@ async function loginAdmin(
       password: adminPassword,
     });
   const { access_token } = login.body;
-  return access_token as string;
+  return { adminUser, access_token };
 }
 
 export { loginAdmin };

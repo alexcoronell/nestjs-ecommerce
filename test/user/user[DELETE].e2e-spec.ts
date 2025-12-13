@@ -16,9 +16,6 @@ import { UserModule } from '@user/user.module';
 /* Interceptors */
 import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
 
-/* Entities */
-import { User } from '@user/entities/user.entity';
-
 /* Seed */
 import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 
@@ -26,24 +23,18 @@ import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 import { dataSource } from '../utils/seed';
 
 /* User Seed */
-import {
-  seedUsers,
-  seedNewAdminUser,
-  adminPassword,
-  seedNewSellerUser,
-  sellerPassword,
-  seedNewCustomerUser,
-  customerPassword,
-} from '../utils/user.seed';
+import { seedUsers } from '../utils/user.seed';
+
+/* Login Users */
+import { loginAdmin } from '../utils/login-admin';
+import { loginSeller } from '../utils/login-seller';
+import { loginCustomer } from '../utils/login-customer';
 
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('UserControler (e2e) [DELETE]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
-  let adminUser: User | null = null;
-  let sellerUser: User | null = null;
-  let customerUser: User | null = null;
   let adminAccessToken: string;
   let sellerAccessToken: string;
   let customerAccessToken: string;
@@ -84,43 +75,15 @@ describe('UserControler (e2e) [DELETE]', () => {
     // Clean all data before each test to ensure isolation
     await cleanDB();
 
-    // Create fresh users for each test
-    adminUser = await repo.save(await seedNewAdminUser());
-    sellerUser = await repo.save(await seedNewSellerUser());
-    customerUser = await repo.save(await seedNewCustomerUser());
+    /* Login Users */
+    const resLoginAdmin = await loginAdmin(app, repo);
+    adminAccessToken = resLoginAdmin.access_token;
 
-    /* Login Admin User */
-    const loginAdmin = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: adminUser?.email,
-        password: adminPassword,
-      });
-    const { access_token: tempAdminAccessToken } = loginAdmin.body;
-    adminAccessToken = tempAdminAccessToken;
+    const resLoginSeller = await loginSeller(app, repo);
+    sellerAccessToken = resLoginSeller.access_token;
 
-    /* Login Seller User */
-    const loginSeller = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: sellerUser?.email,
-        password: sellerPassword,
-      });
-    const { access_token: tempSellerAccessToken } = loginSeller.body;
-    sellerAccessToken = tempSellerAccessToken;
-
-    /* Login Customer User */
-    const loginCustomer = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: customerUser?.email,
-        password: customerPassword,
-      });
-    const { access_token: tempCustomerAccessToken } = loginCustomer.body;
-    customerAccessToken = tempCustomerAccessToken;
+    const resLoginCustomer = await loginCustomer(app, repo);
+    customerAccessToken = resLoginCustomer.access_token;
   });
 
   describe('DELETE User', () => {
@@ -142,7 +105,7 @@ describe('UserControler (e2e) [DELETE]', () => {
       });
       expect(deletedInDBWithDeleted).not.toBeNull();
       expect(deletedInDBWithDeleted.isDeleted).toBe(true);
-      expect(deletedInDBWithDeleted.deletedBy.id).toBe(adminUser?.id);
+      expect(deletedInDBWithDeleted.deletedBy.id).toBe(1);
       expect(statusCode).toBe(200);
       expect(deletedInDB).toBeNull();
       expect(message).toBe(`The User with id: ${id} has been deleted`);

@@ -28,23 +28,18 @@ import { dataSource } from '../utils/seed';
 /* Faker */
 
 /* User Seed */
-import {
-  seedUser,
-  seedUsers,
-  seedNewAdminUser,
-  adminPassword,
-  seedNewSellerUser,
-  sellerPassword,
-  seedNewCustomerUser,
-  customerPassword,
-} from '../utils/user.seed';
+import { seedUser, seedUsers } from '../utils/user.seed';
+
+/* Login Users */
+import { loginAdmin } from '../utils/login-admin';
+import { loginSeller } from '../utils/login-seller';
+import { loginCustomer } from '../utils/login-customer';
 
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 describe('UserControler (e2e) [GET]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
-  let adminUser: User | null = null;
   let sellerUser: User | null = null;
   let customerUser: User | null = null;
   let adminAccessToken: string;
@@ -87,43 +82,17 @@ describe('UserControler (e2e) [GET]', () => {
     // Clean all data before each test to ensure isolation
     await cleanDB();
 
-    // Create fresh users for each test
-    adminUser = await repo.save(await seedNewAdminUser());
-    sellerUser = await repo.save(await seedNewSellerUser());
-    customerUser = await repo.save(await seedNewCustomerUser());
+    /* Login Users */
+    const resLoginAdmin = await loginAdmin(app, repo);
+    adminAccessToken = resLoginAdmin.access_token;
 
-    /* Login Admin User */
-    const loginAdmin = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: adminUser?.email,
-        password: adminPassword,
-      });
-    const { access_token: tempAdminAccessToken } = loginAdmin.body;
-    adminAccessToken = tempAdminAccessToken;
+    const resLoginSeller = await loginSeller(app, repo);
+    sellerUser = resLoginSeller.sellerUser;
+    sellerAccessToken = resLoginSeller.access_token;
 
-    /* Login Seller User */
-    const loginSeller = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: sellerUser?.email,
-        password: sellerPassword,
-      });
-    const { access_token: tempSellerAccessToken } = loginSeller.body;
-    sellerAccessToken = tempSellerAccessToken;
-
-    /* Login Customer User */
-    const loginCustomer = await request(app.getHttpServer())
-      .post('/auth/user/login')
-      .set('x-api-key', API_KEY)
-      .send({
-        email: customerUser?.email,
-        password: customerPassword,
-      });
-    const { access_token: tempCustomerAccessToken } = loginCustomer.body;
-    customerAccessToken = tempCustomerAccessToken;
+    const resLoginCustomer = await loginCustomer(app, repo);
+    customerUser = resLoginCustomer.customerUser;
+    customerAccessToken = resLoginCustomer.access_token;
   });
 
   describe('GET User - Count', () => {

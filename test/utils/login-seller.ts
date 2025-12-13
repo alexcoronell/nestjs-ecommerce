@@ -10,21 +10,18 @@ import { seedNewSellerUser, sellerPassword } from './user.seed';
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-async function loginSeller(
-  app: INestApplication<App>,
-  repo: any,
-): Promise<string> {
-  const customerUser = await repo.save(await seedNewSellerUser());
+async function loginSeller(app: INestApplication<App>, repo: any) {
+  const sellerUser = await repo.save(await seedNewSellerUser());
 
   const login = await request(app.getHttpServer())
     .post('/auth/user/login')
     .set('x-api-key', API_KEY)
     .send({
-      email: customerUser?.email,
+      email: sellerUser?.email,
       password: sellerPassword,
     });
   const { access_token } = login.body;
-  return access_token as string;
+  return { sellerUser, access_token };
 }
 
 export { loginSeller };

@@ -50,6 +50,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   let customerAccessToken: string;
   let category: Category;
   let subcategories: Subcategory[] = [];
+  const path = '/subcategory';
 
   beforeAll(async () => {
     // Initialize database connection once for the entire test suite
@@ -109,7 +110,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   describe('GET Subcategory - Count-All', () => {
     it('/count-all should return 200 with admin access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count-all')
+        .get(`${path}/count-all`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, total } = res.body;
@@ -119,7 +120,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 200 with seller access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count-all')
+        .get(`${path}/count-all`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, total } = res.body;
@@ -129,7 +130,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 401 with customer access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count-all')
+        .get(`${path}/count-all`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -139,7 +140,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 401 if api key is missing', async () => {
       const data: any = await request(app.getHttpServer()).get(
-        '/subcategory/count-all',
+        `${path}/count-all`,
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -148,7 +149,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count-all should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/subcategory/count-all')
+        .get(`${path}/count-all`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -159,7 +160,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   describe('GET Subcategory - Count', () => {
     it('/count should return 200 with admin access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count')
+        .get(`${path}/count`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, total } = res.body;
@@ -169,7 +170,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count should return 200 with seller access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count')
+        .get(`${path}/count`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, total } = res.body;
@@ -179,7 +180,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count should return 401 with customer access token', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory/count')
+        .get(`${path}/count`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -188,9 +189,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     });
 
     it('/count should return 401 if api key is missing', async () => {
-      const data: any = await request(app.getHttpServer()).get(
-        '/subcategory/count',
-      );
+      const data: any = await request(app.getHttpServer()).get(`${path}/count`);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
@@ -198,7 +197,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/count should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/subcategory/count')
+        .get(`${path}/count`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -209,7 +208,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   describe('GET Subcategory - / Find', () => {
     it('/ should return all subcategories with admin user', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory')
+        .get(`${path}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
@@ -227,7 +226,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/ should return 401 with seller user', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory')
+        .get(`${path}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -237,7 +236,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/ should return 401 with customer user', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory')
+        .get(`${path}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, message } = res.body;
@@ -247,7 +246,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/ should return 401 without logged user', async () => {
       const res = await request(app.getHttpServer())
-        .get('/subcategory')
+        .get(`${path}`)
         .set('x-api-key', API_KEY);
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(401);
@@ -255,7 +254,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     });
 
     it('/ should return 401 if api key is missing', async () => {
-      const data: any = await request(app.getHttpServer()).get('/subcategory');
+      const data: any = await request(app.getHttpServer()).get(`${path}`);
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
       expect(body).toHaveProperty('message', 'Invalid API key');
@@ -263,7 +262,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     it('/ should return 401 if api key is invalid', async () => {
       const data: any = await request(app.getHttpServer())
-        .get('/subcategory')
+        .get(`${path}`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -278,7 +277,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         where: { category: { id: categoryId }, isDeleted: false },
       });
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/category/${categoryId}`)
+        .get(`${path}/category/${categoryId}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
@@ -300,7 +299,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         where: { category: { id: categoryId }, isDeleted: false },
       });
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/category/${categoryId}`)
+        .get(`${path}/category/${categoryId}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, data } = res.body;
@@ -322,7 +321,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         where: { category: { id: categoryId }, isDeleted: false },
       });
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/category/${categoryId}`)
+        .get(`${path}/category/${categoryId}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, data } = res.body;
@@ -344,7 +343,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         where: { category: { id: categoryId }, isDeleted: false },
       });
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/category/${categoryId}`)
+        .get(`${path}/category/${categoryId}`)
         .set('x-api-key', API_KEY);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(200);
@@ -362,7 +361,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is missing', async () => {
       const categoryId = category.id;
       const data: any = await request(app.getHttpServer()).get(
-        `/subcategory/category/${categoryId}`,
+        `${path}/category/${categoryId}`,
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -372,7 +371,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is invalid', async () => {
       const categoryId = category.id;
       const data: any = await request(app.getHttpServer())
-        .get(`/subcategory/category/${categoryId}`)
+        .get(`${path}/category/${categoryId}`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -382,7 +381,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/:id should return 404 by id if subcategory does not exist with admin user', async () => {
       const id = 9999;
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/category/${id}`)
+        .get(`${path}/category/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
@@ -395,7 +394,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/:id should return an subcategory by id with admin user', async () => {
       const subcategory = subcategories[0];
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/${subcategory.id}`)
+        .get(`${path}/${subcategory.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
@@ -407,7 +406,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/:id should return 401 by id with seller user', async () => {
       const subcategory = subcategories[0];
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/${subcategory.id}`)
+        .get(`${path}/${subcategory.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -419,7 +418,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/:id should return 401 by id with customer access token', async () => {
       const subcategory = subcategories[0];
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/${subcategory.id}`)
+        .get(`${path}/${subcategory.id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -431,7 +430,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is missing', async () => {
       const subcategory = subcategories[0];
       const data: any = await request(app.getHttpServer()).get(
-        `/subcategory/${subcategory.id}`,
+        `${path}/${subcategory.id}`,
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -441,7 +440,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is invalid', async () => {
       const subcategory = subcategories[0];
       const data: any = await request(app.getHttpServer())
-        .get(`/subcategory/${subcategory.id}`)
+        .get(`${path}/${subcategory.id}`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -451,7 +450,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/:id should return 404 by id if subcategory does not exist with admin user', async () => {
       const id = 9999;
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/${id}`)
+        .get(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -466,7 +465,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
       const category = subcategories[0];
       const name = subcategories[0].name;
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/name/${name}`)
+        .get(`${path}/name/${name}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
@@ -479,7 +478,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/name/:name should return 401 by id with seller user', async () => {
       const name = subcategories[0].name;
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/name/${name}`)
+        .get(`${path}/name/${name}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -491,7 +490,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/name/:name should return 401 by id with customer access token', async () => {
       const name = subcategories[0].name;
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/name/${name}`)
+        .get(`${path}/name/${name}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`);
       const { statusCode, error, message } = res.body;
@@ -503,7 +502,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is missing', async () => {
       const name = subcategories[0].name;
       const data: any = await request(app.getHttpServer()).get(
-        `/subcategory/name/${name}`,
+        `${path}/name/${name}`,
       );
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -513,7 +512,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/ should return 401 if api key is invalid', async () => {
       const name = subcategories[0].name;
       const data: any = await request(app.getHttpServer())
-        .get(`/subcategory/name/${name}`)
+        .get(`${path}/name/${name}`)
         .set('x-api-key', 'invalid-api-key');
       const { body, statusCode } = data;
       expect(statusCode).toBe(401);
@@ -523,7 +522,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
     it('/name/:name should return 404 by id if subcategory does not exist with admin user', async () => {
       const name = 'non-existing-name';
       const res = await request(app.getHttpServer())
-        .get(`/subcategory/name/${name}`)
+        .get(`${path}/name/${name}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, error, message } = res.body;

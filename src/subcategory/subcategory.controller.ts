@@ -90,7 +90,7 @@ export class SubcategoryController
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @Delete(':id¨')
+  @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.subcategoryService.remove(+id, userId);
   }

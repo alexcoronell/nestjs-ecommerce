@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -17,7 +17,6 @@ import { UserModule } from '@user/user.module';
 
 /* Entities */
 import { Category } from '@category/entities/category.entity';
-import { Subcategory } from '@subcategory/entities/subcategory.entity';
 
 /* Interceptors */
 import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
@@ -29,10 +28,7 @@ import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 import { dataSource } from '../utils/seed';
 
 /* Faker */
-import {
-  createSubcategory,
-  generateNewSubcategories,
-} from '@faker/subcategory.faker';
+import { generateNewSubcategories } from '@faker/subcategory.faker';
 import { generateCategory } from '@faker/category.faker';
 
 /* Login Users */
@@ -52,7 +48,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   let sellerAccessToken: string;
   let customerAccessToken: string;
   let category: Category;
-  let subcategories: Subcategory[] = [];
+  const ID = 1;
   const path = '/subcategory';
 
   beforeAll(async () => {
@@ -107,91 +103,71 @@ describe('SubcategoryController (e2e) [GET]', () => {
     const newCategory = generateCategory();
     category = await repoCategory.save(newCategory);
     const newSubcategories = generateNewSubcategories(5, category.id);
-    subcategories = await repo.save(newSubcategories);
+    await repo.save(newSubcategories);
   });
 
-  describe('POST Subcategory', () => {
-    it('/ should create a subcategory, return 201 and the subcategory with admin user', async () => {
-      const newSubcategory = createSubcategory();
-      const dto = {
-        name: newSubcategory.name,
-        categoryId: category.id,
-      };
+  describe('DELETE Subcategory', () => {
+    it('/:id should delete a Subcategory with admin user', async () => {
       const res = await request(app.getHttpServer())
-        .post('/subcategory')
+        .delete(`${path}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(dto);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(201);
-      expect(data.name).toEqual(newSubcategory.name);
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode } = res.body;
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
+      expect(statusCode).toBe(200);
+      expect(deletedInDB).toBeNull();
     });
 
-    it('/ should return 401 if user is seller', async () => {
-      const newSubcategory = createSubcategory();
+    it('/:id should return 401 if user is seller', async () => {
       const res = await request(app.getHttpServer())
-        .post(`${path}`)
+        .delete(`${path}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${sellerAccessToken}`)
-        .send(newSubcategory);
-      const { statusCode, error, message } = res.body;
+        .set('Authorization', `Bearer ${sellerAccessToken}`);
+      const { statusCode, error } = res.body;
       expect(statusCode).toBe(401);
       expect(error).toBe('Unauthorized');
-      expect(message).toBe('Unauthorized: Admin access required');
     });
 
-    it('/ should return 401 if user is customer', async () => {
-      const newSubcategory = createSubcategory();
+    it('/:id should return 401 if user is customer', async () => {
       const res = await request(app.getHttpServer())
-        .post(`${path}`)
+        .delete(`${path}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${customerAccessToken}`)
-        .send(newSubcategory);
-      const { statusCode, error, message } = res.body;
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const { statusCode, error } = res.body;
       expect(statusCode).toBe(401);
       expect(error).toBe('Unauthorized');
-      expect(message).toBe('Unauthorized: Admin access required');
     });
 
-    it('/ should return 401 if user is not logged', async () => {
-      const newSubcategory = createSubcategory();
+    it('/:id should return 401 if api key is missing', async () => {
       const res = await request(app.getHttpServer())
-        .post(`${path}`)
-        .set('x-api-key', API_KEY)
-        .send(newSubcategory);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(message).toBe('Unauthorized');
-    });
-
-    it('/ should create a subcategory, return 401 if api key is missing', async () => {
-      const newSubcategory = createSubcategory();
-      const res = await request(app.getHttpServer())
-        .post(`${path}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(newSubcategory);
+        .delete(`${path}/${ID}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(401);
       expect(message).toBe('Invalid API key');
     });
 
-    it('/ should return conflict if subcategory name already exists with the same category', async () => {
-      const existingSubcategory = subcategories[0];
+    it('/:id should return 401 if api key is invalid', async () => {
+      const res = await request(app.getHttpServer())
+        .delete(`${path}/${ID}`)
+        .set('x-api-key', 'invalid-api-key')
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(401);
+      expect(message).toBe('Invalid API key');
+    });
 
-      const newSubcategory = createSubcategory();
-      const dto = {
-        ...newSubcategory,
-        name: existingSubcategory.name,
-        categoryId: category.id,
-      };
-      try {
-        await request(app.getHttpServer()).post('/tag').send(dto);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(
-          `The Subcategory NAME ${dto.name} is already in use with the same Category`,
-        );
-      }
+    it('/:id should return 404 if shipping company does not exist', async () => {
+      const id = 9999;
+      const res = await request(app.getHttpServer())
+        .delete(`${path}/${id}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, message } = res.body;
+      expect(statusCode).toBe(404);
+      expect(message).toBe(`The Subcategory with ID: ${id} not found`);
     });
   });
 

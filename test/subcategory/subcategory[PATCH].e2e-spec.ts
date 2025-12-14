@@ -53,6 +53,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
   let customerAccessToken: string;
   let category: Category;
   let subcategories: Subcategory[] = [];
+  const path = '/subcategory';
 
   beforeAll(async () => {
     // Initialize database connection once for the entire test suite
@@ -116,7 +117,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
@@ -131,7 +132,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`)
         .send(updatedData);
@@ -147,7 +148,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`)
         .send(updatedData);
@@ -163,7 +164,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .send(updatedData);
       const { statusCode, message } = res.body;
@@ -177,7 +178,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
       const { statusCode, message } = res.body;
@@ -191,7 +192,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', 'invalid-api-key')
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
@@ -206,7 +207,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`/subcategory/${id}`)
+        .patch(`${path}/${id}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
@@ -226,7 +227,7 @@ describe('SubcategoryController (e2e) [GET]', () => {
       };
       try {
         await request(app.getHttpServer())
-          .post(`/subcategory/${id}`)
+          .post(`${path}/${id}`)
           .send(repeatedNameSubcategory);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);

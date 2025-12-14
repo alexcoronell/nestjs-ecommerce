@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interface */
@@ -25,12 +26,18 @@ import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
+/* Guards */
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+
 @Controller('product')
 export class ProductController
   implements IBaseController<Product, CreateProductDto, UpdateProductDto>
 {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count-all')
   countAll() {
     return this.productService.countAll();
@@ -46,6 +53,7 @@ export class ProductController
     return this.productService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findOne(+id);

@@ -13,15 +13,32 @@ import { generateCategory } from './category.faker';
 import { generateUser } from './user.faker';
 import { generateSubcategory } from './subcategory.faker';
 
-export const createProduct = (): CreateProductDto => ({
+export const createProduct = (
+  category?: number,
+  subcategory?: number,
+  brand?: number,
+): CreateProductDto => ({
   name: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
   price: parseInt(faker.commerce.price()),
-  stock: faker.number.int(),
-  category: faker.number.int(),
-  subcategory: faker.number.int(),
-  brand: faker.number.int(),
+  stock: faker.number.int({ min: 0, max: 1000 }),
+  category: category || faker.number.int(),
+  subcategory: subcategory || faker.number.int(),
+  brand: brand || faker.number.int(),
 });
+
+export const generateNewProducts = (
+  size: number = 1,
+  category?: number,
+  subcategory?: number,
+  brand?: number,
+): CreateProductDto[] => {
+  const newProducts: CreateProductDto[] = [];
+  for (let i = 0; i < size; i++) {
+    newProducts.push(createProduct(category, subcategory, brand));
+  }
+  return newProducts;
+};
 
 export const generateProduct = (id: number = 1): Product => ({
   ...generateBaseEntity(id),

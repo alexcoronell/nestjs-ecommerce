@@ -64,7 +64,7 @@ export class ProductService
       where: { id, isDeleted: false },
     });
     if (!product) {
-      throw new NotFoundException(`The Product with id: ${id} not found`);
+      throw new NotFoundException(`The Product with ID: ${id} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -78,7 +78,7 @@ export class ProductService
       where: { name, isDeleted: false },
     });
     if (!product) {
-      throw new NotFoundException(`The Product with name: ${name} not found`);
+      throw new NotFoundException(`The Product with NAME: ${name} not found`);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -124,7 +124,7 @@ export class ProductService
     return {
       statusCode: HttpStatus.OK,
       data: rta,
-      message: `The Product with id: ${id} has been modified`,
+      message: `The Product with ID: ${id} has been modified`,
     };
   }
 
@@ -140,7 +140,7 @@ export class ProductService
     await this.repo.save(data as Product);
     return {
       statusCode: HttpStatus.OK,
-      message: `The Product with id: ${id} has been deleted`,
+      message: `The Product with ID: ${id} has been deleted`,
     };
   }
 }

@@ -181,6 +181,26 @@ describe('ProductService', () => {
       expect(total).toEqual(mocks.length);
       expect(data).toEqual(mocks);
     });
+
+    it('findBySubcategory should return products by subcategory', async () => {
+      const mocks = generateManyProducts(50);
+      const subcategoryId = 1;
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([mocks, mocks.length]);
+
+      const { statusCode, data, total } =
+        await service.findBySubcategory(subcategoryId);
+      expect(repository.findAndCount).toHaveBeenCalledTimes(subcategoryId);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { subcategory: { id: subcategoryId }, isDeleted: false },
+        order: { name: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(mocks.length);
+      expect(data).toEqual(mocks);
+    });
   });
 
   describe('create products services', () => {

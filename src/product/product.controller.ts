@@ -74,6 +74,13 @@ export class ProductController
     return this.productService.findByCategory(+categoryId);
   }
 
+  @Get('subcategory/:subcategoryId')
+  findBySubcategory(
+    @Param('subcategoryId', ParseIntPipe) subcategoryId: number,
+  ) {
+    return this.productService.findBySubcategory(+subcategoryId);
+  }
+
   @Post()
   create(@Body() payload: CreateProductDto, @UserId() userId: number) {
     return this.productService.create(payload, userId);

@@ -36,6 +36,7 @@ describe('ProductController', () => {
     findOneByName: jest.fn().mockResolvedValue(mockProduct),
     findByBrand: jest.fn().mockResolvedValue(mockProducts),
     findByCategory: jest.fn().mockResolvedValue(mockProducts),
+    findBySubcategory: jest.fn().mockResolvedValue(mockProducts),
     create: jest.fn().mockResolvedValue(mockNewProduct),
     update: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -95,6 +96,11 @@ describe('ProductController', () => {
     it('should call findByCategory product service', async () => {
       expect(await controller.findByCategory(1)).toBe(mockProducts);
       expect(service.findByCategory).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call findBySubcategory product service', async () => {
+      expect(await controller.findBySubcategory(1)).toBe(mockProducts);
+      expect(service.findBySubcategory).toHaveBeenCalledTimes(1);
     });
   });
 

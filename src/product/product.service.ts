@@ -98,6 +98,18 @@ export class ProductService
     };
   }
 
+  async findByCategory(categoryId: Category['id']) {
+    const [products, total] = await this.repo.findAndCount({
+      where: { category: { id: categoryId }, isDeleted: false },
+      order: { name: 'ASC' },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      data: products,
+      total,
+    };
+  }
+
   async create(dto: CreateProductDto, userId: number) {
     const brandId = dto.brand;
     const categoryId = dto.category;

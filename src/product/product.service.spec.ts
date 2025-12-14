@@ -151,10 +151,30 @@ describe('ProductService', () => {
         .spyOn(repository, 'findAndCount')
         .mockResolvedValue([mocks, mocks.length]);
 
-      const { statusCode, data, total } = await service.findByBrand(1);
+      const { statusCode, data, total } = await service.findByBrand(brandId);
       expect(repository.findAndCount).toHaveBeenCalledTimes(brandId);
       expect(repository.findAndCount).toHaveBeenCalledWith({
         where: { brand: { id: brandId }, isDeleted: false },
+        order: { name: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(mocks.length);
+      expect(data).toEqual(mocks);
+    });
+
+    it('findByCategory should return products by category', async () => {
+      const mocks = generateManyProducts(50);
+      const categoryId = 1;
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([mocks, mocks.length]);
+
+      const { statusCode, data, total } =
+        await service.findByCategory(categoryId);
+      expect(repository.findAndCount).toHaveBeenCalledTimes(categoryId);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { category: { id: categoryId }, isDeleted: false },
         order: { name: 'ASC' },
       });
       expect(statusCode).toBe(200);

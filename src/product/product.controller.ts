@@ -64,6 +64,11 @@ export class ProductController
     return this.productService.findOneByName(name);
   }
 
+  @Get('brand/:brandId')
+  findByBrand(@Param('brandId', ParseIntPipe) brandId: number) {
+    return this.productService.findByBrand(+brandId);
+  }
+
   @Post()
   create(@Body() payload: CreateProductDto, @UserId() userId: number) {
     return this.productService.create(payload, userId);

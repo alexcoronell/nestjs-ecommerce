@@ -106,7 +106,7 @@ describe('ProductService', () => {
         await service.findOne(id);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Product with id: ${id} not found`);
+        expect(error.message).toBe(`The Product with ID: ${id} not found`);
       }
     });
 
@@ -115,7 +115,7 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Product with id: ${id} not found`),
+        new NotFoundException(`The Product with ID: ${id} not found`),
       );
     });
 
@@ -139,8 +139,27 @@ describe('ProductService', () => {
         await service.findOneByName(name);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Product with name: ${name} not found`);
+        expect(error.message).toBe(`The Product with NAME: ${name} not found`);
       }
+    });
+
+    it('findByBrand should return products by brand', async () => {
+      const mocks = generateManyProducts(50);
+      const brandId = 1;
+
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockResolvedValue([mocks, mocks.length]);
+
+      const { statusCode, data, total } = await service.findByBrand(1);
+      expect(repository.findAndCount).toHaveBeenCalledTimes(brandId);
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { brand: { id: brandId }, isDeleted: false },
+        order: { name: 'ASC' },
+      });
+      expect(statusCode).toBe(200);
+      expect(total).toEqual(mocks.length);
+      expect(data).toEqual(mocks);
     });
   });
 
@@ -201,7 +220,7 @@ describe('ProductService', () => {
       expect(repository.merge).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Product with id: ${id} has been modified`);
+      expect(message).toEqual(`The Product with ID: ${id} has been modified`);
     });
 
     it('update should throw NotFoundException if Product does not exist', async () => {
@@ -213,7 +232,7 @@ describe('ProductService', () => {
         await service.update(id, userId, { name: 'newName' });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe(`The Product with id: ${id} not found`);
+        expect(error.message).toBe(`The Product with ID: ${id} not found`);
       }
     });
   });
@@ -232,7 +251,7 @@ describe('ProductService', () => {
 
       const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
-      expect(message).toEqual(`The Product with id: ${id} has been deleted`);
+      expect(message).toEqual(`The Product with ID: ${id} has been deleted`);
     });
 
     it('remove should throw NotFoundException if Product does not exist with Rejects', async () => {
@@ -241,7 +260,7 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id, userId)).rejects.toThrowError(
-        new NotFoundException(`The Product with id: ${id} not found`),
+        new NotFoundException(`The Product with ID: ${id} not found`),
       );
     });
   });

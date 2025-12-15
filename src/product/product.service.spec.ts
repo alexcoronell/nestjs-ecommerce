@@ -165,17 +165,18 @@ describe('ProductService', () => {
 
     it('findByCategory should return products by category', async () => {
       const mocks = generateManyProducts(50);
-      const categoryId = 1;
+      const categorySlug = 'test-category';
 
       jest
         .spyOn(repository, 'findAndCount')
         .mockResolvedValue([mocks, mocks.length]);
 
       const { statusCode, data, total } =
-        await service.findByCategory(categoryId);
-      expect(repository.findAndCount).toHaveBeenCalledTimes(categoryId);
+        await service.findByCategory(categorySlug);
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
       expect(repository.findAndCount).toHaveBeenCalledWith({
-        where: { category: { id: categoryId }, isDeleted: false },
+        relations: ['brand', 'category', 'subcategory'],
+        where: { category: { slug: categorySlug }, isDeleted: false },
         order: { name: 'ASC' },
       });
       expect(statusCode).toBe(200);

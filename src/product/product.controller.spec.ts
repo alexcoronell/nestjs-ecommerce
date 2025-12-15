@@ -94,7 +94,9 @@ describe('ProductController', () => {
       expect(service.findByBrand).toHaveBeenCalledTimes(1);
     });
     it('should call findByCategory product service', async () => {
-      expect(await controller.findByCategory(1)).toBe(mockProducts);
+      expect(await controller.findByCategory('category-test')).toBe(
+        mockProducts,
+      );
       expect(service.findByCategory).toHaveBeenCalledTimes(1);
     });
 

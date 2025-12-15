@@ -20,6 +20,8 @@ import { UserId } from '@auth/decorators/user-id.decorator';
 import { ProductService } from './product.service';
 
 /* Entities */
+import { Brand } from '@brand/entities/brand.entity';
+import { Category } from '@category/entities/category.entity';
 import { Product } from './entities/product.entity';
 
 /* DTO's */
@@ -64,14 +66,14 @@ export class ProductController
     return this.productService.findOneByName(name);
   }
 
-  @Get('brand/:brandName')
-  findByBrand(@Param('brandName') brandName: string) {
-    return this.productService.findByBrand(brandName);
+  @Get('brand/:brandSlug')
+  findByBrand(@Param('brandSlug') brandSlug: Brand['slug']) {
+    return this.productService.findByBrand(brandSlug);
   }
 
-  @Get('category/:categoryId')
-  findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
-    return this.productService.findByCategory(+categoryId);
+  @Get('category/:categorySlug')
+  findByCategory(@Param('categorySlug') categorySlug: Category['slug']) {
+    return this.productService.findByCategory(categorySlug);
   }
 
   @Get('subcategory/:subcategoryId')

@@ -64,9 +64,9 @@ export class ProductController
     return this.productService.findOneByName(name);
   }
 
-  @Get('brand/:brandId')
-  findByBrand(@Param('brandId', ParseIntPipe) brandId: number) {
-    return this.productService.findByBrand(+brandId);
+  @Get('brand/:brandName')
+  findByBrand(@Param('brandName') brandName: string) {
+    return this.productService.findByBrand(brandName);
   }
 
   @Get('category/:categoryId')

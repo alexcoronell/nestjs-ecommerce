@@ -86,9 +86,10 @@ export class ProductService
     };
   }
 
-  async findByBrand(brandId: Brand['id']) {
+  async findByBrand(brandSlug: Brand['slug']) {
     const [products, total] = await this.repo.findAndCount({
-      where: { brand: { id: brandId }, isDeleted: false },
+      relations: ['brand', 'category', 'subcategory'],
+      where: { brand: { slug: brandSlug }, isDeleted: false },
       order: { name: 'ASC' },
     });
     return {

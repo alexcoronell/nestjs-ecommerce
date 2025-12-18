@@ -214,7 +214,7 @@ describe('ProductController (e2e) [GET]', () => {
       expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
     });
 
-    it('/count-all should return 200 with admin access token', async () => {
+    it('/count-all should return 200 and total with admin access token', async () => {
       const res = await request(app.getHttpServer())
         .get(COUNT)
         .set('x-api-key', API_KEY)
@@ -224,7 +224,7 @@ describe('ProductController (e2e) [GET]', () => {
       expect(total).toEqual(products.length);
     });
 
-    it('/count-all should return 401 with seller access token', async () => {
+    it('/count-all should return 200 and total with seller access token', async () => {
       const res = await request(app.getHttpServer())
         .get(COUNT)
         .set('x-api-key', API_KEY)
@@ -234,7 +234,7 @@ describe('ProductController (e2e) [GET]', () => {
       expect(total).toEqual(products.length);
     });
 
-    it('/count-all should return 401 with customer access token', async () => {
+    it('/count-all should return 200 and total with customer access token', async () => {
       const res = await request(app.getHttpServer())
         .get(COUNT)
         .set('x-api-key', API_KEY)
@@ -244,7 +244,7 @@ describe('ProductController (e2e) [GET]', () => {
       expect(total).toEqual(products.length);
     });
 
-    it('/count-all should return 401 without access token', async () => {
+    it('/count-all should return 200 and total without access token', async () => {
       const res = await request(app.getHttpServer())
         .get(COUNT)
         .set('x-api-key', API_KEY);

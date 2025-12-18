@@ -22,9 +22,9 @@ export const createProduct = (
   description: faker.commerce.productDescription(),
   price: parseInt(faker.commerce.price()),
   stock: faker.number.int({ min: 0, max: 1000 }),
-  category: category || faker.number.int(),
-  subcategory: subcategory || faker.number.int(),
-  brand: brand || faker.number.int(),
+  category: category || faker.number.int({ min: 1, max: 100 }),
+  subcategory: subcategory || faker.number.int({ min: 1, max: 100 }),
+  brand: brand || faker.number.int({ min: 1, max: 100 }),
 });
 
 export const generateNewProducts = (

@@ -81,6 +81,7 @@ export class ProductController
     return this.productService.findBySubcategory(+subcategoryId);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(@Body() payload: CreateProductDto, @UserId() userId: number) {
     return this.productService.create(payload, userId);

@@ -111,7 +111,7 @@ describe('ShippingCompanyService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(
-          `The Shipping Company with id: ${id} not found`,
+          `The Shipping Company with ID: ${id} not found`,
         );
       }
     });
@@ -121,7 +121,7 @@ describe('ShippingCompanyService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrowError(
-        new NotFoundException(`The Shipping Company with id: ${id} not found`),
+        new NotFoundException(`The Shipping Company with ID: ${id} not found`),
       );
     });
 
@@ -146,7 +146,7 @@ describe('ShippingCompanyService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(
-          `The Shipping Company with name: ${name} not found`,
+          `The Shipping Company with NAME: ${name} not found`,
         );
       }
     });
@@ -201,7 +201,7 @@ describe('ShippingCompanyService', () => {
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
-        `The Shipping Company with id: ${id} has been modified`,
+        `The Shipping Company with ID: ${id} has been modified`,
       );
     });
 
@@ -215,7 +215,7 @@ describe('ShippingCompanyService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(
-          `The Shipping Company with id: ${id} not found`,
+          `The Shipping Company with ID: ${id} not found`,
         );
       }
     });
@@ -235,7 +235,7 @@ describe('ShippingCompanyService', () => {
       const { statusCode, message } = await service.remove(id, userId);
       expect(statusCode).toBe(200);
       expect(message).toEqual(
-        `The Shipping Company with id: ${id} has been deleted`,
+        `The Shipping Company with ID: ${id} has been deleted`,
       );
     });
 
@@ -245,7 +245,7 @@ describe('ShippingCompanyService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(service.remove(id, userId)).rejects.toThrowError(
-        new NotFoundException(`The Shipping Company with id: ${id} not found`),
+        new NotFoundException(`The Shipping Company with ID: ${id} not found`),
       );
     });
   });

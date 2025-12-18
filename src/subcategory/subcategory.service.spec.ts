@@ -181,7 +181,7 @@ describe('SubcategoryService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe(
-          `The Subcategory with name: ${name} not found`,
+          `The Subcategory with NAME: ${name} not found`,
         );
       }
     });

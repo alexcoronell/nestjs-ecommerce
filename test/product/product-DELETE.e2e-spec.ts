@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { ConfigModule } from '@nestjs/config';
@@ -41,13 +41,12 @@ import { generateNewProducts } from '@faker/product.faker';
 import { loginAdmin } from '../utils/login-admin';
 import { loginSeller } from '../utils/login-seller';
 import { loginCustomer } from '../utils/login-customer';
-import { createProduct } from '../../faker/product.faker';
-import { CreateProductDto } from '@product/dto/create-product.dto';
 
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
 const PATH = '/product';
+const ID = 1;
 
 describe('ProductController (e2e) [GET]', () => {
   let app: INestApplication<App>;
@@ -122,143 +121,98 @@ describe('ProductController (e2e) [GET]', () => {
 
     const newSubcategories = createSubcategory(category.id);
     subcategory = await repoSubcategory.save(newSubcategories);
+
+    const newProducts = generateNewProducts(
+      5,
+      brand.id,
+      category.id,
+      subcategory.id,
+    );
+    await repo.save(newProducts);
   });
 
-  describe('POST Product', () => {
-    it('/ should create a product, return 201 with admin user', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+  describe('DELETE Subcategory', () => {
+    it('/:id should delete a Product with admin user', async () => {
       const res = await request(app.getHttpServer())
-        .post(PATH)
+        .delete(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(dto);
-      const { statusCode, data } = res.body;
-      expect(statusCode).toBe(HTTP_STATUS.CREATED);
-      expect(data.name).toEqual(dto.name);
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode } = res.body;
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
+      expect(statusCode).toBe(HTTP_STATUS.OK);
+      expect(deletedInDB).toBeNull();
     });
 
-    it('/ should return 401 with seller user', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+    it('/:id should return 401 with seller user', async () => {
       const res = await request(app.getHttpServer())
-        .post(PATH)
+        .delete(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${sellerAccessToken}`)
-        .send(dto);
+        .set('Authorization', `Bearer ${sellerAccessToken}`);
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
       const { statusCode, error, message } = res.body;
       expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
       expect(message).toBe(ERROR_MESSAGES.ADMIN_REQUIRED);
       expect(error).toBe(ERRORS.UNAUTHORIZED);
+      expect(deletedInDB).toBeDefined();
     });
 
-    it('/ should return 401 with customer user', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+    it('/:id should return 401 with customer user', async () => {
       const res = await request(app.getHttpServer())
-        .post(PATH)
+        .delete(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
-        .set('Authorization', `Bearer ${customerAccessToken}`)
-        .send(dto);
+        .set('Authorization', `Bearer ${customerAccessToken}`);
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
       const { statusCode, error, message } = res.body;
       expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
       expect(message).toBe(ERROR_MESSAGES.ADMIN_REQUIRED);
       expect(error).toBe(ERRORS.UNAUTHORIZED);
+      expect(deletedInDB).toBeDefined();
     });
 
-    it('/ should return 401 without user', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+    it('/:id should return 401 without user', async () => {
       const res = await request(app.getHttpServer())
-        .post(PATH)
-        .set('x-api-key', API_KEY)
-        .send(dto);
+        .delete(`${PATH}/${ID}`)
+        .set('x-api-key', API_KEY);
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
       expect(message).toBe(ERROR_MESSAGES.UNAUTHORIZED);
+      expect(deletedInDB).toBeDefined();
     });
 
-    it('/ should not create a product, return 401 with invalid api key', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+    it('/:id should return 401 with invalid api key', async () => {
       const res = await request(app.getHttpServer())
-        .post(`${PATH}`)
+        .delete(`${PATH}/${ID}`)
         .set('x-api-key', 'invalid-api-key')
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(dto);
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
       const { statusCode, message } = res.body;
-      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(statusCode).toBe(401);
       expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
+      expect(deletedInDB).toBeDefined();
     });
 
-    it('/ should not create a product, return 401 if api key is missing', async () => {
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
+    it('/:id should return 401 if api key is missing', async () => {
       const res = await request(app.getHttpServer())
-        .post(`${PATH}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(dto);
+        .delete(`${PATH}/${ID}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const deletedInDB = await repo.findOne({
+        where: { id: ID, isDeleted: false },
+      });
       const { statusCode, message } = res.body;
-      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(statusCode).toBe(401);
       expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
-    });
-
-    it('/ should return conflict if product name already exists', async () => {
-      const newProducts = generateNewProducts(
-        5,
-        category.id,
-        subcategory.id,
-        brand.id,
-      );
-      const products = await repo.save(newProducts);
-
-      const newProduct = createProduct();
-      const dto: CreateProductDto = {
-        ...newProduct,
-        name: products[0].name,
-        brand: brand.id,
-        category: category.id,
-        subcategory: subcategory.id,
-      };
-
-      try {
-        await request(app.getHttpServer()).post(PATH).send(dto);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ConflictException);
-        expect(error.message).toBe(
-          `The Product NAME ${dto.name} is already in use`,
-        );
-      }
+      expect(deletedInDB).toBeDefined();
     });
   });
 

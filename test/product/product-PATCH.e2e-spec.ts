@@ -16,14 +16,15 @@ import { CategoryModule } from '@category/category.module';
 import { UserModule } from '@user/user.module';
 
 /* Entities */
+import { Brand } from '@brand/entities/brand.entity';
 import { Category } from '@category/entities/category.entity';
+import { Product } from '@product/entities/product.entity';
 import { Subcategory } from '@subcategory/entities/subcategory.entity';
-
-/* DTO's */
-import { UpdateSubcategoryDto } from '@subcategory/dto/update-subcategory.dto';
 
 /* Interceptors */
 import { AuditInterceptor } from '@commons/interceptors/audit.interceptor';
+
+import { ERROR_MESSAGES, ERRORS, HTTP_STATUS } from '../constants';
 
 /* Seed */
 import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
@@ -32,28 +33,37 @@ import { initDataSource, cleanDB, closeDataSource } from '../utils/seed';
 import { dataSource } from '../utils/seed';
 
 /* Faker */
-import { generateNewSubcategories } from '@faker/subcategory.faker';
-import { generateCategory } from '@faker/category.faker';
+import { createBrand } from '@faker/brand.faker';
+import { createCategory } from '@faker/category.faker';
+import { createSubcategory } from '@faker/subcategory.faker';
+import { generateNewProducts } from '@faker/product.faker';
 
 /* Login Users */
 import { loginAdmin } from '../utils/login-admin';
 import { loginSeller } from '../utils/login-seller';
 import { loginCustomer } from '../utils/login-customer';
+import { UpdateProductDto } from '@product/dto/update-product.dto';
 
 /* ApiKey */
 const API_KEY = process.env.API_KEY || 'api-e2e-key';
 
-describe('SubcategoryController (e2e) [GET]', () => {
+const PATH = '/product';
+const ID = 1;
+
+describe('ProductController (e2e) [GET]', () => {
   let app: INestApplication<App>;
   let repo: any = undefined;
+  let repoBrand: any = undefined;
   let repoCategory: any = undefined;
+  let repoSubcategory: any = undefined;
   let repoUser: any = undefined;
   let adminAccessToken: string;
   let sellerAccessToken: string;
   let customerAccessToken: string;
+  let brand: Brand;
   let category: Category;
-  let subcategories: Subcategory[] = [];
-  const path = '/subcategory';
+  let subcategory: Subcategory;
+  let products: Product[] = [];
 
   beforeAll(async () => {
     // Initialize database connection once for the entire test suite
@@ -86,7 +96,9 @@ describe('SubcategoryController (e2e) [GET]', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    repo = app.get('SubcategoryRepository');
+    repo = app.get('ProductRepository');
+    repoBrand = app.get('BrandRepository');
+    repoSubcategory = app.get('SubcategoryRepository');
     repoCategory = app.get('CategoryRepository');
     repoUser = app.get('UserRepository');
   });
@@ -103,136 +115,126 @@ describe('SubcategoryController (e2e) [GET]', () => {
     const resLoginCustomer = await loginCustomer(app, repoUser);
     customerAccessToken = resLoginCustomer.access_token;
 
-    /* Create category and 5 subcategories for testing */
-    const newCategory = generateCategory();
+    /* Create brand, category, subcategory  and 5 products for testing */
+    const newBrand = createBrand();
+    brand = await repoBrand.save(newBrand);
+
+    const newCategory = createCategory();
     category = await repoCategory.save(newCategory);
-    const newSubcategories = generateNewSubcategories(5, category.id);
-    subcategories = await repo.save(newSubcategories);
+
+    const newSubcategories = createSubcategory(category.id);
+    subcategory = await repoSubcategory.save(newSubcategories);
+
+    const newProducts = generateNewProducts(
+      5,
+      brand.id,
+      category.id,
+      subcategory.id,
+    );
+    products = await repo.save(newProducts);
   });
 
   describe('PATCH Subcategory', () => {
-    it('/:id should update a tag with admin user', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should update a product with admin user', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
+        .patch(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
       const { statusCode, data } = res.body;
-      expect(statusCode).toBe(200);
+      expect(statusCode).toBe(HTTP_STATUS.OK);
       expect(data.name).toBe(updatedData.name);
     });
 
-    it('/:id should return 401 if the user is seller', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should return 401 with seller user', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
+        .patch(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${sellerAccessToken}`)
         .send(updatedData);
       const { statusCode, error, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(error).toBe('Unauthorized');
-      expect(message).toBe('Unauthorized: Admin access required');
+      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(message).toBe(ERROR_MESSAGES.ADMIN_REQUIRED);
+      expect(error).toBe(ERRORS.UNAUTHORIZED);
     });
 
-    it('/:id should return 401 if the user is customer', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should return 401 with customer user', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
+        .patch(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${customerAccessToken}`)
         .send(updatedData);
       const { statusCode, error, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(error).toBe('Unauthorized');
-      expect(message).toBe('Unauthorized: Admin access required');
+      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(message).toBe(ERROR_MESSAGES.ADMIN_REQUIRED);
+      expect(error).toBe(ERRORS.UNAUTHORIZED);
     });
 
-    it('/:id should return 401 if the user is not logged', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should return 401 without user', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
+        .patch(`${PATH}/${ID}`)
         .set('x-api-key', API_KEY)
         .send(updatedData);
       const { statusCode, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(message).toBe('Unauthorized');
+      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(message).toBe(ERROR_MESSAGES.UNAUTHORIZED);
     });
 
-    it('/:id should return 401 if api key is missing', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should return 401 with invalid api key', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updatedData);
-      const { statusCode, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(message).toBe('Invalid API key');
-    });
-
-    it('/:id should return 401 if api key is invalid', async () => {
-      const id = subcategories[0].id;
-      const updatedData: UpdateSubcategoryDto = {
-        name: 'Updated name',
-      };
-      const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
+        .patch(`${PATH}/${ID}`)
         .set('x-api-key', 'invalid-api-key')
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
       const { statusCode, message } = res.body;
-      expect(statusCode).toBe(401);
-      expect(message).toBe('Invalid API key');
+      expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
+      expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
     });
 
-    it('should return 404 if tag does not exist', async () => {
-      const id = 9999;
-      const updatedData: UpdateSubcategoryDto = {
+    it('/:id should return 401 if api key is missing', async () => {
+      const updatedData: UpdateProductDto = {
         name: 'Updated name',
       };
       const res = await request(app.getHttpServer())
-        .patch(`${path}/${id}`)
-        .set('x-api-key', API_KEY)
+        .patch(`${PATH}/${ID}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updatedData);
       const { statusCode, message } = res.body;
-      expect(statusCode).toBe(404);
-      expect(message).toBe(`The Subcategory with ID: ${id} not found`);
+      expect(statusCode).toBe(401);
+      expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
     });
 
-    it('/:id should return Conflict if subcategory name is already taken with the same category', async () => {
-      const existingSubcategory = subcategories[0];
+    it('/ should return conflict if product name already exists', async () => {
+      const existentProduct = products[0];
+      const productToUpdate = products[1];
 
-      const id = subcategories[1].id;
-      const repeatedNameSubcategory = {
-        ...subcategories[1],
-        name: existingSubcategory.name,
-        categoryId: category.id,
+      const updatedData: UpdateProductDto = {
+        name: existentProduct.name,
       };
+
       try {
         await request(app.getHttpServer())
-          .patch(`${path}/${id}`)
-          .send(repeatedNameSubcategory);
+          .patch(`${PATH}/${productToUpdate.id}`)
+          .send(updatedData);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The tag NAME ${repeatedNameSubcategory.name} is already in use`,
+          `The Product NAME ${updatedData.name} is already in use`,
         );
       }
     });

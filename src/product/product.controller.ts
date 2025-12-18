@@ -87,6 +87,7 @@ export class ProductController
     return this.productService.create(payload, userId);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -96,6 +97,7 @@ export class ProductController
     return this.productService.update(+id, userId, updateCategoryDto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
     return this.productService.remove(+id, userId);

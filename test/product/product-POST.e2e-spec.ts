@@ -256,7 +256,7 @@ describe('ProductController (e2e) [GET]', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe(
-          `The Product NAME ${dto.name} is already in use with the same Category`,
+          `The Product NAME ${dto.name} is already in use`,
         );
       }
     });

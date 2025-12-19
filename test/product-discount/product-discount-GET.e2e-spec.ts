@@ -160,7 +160,7 @@ describe('ProductController (e2e) [GET]', () => {
     productDiscounts = await repo.save(newProductDiscounts);
   });
 
-  xdescribe('GET Product Discount - Count-All', () => {
+  describe('GET Product Discount - Count-All', () => {
     it('/count should return 401 if api key is missing', async () => {
       const res: any = await request(app.getHttpServer()).get(COUNT);
       const { statusCode, message } = res.body;
@@ -221,7 +221,7 @@ describe('ProductController (e2e) [GET]', () => {
     });
   });
 
-  xdescribe('GET Product Discount - Find', () => {
+  describe('GET Product Discount - Find', () => {
     it('/ should return 401 if api key is missing', async () => {
       const res: any = await request(app.getHttpServer()).get(`${PATH}`);
       const { statusCode, message } = res.body;
@@ -280,7 +280,7 @@ describe('ProductController (e2e) [GET]', () => {
     });
   });
 
-  xdescribe('GET Product Discount - Find By Product', () => {
+  describe('GET Product Discount - Find By Product', () => {
     const productId = 1;
     it('/ should return 401 if api key is missing', async () => {
       const res: any = await request(app.getHttpServer()).get(
@@ -340,7 +340,7 @@ describe('ProductController (e2e) [GET]', () => {
     });
   });
 
-  xdescribe('GET Product Discount - Find By Discount', () => {
+  describe('GET Product Discount - Find By Discount', () => {
     const productId = 1;
     it('/ should return 401 if api key is missing', async () => {
       const res: any = await request(app.getHttpServer()).get(

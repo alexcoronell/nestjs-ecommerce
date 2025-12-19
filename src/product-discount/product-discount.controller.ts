@@ -61,6 +61,7 @@ export class ProductDiscountController {
     return this.productDiscountService.findOne({ productId, discountId });
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   create(
     @Body() createProductDiscountDto: CreateProductDiscountDto,
@@ -69,9 +70,10 @@ export class ProductDiscountController {
     return this.productDiscountService.create(createProductDiscountDto, userId);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('many')
   createMany(
-    @Body() dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
+    @Body() dtos: CreateProductDiscountDto[],
     @UserId() userId: number,
   ) {
     return this.productDiscountService.createMany(dtos, userId);

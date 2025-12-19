@@ -98,7 +98,7 @@ export class ProductDiscountService {
   }
 
   async createMany(
-    dtos: CreateProductDiscountDto | CreateProductDiscountDto[],
+    dtos: CreateProductDiscountDto[],
     userId: number,
   ): Promise<Result<ProductDiscount[]>> {
     const dtosArray = Array.isArray(dtos) ? dtos : [dtos];

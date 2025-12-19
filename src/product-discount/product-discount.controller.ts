@@ -58,7 +58,7 @@ export class ProductDiscountController {
     @Param('productId', ParseIntPipe) productId: number,
     @Param('discountId', ParseIntPipe) discountId: number,
   ) {
-    return this.productDiscountService.findOne({ productId, discountId });
+    return this.productDiscountService.findOne(productId, discountId);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -80,7 +80,10 @@ export class ProductDiscountController {
   }
 
   @Delete()
-  delete(@Body() criteria: Partial<{ productId: number; discountId: number }>) {
-    return this.productDiscountService.delete(criteria);
+  delete(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('discountId', ParseIntPipe) discountId: number,
+  ) {
+    return this.productDiscountService.delete(productId, discountId);
   }
 }

@@ -73,69 +73,33 @@ describe('ProductDiscountService', () => {
 
     it('findOne should return a product discount by criteria', async () => {
       const mockProductDiscount = generateProductDiscount();
-      const criteria = {
-        productId: mockProductDiscount.productId,
-        discountId: mockProductDiscount.discountId,
-      };
+      const productId = mockProductDiscount.productId;
+      const discountId = mockProductDiscount.discountId;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockProductDiscount);
 
-      const result = await service.findOne(criteria);
+      const result = await service.findOne(productId, discountId);
 
       expect(repository.findOne).toHaveBeenCalledTimes(1);
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { productId, discountId },
+      });
       expect(result.statusCode).toBe(200);
       expect(result.data).toEqual(mockProductDiscount);
     });
 
     it('findOne should throw NotFoundException if product discount does not exist', async () => {
-      const criteria = { productId: 999, discountId: 888 };
+      const productId = 999;
+      const discountId = 999;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.findOne(criteria)).rejects.toThrow(
+      await expect(service.findOne(productId, discountId)).rejects.toThrow(
         NotFoundException,
       );
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
-    });
-
-    it('findOne should return a product discount by only productId', async () => {
-      const mockProductDiscount = generateProductDiscount();
-      const criteria = { productId: mockProductDiscount.productId };
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockProductDiscount);
-
-      const result = await service.findOne(criteria);
-
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
-      expect(result.statusCode).toBe(200);
-      expect(result.data).toEqual(mockProductDiscount);
-    });
-
-    it('findOne should return a product discount by only discountId', async () => {
-      const mockProductDiscount = generateProductDiscount();
-      const criteria = { discountId: mockProductDiscount.discountId };
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockProductDiscount);
-
-      const result = await service.findOne(criteria);
-
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
-      expect(result.statusCode).toBe(200);
-      expect(result.data).toEqual(mockProductDiscount);
-    });
-
-    it('findOne should throw NotFoundException if only discountId does not exist', async () => {
-      const criteria = { discountId: 54321 };
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-
-      await expect(service.findOne(criteria)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { productId, discountId },
+      });
     });
 
     it('findAllByProduct should return product discounts by product id', async () => {
@@ -176,17 +140,6 @@ describe('ProductDiscountService', () => {
       expect(statusCode).toBe(200);
       expect(total).toEqual(mocks.length);
       expect(data).toEqual(mocks);
-    });
-
-    it('findOne should throw NotFoundException if only productId does not exist', async () => {
-      const criteria = { productId: 12345 };
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-
-      await expect(service.findOne(criteria)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(repository.findOne).toHaveBeenCalledWith({ where: criteria });
     });
   });
 
@@ -238,16 +191,18 @@ describe('ProductDiscountService', () => {
     it('should create a single product discount when object is provided to createMany', async () => {
       const mock: ProductDiscount[] = generateManyProductDiscounts(1);
       const userId: User['id'] = 1;
-      const dto: CreateProductDiscountDto = {
-        ...mock,
-        product: mock[0].product.id,
-        discount: mock[0].discount.id,
-      };
+      const dtos: CreateProductDiscountDto[] = [
+        {
+          ...mock,
+          product: mock[0].product.id,
+          discount: mock[0].discount.id,
+        },
+      ];
 
-      jest.spyOn(repository, 'create').mockReturnValue([dto] as any);
-      jest.spyOn(repository, 'save').mockResolvedValue([dto] as any);
+      jest.spyOn(repository, 'create').mockReturnValue([dtos] as any);
+      jest.spyOn(repository, 'save').mockResolvedValue([dtos] as any);
 
-      const { statusCode } = await service.createMany(dto, userId);
+      const { statusCode } = await service.createMany(dtos, userId);
       expect(repository.create).toHaveBeenCalledTimes(1);
       //expect(repository.create).toHaveBeenCalledWith([dto]);
       expect(repository.save).toHaveBeenCalledTimes(1);
@@ -308,75 +263,38 @@ describe('ProductDiscountService', () => {
 
   describe('delete product discount services', () => {
     it('should delete a product discount by criteria', async () => {
-      const criteria = { productId: 1, discountId: 2 };
+      const mock = generateProductDiscount();
+      const productId = 1;
+      const discountId = 2;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
       jest
         .spyOn(repository, 'delete')
         .mockResolvedValue({ affected: 1 } as any);
 
-      const result = await service.delete(criteria);
+      const result = await service.delete(productId, discountId);
 
       expect(repository.delete).toHaveBeenCalledTimes(1);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
+      expect(repository.delete).toHaveBeenCalledWith({
+        product: { id: productId },
+        discount: { id: discountId },
+      });
       expect(result.statusCode).toBe(200);
       expect(result.message).toContain('deleted successfully');
     });
 
     it('should throw NotFoundException if no product discount matches criteria', async () => {
-      const criteria = { productId: 999, discountId: 888 };
+      const productId = 999;
+      const discountId = 888;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(repository, 'delete')
         .mockResolvedValue({ affected: 0 } as any);
 
-      await expect(service.delete(criteria)).rejects.toThrow(NotFoundException);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
-    });
-
-    it('should delete a product discount by only productId', async () => {
-      const criteria = { productId: 5 };
-      jest
-        .spyOn(repository, 'delete')
-        .mockResolvedValue({ affected: 1 } as any);
-
-      const result = await service.delete(criteria);
-
-      expect(repository.delete).toHaveBeenCalledTimes(1);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
-      expect(result.statusCode).toBe(200);
-      expect(result.message).toContain('deleted successfully');
-    });
-
-    it('should delete a product discount by only discountId', async () => {
-      const criteria = { discountId: 10 };
-      jest
-        .spyOn(repository, 'delete')
-        .mockResolvedValue({ affected: 1 } as any);
-
-      const result = await service.delete(criteria);
-
-      expect(repository.delete).toHaveBeenCalledTimes(1);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
-      expect(result.statusCode).toBe(200);
-      expect(result.message).toContain('deleted successfully');
-    });
-
-    it('should throw NotFoundException if only productId does not exist', async () => {
-      const criteria = { productId: 12345 };
-      jest
-        .spyOn(repository, 'delete')
-        .mockResolvedValue({ affected: 0 } as any);
-
-      await expect(service.delete(criteria)).rejects.toThrow(NotFoundException);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
-    });
-
-    it('should throw NotFoundException if only discountId does not exist', async () => {
-      const criteria = { discountId: 54321 };
-      jest
-        .spyOn(repository, 'delete')
-        .mockResolvedValue({ affected: 0 } as any);
-
-      await expect(service.delete(criteria)).rejects.toThrow(NotFoundException);
-      expect(repository.delete).toHaveBeenCalledWith(criteria);
+      await expect(service.delete(productId, discountId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

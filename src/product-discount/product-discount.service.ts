@@ -36,14 +36,15 @@ export class ProductDiscountService {
   }
 
   async findOne(
-    criteria: Partial<Pick<ProductDiscount, 'productId' | 'discountId'>>,
+    productId: Product['id'],
+    discountId: Discount['id'],
   ): Promise<Result<ProductDiscount>> {
     const productDiscount = await this.repo.findOne({
-      where: { productId: criteria.productId, discountId: criteria.discountId },
+      where: { productId, discountId },
     });
     if (!productDiscount) {
       throw new NotFoundException(
-        `The Product Discount with product ID: ${criteria.productId} and discount ID: ${criteria.discountId}  not found`,
+        `The Product Discount with product ID: ${productId} and discount ID: ${discountId}  not found`,
       );
     }
     return {
@@ -117,17 +118,19 @@ export class ProductDiscountService {
   }
 
   async delete(
-    criteria: Partial<Pick<ProductDiscount, 'productId' | 'discountId'>>,
+    productId: Product['id'],
+    discountId: Discount['id'],
   ): Promise<Result<void>> {
-    const result = await this.repo.delete(criteria);
-    if (result.affected === 0) {
-      throw new NotFoundException(
-        `The Product Discount with criteria: ${JSON.stringify(criteria)} not found`,
-      );
-    }
+    await this.findOne(productId, discountId);
+
+    await this.repo.delete({
+      product: { id: productId },
+      discount: { id: discountId },
+    });
+
     return {
       statusCode: HttpStatus.OK,
-      message: `The Product Discount with criteria: ${JSON.stringify(criteria)} deleted successfully`,
+      message: `The Product Discount with Product ID: ${productId} and Discount ID: ${discountId} deleted successfully`,
     };
   }
 }

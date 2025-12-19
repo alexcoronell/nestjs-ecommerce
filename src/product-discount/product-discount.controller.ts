@@ -53,7 +53,7 @@ export class ProductDiscountController {
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @Get('one')
+  @Get('one/:productId/:discountId')
   findOne(
     @Param('productId', ParseIntPipe) productId: number,
     @Param('discountId', ParseIntPipe) discountId: number,

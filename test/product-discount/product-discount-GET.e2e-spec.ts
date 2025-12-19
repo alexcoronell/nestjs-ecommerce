@@ -422,14 +422,16 @@ describe('ProductController (e2e) [GET]', () => {
       expect(message).toBe(ERROR_MESSAGES.INVALID_API_KEY);
     });
 
-    it('/ should return all product discounts with admin user', async () => {
+    it('/ should return one product discount with admin user', async () => {
       const res = await request(app.getHttpServer())
         .get(`${FIND_ONE}/${productId}/${discountId}`)
         .set('x-api-key', API_KEY)
         .set('Authorization', `Bearer ${adminAccessToken}`);
       const { statusCode, data } = res.body;
       expect(statusCode).toBe(HTTP_STATUS.OK);
-      expect(data.length).toEqual(productDiscounts.length);
+      expect(data).toBeDefined();
+      expect(data.productId).toBe(productId);
+      expect(data.discountId).toBe(discountId);
     });
 
     it('/ should return 401 with seller user', async () => {
@@ -461,6 +463,23 @@ describe('ProductController (e2e) [GET]', () => {
       const { statusCode, message } = res.body;
       expect(statusCode).toBe(HTTP_STATUS.UNAUTHORIZED);
       expect(message).toBe(ERROR_MESSAGES.UNAUTHORIZED);
+    });
+
+    it('/ should return 404 if product discount not found', async () => {
+      const productId = 9999;
+      const discountId = 9999;
+      const res = await request(app.getHttpServer())
+        .get(`${FIND_ONE}/${productId}/${discountId}`)
+        .set('x-api-key', API_KEY)
+        .set('Authorization', `Bearer ${adminAccessToken}`);
+      const { statusCode, data, error, message } = res.body;
+      expect(statusCode).toBe(HTTP_STATUS.NOT_FOUND);
+      expect(data).toBeUndefined();
+      console.log(error);
+      expect(error).toBe(ERRORS.NOT_FOUND);
+      expect(message).toEqual(
+        `The Product Discount with product ID: ${productId} and discount ID: ${discountId}  not found`,
+      );
     });
   });
 

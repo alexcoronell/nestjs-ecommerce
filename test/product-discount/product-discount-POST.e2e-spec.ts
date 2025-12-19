@@ -157,7 +157,7 @@ describe('ProductController (e2e) [POST]', () => {
     productDiscount = await repo.save(newProductDiscount);
   });
 
-  xdescribe('POST Product Discount', () => {
+  describe('POST Product Discount', () => {
     it('/ should create a product, return 401 with invalid api key', async () => {
       const productId = products[1].id;
       const discountId = discounts[1].id;

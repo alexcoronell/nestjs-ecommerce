@@ -478,7 +478,7 @@ describe('ProductController (e2e) [GET]', () => {
       console.log(error);
       expect(error).toBe(ERRORS.NOT_FOUND);
       expect(message).toEqual(
-        `The Product Discount with product ID: ${productId} and discount ID: ${discountId}  not found`,
+        `The Product Discount with Product ID: ${productId} and Discount ID: ${discountId} Not Found`,
       );
     });
   });

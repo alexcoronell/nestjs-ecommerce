@@ -44,7 +44,7 @@ export class ProductDiscountService {
     });
     if (!productDiscount) {
       throw new NotFoundException(
-        `The Product Discount with product ID: ${productId} and discount ID: ${discountId}  not found`,
+        `The Product Discount with Product ID: ${productId} and Discount ID: ${discountId} Not Found`,
       );
     }
     return {

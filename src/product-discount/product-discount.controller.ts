@@ -79,7 +79,8 @@ export class ProductDiscountController {
     return this.productDiscountService.createMany(dtos, userId);
   }
 
-  @Delete()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Delete(':productId/:discountId')
   delete(
     @Param('productId', ParseIntPipe) productId: number,
     @Param('discountId', ParseIntPipe) discountId: number,

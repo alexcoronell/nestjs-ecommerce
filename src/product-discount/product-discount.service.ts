@@ -20,7 +20,7 @@ export class ProductDiscountService {
     private readonly repo: Repository<ProductDiscount>,
   ) {}
 
-  async countAll() {
+  async count() {
     const total = await this.repo.count();
     return { statusCode: HttpStatus.OK, total };
   }
@@ -39,11 +39,11 @@ export class ProductDiscountService {
     criteria: Partial<Pick<ProductDiscount, 'productId' | 'discountId'>>,
   ): Promise<Result<ProductDiscount>> {
     const productDiscount = await this.repo.findOne({
-      where: criteria,
+      where: { productId: criteria.productId, discountId: criteria.discountId },
     });
     if (!productDiscount) {
       throw new NotFoundException(
-        `The Product Discount with criteria: ${JSON.stringify(criteria)} not found`,
+        `The Product Discount with product ID: ${criteria.productId} and discount ID: ${criteria.discountId}  not found`,
       );
     }
     return {

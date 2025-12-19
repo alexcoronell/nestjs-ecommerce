@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 
 /* Decorators */
 import { UserId } from '@auth/decorators/user-id.decorator';
@@ -9,17 +18,24 @@ import { ProductDiscountService } from './product-discount.service';
 /* DTO's */
 import { CreateProductDiscountDto } from './dto/create-product-discount.dto';
 
+/* Guards */
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { IsNotCustomerGuard } from '@auth/guards/is-not-customer/is-not-customer.guard';
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+
 @Controller('product-discount')
 export class ProductDiscountController {
   constructor(
     private readonly productDiscountService: ProductDiscountService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count')
-  countAll() {
-    return this.productDiscountService.countAll();
+  count() {
+    return this.productDiscountService.count();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   findAll() {
     return this.productDiscountService.findAll();
@@ -30,16 +46,19 @@ export class ProductDiscountController {
     return this.productDiscountService.findAllByProduct(+id);
   }
 
+  @UseGuards(JwtAuthGuard, IsNotCustomerGuard)
   @Get('discount/:id')
   findAllByDiscount(@Param('id') id: number) {
     return this.productDiscountService.findAllByDiscount(+id);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('one')
   findOne(
-    @Body() criteria: Partial<{ productId: number; discountId: number }>,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('discountId', ParseIntPipe) discountId: number,
   ) {
-    return this.productDiscountService.findOne(criteria);
+    return this.productDiscountService.findOne({ productId, discountId });
   }
 
   @Post()

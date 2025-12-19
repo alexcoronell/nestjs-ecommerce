@@ -48,7 +48,7 @@ describe('ProductDiscountService', () => {
     it('should return total all product discounts', async () => {
       jest.spyOn(repository, 'count').mockResolvedValue(100);
 
-      const { statusCode, total } = await service.countAll();
+      const { statusCode, total } = await service.count();
       expect(repository.count).toHaveBeenCalledTimes(1);
       expect(statusCode).toBe(200);
       expect(total).toEqual(100);

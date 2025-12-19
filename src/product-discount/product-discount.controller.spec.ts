@@ -53,7 +53,7 @@ describe('ProductDiscountController', () => {
   };
 
   const mockService = {
-    countAll: jest.fn().mockResolvedValue(mockCountResult),
+    count: jest.fn().mockResolvedValue(mockCountResult),
     findAll: jest.fn().mockResolvedValue(mockResultArray),
     findAllByProduct: jest.fn().mockResolvedValue(mockResultArray),
     findAllByDiscount: jest.fn().mockResolvedValue(mockResultArray),
@@ -85,9 +85,9 @@ describe('ProductDiscountController', () => {
   });
 
   describe('Count product discounts controller', () => {
-    it('should call countAll productDiscount service', async () => {
-      expect(await controller.countAll()).toBe(mockCountResult);
-      expect(service.countAll).toHaveBeenCalledTimes(1);
+    it('should call count productDiscount service', async () => {
+      expect(await controller.count()).toBe(mockCountResult);
+      expect(service.count).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -108,9 +108,10 @@ describe('ProductDiscountController', () => {
     });
 
     it('should call findOne productDiscount service', async () => {
-      const criteria = { productId: 1, discountId: 2 };
-      expect(await controller.findOne(criteria)).toBe(mockResult);
-      expect(service.findOne).toHaveBeenCalledWith(criteria);
+      const productId = 1;
+      const discountId = 1;
+      expect(await controller.findOne(productId, discountId)).toBe(mockResult);
+      expect(service.findOne).toHaveBeenCalledWith({ productId, discountId });
       expect(service.findOne).toHaveBeenCalledTimes(1);
     });
   });

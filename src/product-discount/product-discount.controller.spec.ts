@@ -111,7 +111,7 @@ describe('ProductDiscountController', () => {
       const productId = 1;
       const discountId = 1;
       expect(await controller.findOne(productId, discountId)).toBe(mockResult);
-      expect(service.findOne).toHaveBeenCalledWith({ productId, discountId });
+      expect(service.findOne).toHaveBeenCalledWith(productId, discountId);
       expect(service.findOne).toHaveBeenCalledTimes(1);
     });
   });
@@ -135,18 +135,21 @@ describe('ProductDiscountController', () => {
 
     it('should call createMany productDiscount service with single dto', async () => {
       const userId = 1;
-      expect(await controller.createMany(mockNewProductDiscount, userId)).toBe(
-        mockCreateManyResult,
-      );
+      expect(
+        await controller.createMany([mockNewProductDiscount], userId),
+      ).toBe(mockCreateManyResult);
       expect(service.createMany).toHaveBeenCalledTimes(2); // Called twice now
     });
   });
 
   describe('Delete product discounts controller', () => {
     it('should call delete productDiscount service', async () => {
-      const criteria = { productId: 1, discountId: 2 };
-      expect(await controller.delete(criteria)).toBe(mockDeleteResult);
-      expect(service.delete).toHaveBeenCalledWith(criteria);
+      const productId = 1;
+      const discountId = 2;
+      expect(await controller.delete(productId, discountId)).toBe(
+        mockDeleteResult,
+      );
+      expect(service.delete).toHaveBeenCalledWith(productId, discountId);
       expect(service.delete).toHaveBeenCalledTimes(1);
     });
   });

@@ -111,6 +111,22 @@ export class SubcategoryService
     };
   }
 
+  async findOneBySlug(slug: string): Promise<Result<Subcategory>> {
+    const data = await this.repo.findOne({
+      relations: ['createdBy', 'updatedBy'],
+      where: { slug, isDeleted: false },
+    });
+    if (!data) {
+      throw new NotFoundException(
+        `The Subcategory with SLUG: ${slug} not found`,
+      );
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
+  }
+
   async create(dto: CreateSubcategoryDto, userId: number) {
     const categoryId = dto.category;
 

@@ -185,6 +185,32 @@ describe('SubcategoryService', () => {
         );
       }
     });
+
+    it('findOneBySlug should return a subcategory', async () => {
+      const mock = generateSubcategory();
+      const slug = mock.slug;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mock);
+
+      const { statusCode, data } = await service.findOneBySlug(slug);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(statusCode).toBe(200);
+      expect(data).toEqual(mock);
+    });
+
+    it('findOneBySlug should throw NotFoundException if subcategory does not exist', async () => {
+      const slug = 'slugTest';
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.findOneBySlug(slug);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe(
+          `The Subcategory with SLUG: ${slug} not found`,
+        );
+      }
+    });
   });
 
   describe('create subcategory services', () => {

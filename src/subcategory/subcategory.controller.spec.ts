@@ -35,6 +35,7 @@ describe('SubcategoryController', () => {
     findAllByCategory: jest.fn().mockResolvedValue(mockSubcategories),
     findOne: jest.fn().mockResolvedValue(mockSubcategory),
     findOneByName: jest.fn().mockResolvedValue(mockSubcategory),
+    findOneBySlug: jest.fn().mockResolvedValue(mockSubcategory),
     create: jest.fn().mockResolvedValue(mockNewSubcategory),
     update: jest.fn().mockResolvedValue(1),
     remove: jest.fn().mockResolvedValue(1),
@@ -89,8 +90,13 @@ describe('SubcategoryController', () => {
     });
 
     it('should return an subcategory by name', async () => {
-      expect(await controller.findOneByname(mockSubcategory.name));
+      expect(await controller.findOneByName(mockSubcategory.name));
       expect(service.findOneByName).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return an subcategory by slug', async () => {
+      expect(await controller.findOneBySlug(mockSubcategory.slug));
+      expect(service.findOneBySlug).toHaveBeenCalledTimes(1);
     });
   });
 

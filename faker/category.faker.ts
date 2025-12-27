@@ -11,7 +11,7 @@ import { generateBaseEntity } from '@faker/base.faker';
 import { generateUser } from './user.faker';
 
 /* Utils */
-import { createSlug } from '../src/commons/utils/create-slug.uti';
+import { createSlug } from '../src/commons/utils/create-slug.util';
 
 export const createCategory = (): CreateCategoryDto => {
   const name = faker.commerce.productName();

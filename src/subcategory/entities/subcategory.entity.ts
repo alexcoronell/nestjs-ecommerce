@@ -9,6 +9,9 @@ export class Subcategory extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
+  slug: string;
+
   /**************************** Relations ****************************/
   @ManyToOne(() => Category, (item) => item.subcategories)
   @JoinColumn({ name: 'category_id' })

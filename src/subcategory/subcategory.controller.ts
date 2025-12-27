@@ -69,8 +69,14 @@ export class SubcategoryController
 
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('name/:name')
-  findOneByname(@Param('name') name: string) {
+  findOneByName(@Param('name') name: string) {
     return this.subcategoryService.findOneByName(name);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get('slug/:slug')
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.subcategoryService.findOneBySlug(slug);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

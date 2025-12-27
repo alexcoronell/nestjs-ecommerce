@@ -11,13 +11,18 @@ import { generateBaseEntity } from '@faker/base.faker';
 import { generateUser } from './user.faker';
 import { generateCategory } from './category.faker';
 
+import { createSlug } from '@commons/utils/create-slug.util';
+
 export const createSubcategory = (
   categoryId: number = 1,
   name: string | null = null,
 ): CreateSubcategoryDto => {
   const category = categoryId || faker.number.int({ min: 1, max: 50 });
+  const tempName = faker.lorem.words(3);
+  const slug = createSlug(name || tempName);
   return {
-    name: name || faker.lorem.words(2),
+    name: name || tempName,
+    slug: slug,
     category,
   };
 };

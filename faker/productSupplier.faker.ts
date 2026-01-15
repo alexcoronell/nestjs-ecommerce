@@ -11,6 +11,11 @@ import { generateProduct } from './product.faker';
 import { generateSupplier } from './supplier.faker';
 import { generateUser } from './user.faker';
 
+/* Entities */
+import { Product } from '@product/entities/product.entity';
+import { Supplier } from '@supplier/entities/supplier.entity';
+import { User } from '@user/entities/user.entity';
+
 export const createProductSupplier = (): CreateProductSupplierDto => ({
   supplierProductCode: faker.string.alphanumeric(10),
   costPrice: parseFloat(faker.commerce.price({ min: 1, max: 1000 })),
@@ -38,4 +43,42 @@ export const generateManyProductSuppliers = (
     suppliers.push(generateProductSupplier(i + 1));
   }
   return suppliers;
+};
+
+export const generateProductSupplierE2E = (
+  id: number = 1,
+  product: Product,
+  supplier: Supplier,
+  user: User,
+): ProductSupplier => {
+  return {
+    id,
+    supplierProductCode: faker.string.alphanumeric(10),
+    costPrice: parseFloat(faker.commerce.price({ min: 1, max: 1000 })),
+    isPrimarySupplier: faker.datatype.boolean(),
+    product,
+    supplier,
+    createdBy: user,
+    updatedBy: user,
+    deletedBy: null,
+    isDeleted: false,
+    createdAt: faker.date.anytime(),
+    updatedAt: faker.date.anytime(),
+    deletedAt: null,
+  };
+};
+
+export const generateManyProductSuppliersE2E = (
+  size = 1,
+  product: Product,
+  supplier: Supplier,
+  user: User,
+) => {
+  const productSuppliers: ProductSupplier[] = [];
+  for (let i = 0; i < size; i++) {
+    productSuppliers.push(
+      generateProductSupplierE2E(i + 1, product, supplier, user),
+    );
+  }
+  return productSuppliers;
 };

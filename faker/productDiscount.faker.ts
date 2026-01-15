@@ -10,6 +10,8 @@ import { CreateProductDiscountDto } from 'src/product-discount/dto/create-produc
 import { generateDiscount } from './discount.faker';
 import { generateProduct } from './product.faker';
 import { generateUser } from './user.faker';
+
+/* Entities */
 import { Product } from '@product/entities/product.entity';
 import { Discount } from '@discount/entities/discount.entity';
 import { User } from '@user/entities/user.entity';

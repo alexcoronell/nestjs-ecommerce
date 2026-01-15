@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 /* Interfaces */
@@ -25,6 +26,10 @@ import { ProductSupplier } from './entities/product-supplier.entity';
 import { CreateProductSupplierDto } from './dto/create-product-supplier.dto';
 import { UpdateProductSupplierDto } from './dto/update-product-supplier.dto';
 
+/* Guards */
+import { JwtAuthGuard } from '@auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminGuard } from '@auth/guards/admin-auth/admin-auth.guard';
+
 @Controller('product-supplier')
 export class ProductSupplierController
   implements
@@ -38,32 +43,38 @@ export class ProductSupplierController
     private readonly productSupplierService: ProductSupplierService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count-all')
   countAll() {
     return this.productSupplierService.countAll();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('count')
   count() {
     return this.productSupplierService.count();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   findAll() {
     return this.productSupplierService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productSupplierService.findOne(+id);
   }
 
-  @Get('by-product/:id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get('product/:id')
   findAllByProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productSupplierService.findAllByProduct(+id);
   }
 
-  @Get('by-supplier/:id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get('supplier/:id')
   findAllBySupplier(@Param('id', ParseIntPipe) id: number) {
     return this.productSupplierService.findAllBySupplier(+id);
   }
